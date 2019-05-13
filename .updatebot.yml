@@ -1,0 +1,28 @@
+github:
+  organisations:
+  - name: activiti
+    repositories:
+    - name: example-cloud-connector
+      branch: master
+      useSinglePullRequest: true
+    - name: activiti-cloud-audit
+      branch: master
+      useSinglePullRequest: true
+    - name: example-runtime-bundle
+      branch: master
+      useSinglePullRequest: true
+    - name: activiti-cloud-modeling
+      branch: master
+      useSinglePullRequest: true
+    - name: activiti-cloud-query
+      branch: master
+      useSinglePullRequest: true
+    - name: activiti-cloud-notifications-graphql
+      branch: master
+      useSinglePullRequest: true
+    - name: activiti-cloud-keycloak
+      branch: master
+      useSinglePullRequest: true
+    - name: activiti-cloud-gateway
+      branch: master
+      useSinglePullRequest: true

@@ -1,0 +1,81 @@
+# common values shared between all charts
+
+global:
+  gateway:
+    ## Configure default domain for gateway host, i.e. "{{ .Relase.Name }}.127.0.0.1.nip.io"
+    domain: ""
+    ## Confige default gateway host Helm template, i.e. "activiti-cloud-gateway.{{ .Values.global.gateway.domain }}"
+    host: ""
+    ## Toggle creating http or https ingress rules, supports literal or boolean values
+    http: true
+
+    ## Used to enable automatic TLS for ingress if http is false
+    tlsacme: false
+
+  keycloak:
+    enabled: true
+    ## Overrides gateway host configuration
+    url: "" 
+    ## Configure default keycloak path 
+    path: "/auth"
+    ## Configure default keycloak host template, i.e "activiti-keycloak.{{ .Values.global.gateway.domain }}"
+    host: ""
+
+    ## Configure default Keycloak realm
+    realm: "activiti"
+    resource: "activiti"
+    client: "activiti"
+
+    ## Adds Keycloak extraEnv to deployments
+    extraEnv: ""
+
+  ## Configure pull secrets for all deployments
+  registryPullSecrets: []
+
+  ## Adds global extraEnv to deployments
+  extraEnv: ""
+
+## Adds extraEnv to deployments
+extraEnv: ""
+
+## Configures additional pull secrets for this deployment
+registryPullSecrets: []
+
+## Allows to template gateway values from Jx Expose controller configuration in GitOps environment, i.e.
+# expose:
+#   config:
+#     domain: 1.2.3.4.nip.io
+#     http: "true"
+#     tlsacme: "false"
+#
+# global:
+#   keycloak:
+#     host: "activiti-keycloak.{{ tpl .Values.global.gateway.domain . }}"
+#   gateway:
+#     domain: "{{ .Values.expose.config.domain }}"
+#     http: "{{ .Values.expose.config.http }}"
+#     tlsacme: "{{ .Values.expose.config.tlsacme }}"
+expose:
+  config:
+    domain: ""
+    http: "true"
+    tlsacme: "false"
+
+
+ingress:
+  enabled: false
+  ## Set this to true in order to enable TLS on the ingress record
+  tls:
+
+  ## Empty default. Each ingress should provide its own value or template
+  path: 
+
+  ## If TLS is set to true, you must declare what secret will store the key/certificate for TLS
+  tlsSecret: 
+
+  ## If set, overrides .Values.global.gateway.host configuration 
+  hostName: 
+ 
+  ## Configure default ingress annotations 
+  annotations: {}
+
