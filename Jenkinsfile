@@ -7,7 +7,7 @@ pipeline {
     }
     environment {
       ORG               = 'activiti'
-      APP_NAME          = 'activiti-cloud-common-chart'
+      APP_NAME          = 'common'
       CHARTMUSEUM_CREDS = credentials('jenkins-x-chartmuseum')
       GITHUB_CHARTS_REPO    = "https://github.com/Activiti/activiti-cloud-helm-charts.git"
       GITHUB_HELM_REPO_URL = "https://activiti.github.io/activiti-cloud-helm-charts/"
@@ -44,8 +44,8 @@ pipeline {
             // so we can retrieve the version in later steps
             sh "echo \$(jx-release-version) > VERSION"
             dir ("./charts/$APP_NAME") {
-	           // sh 'make build'
-              sh 'make install'
+	       sh 'make build'
+              //sh 'make install'
             }
             dir ("./charts/$APP_NAME") {
 	      retry(5) {    
