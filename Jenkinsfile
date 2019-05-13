@@ -55,10 +55,10 @@ pipeline {
 	      //retry(5) {    
               sh 'make github'
               //}
-              //sh 'jx step git credentials'
+              sh 'jx step git credentials'
               //sh 'sleep 30'
               //retry(5) {
-              //  sh 'make updatebot/push-version'
+              sh 'make updatebot/push-version'
               //}
             }
           }
