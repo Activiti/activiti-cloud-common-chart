@@ -8,7 +8,7 @@ livenessProbe:
   successThreshold: {{ .Values.livenessProbe.successThreshold }}
   timeoutSeconds: {{ .Values.livenessProbe.timeoutSeconds }}
   failureThreshold: {{ .Values.livenessProbe.failureThreshold }}
-  readinessProbe:
+readinessProbe:
     httpGet:
       path: {{ tpl .Values.probePath . }}
       port: {{ .Values.service.internalPort }}
