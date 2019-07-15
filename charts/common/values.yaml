@@ -34,6 +34,7 @@ global:
 
   ## Adds global extraEnv to deployments
   extraEnv: ""
+  extraInitContainers: ""
 
 ## Adds extraEnv to deployments
 extraEnv: ""
