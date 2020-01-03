@@ -1,0 +1,3 @@
+{{ template "common.service" (list . "test.service") -}}
+{{- define "test.service" -}}
+{{- end -}}

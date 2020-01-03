@@ -1,0 +1,50 @@
+{{- template "common.statefulset" (list . "test.deployment") -}}
+{{- define "test.deployment" -}}
+## Define overrides for your Deployment resource here, e.g.
+spec:
+  replicas: {{ .Values.replicaCount }}
+  template:
+    spec:
+      initContainers:
+      - name: init-config
+        image: busybox
+        command:
+        - sh
+        - -c
+        - 'echo spring.cloud.stream.instanceIndex=${POD_NAME##*-} > /opt/config/application.properties'
+        env:
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        volumeMounts:
+        - name: config
+          mountPath: /opt/config/
+      containers:
+      - {{ template "common.container" (list . "test.deployment.container") }}
+      volumes:
+      - name: config
+        emptyDir: {}
+{{- end -}}
+
+{{- define "test.deployment.container" -}}
+## Define overrides for your Container here, e.g.
+# lifecycle:
+#   postStart:
+#     exec:
+#       command: ["/bin/sh", "-c", "echo spring.cloud.stream.instanceIndex=${HOSTNAME##*-} > application.properties"]
+env:
+- {{ template "common.envvar.value" (list "ZEUS" "cat") }}
+- {{ template "common.envvar.fieldpath" (list "POD_IP" "status.podIP") }}
+volumeMounts:
+- name: config
+  mountPath: /opt/config/
+# livenessProbe:
+#   httpGet:
+#     path: {{ .Values.probePath }}
+#     port: {{ .Values.service.internalPort }}
+# readinessProbe:
+#   httpGet:
+#     path: {{ .Values.probePath }}
+#     port: {{ .Values.service.internalPort }}
+{{- end -}}
