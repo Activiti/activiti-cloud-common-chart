@@ -1,20 +1,32 @@
 {{- define "common.probes.tpl" -}}
+{{- if .Values.livenessProbe }}
 livenessProbe:
-  httpGet:
-    path: {{ tpl .Values.probePath . }}
-    port: {{ .Values.service.internalPort }}
-  initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }}
-  periodSeconds: {{ .Values.livenessProbe.periodSeconds }}
-  successThreshold: {{ .Values.livenessProbe.successThreshold }}
-  timeoutSeconds: {{ .Values.livenessProbe.timeoutSeconds }}
-  failureThreshold: {{ .Values.livenessProbe.failureThreshold }}
+  {{ include "common.probes.httpGet.tpl" . | indent 2 }}
+  initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds | default 30 }}
+  periodSeconds: {{ .Values.livenessProbe.periodSeconds | default 10 }}
+  successThreshold: {{ .Values.livenessProbe.successThreshold | default 10 }}
+  timeoutSeconds: {{ .Values.livenessProbe.timeoutSeconds | default 10 }}
+  failureThreshold: {{ .Values.livenessProbe.failureThreshold | default 10 }}
+{{- end }}  
+{{- if .Values.readinessProbe }}
 readinessProbe:
-    httpGet:
-      path: {{ tpl .Values.probePath . }}
-      port: {{ .Values.service.internalPort }}
-    initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds }}
-    periodSeconds: {{ .Values.readinessProbe.periodSeconds }}
-    successThreshold: {{ .Values.readinessProbe.successThreshold }}
-    timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds }}
-    failureThreshold: {{ .Values.readinessProbe.failureThreshold }}
+  {{ include "common.probes.httpGet.tpl" . | indent 2 }}
+  initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds | default 30 }}
+  periodSeconds: {{ .Values.readinessProbe.periodSeconds | default 10 }}
+  successThreshold: {{ .Values.readinessProbe.successThreshold | default 10 }}
+  timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds | default 10 }}
+  failureThreshold: {{ .Values.readinessProbe.failureThreshold | default 10 }}
+{{- end }}  
+{{- end -}}
+
+{{- define "common.probes.httpGet.tpl" }}
+httpGet:
+  path: {{ tpl .Values.probePath . | default "/" | quote }}
+  port: {{ .Values.service.internalPort | default 8080 }}
+{{- end }}
+
+{{- define "common.probes" -}}
+{{- /* clear new line so indentation works correctly */ -}}
+{{- println "" -}}
+{{- include "common.util.merge" (append . "common.probes.tpl") | indent 8 -}}
 {{- end -}}

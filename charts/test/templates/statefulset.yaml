@@ -1,0 +1,37 @@
+{{- template "common.statefulset" (list . "test.statefulset") -}}
+{{- define "test.statefulset" -}}
+## Define overrides for your Deployment resource here, e.g.
+spec:
+  replicas: {{ .Values.replicaCount }}
+  template:
+    spec:
+      initContainers:
+      - {{ template "common.container.init" (list . "test.statefulset.init") }}
+      containers:
+      - {{ template "common.container" (list . "test.statefulset.container") }}
+{{- end -}}
+
+{{- define "test.statefulset.container" -}}
+## Define overrides for your Container here, e.g.
+env:
+- {{ template "common.envvar.value" (list . "ZEUS" "cat") }}
+- {{ template "common.envvar.fieldpath" (list . "POD_IP" "status.podIP") }}
+- {{ template "common.envvar.value" (list . "APP_NAME" "{{ .Release.Name }}") }}
+{{- end -}}
+
+{{- define "test.statefulset.init" -}}
+## Define overrides for your initContainer here, e.g.
+name: '{{ .Chart.Name }}-init'
+image: busybox
+imagePullPolicy: IfNotPresent
+command: 
+- sh
+- -c
+- 'echo spring.cloud.stream.instanceIndex=${HOSTNAME##*-} >> /opt/config/application.properties &&
+   echo spring.cloud.stream.instanceCount={{ .Values.replicaCount }} >> /opt/config/application.properties'
+env:
+- {{ template "common.envvar.fieldpath" (list . "POD_IP" "status.podIP") }}
+- {{ template "common.envvar.value" (list . "APP_NAME" "{{ .Release.Name }}") }}
+volumeMounts:
+  {{ include "common.container.extraVolumeMounts.tpl" $ }}
+{{- end -}}

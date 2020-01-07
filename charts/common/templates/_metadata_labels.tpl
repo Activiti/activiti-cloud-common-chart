@@ -15,9 +15,9 @@ Example output:
 common.labels.standard prints the standard Helm labels.
 The standard labels are frequently used in metadata.
 */ -}}
-{{- define "common.labels.standard" -}}
+{{- define "common.labels.standard" }}
 app: {{ template "common.name" . }}
 chart: {{ template "common.chartref" . }}
 heritage: {{ .Release.Service | quote }}
 release: {{ .Release.Name | quote }}
-{{- end -}}
+{{- end }}

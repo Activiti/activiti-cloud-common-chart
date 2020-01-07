@@ -1,18 +1,16 @@
+{{- define "common.service" -}}
+{{- template "common.util.merge" (append . "common.service.tpl") -}}
+{{- end -}}
+
 {{- define "common.service.tpl" -}}
 apiVersion: v1
 kind: Service
 metadata:
-{{- if .Values.service.name }}
-  name: {{ .Values.service.name }}
-{{- else }}
-  name: {{ template "common.fullname" . }}
-{{- end }}
+  name: {{ template "common.service.name" . }}
   labels:
-{{ include "common.labels.standard" . | indent 4 -}}
-{{- if .Values.service.annotations }}
+  {{ include "common.labels.standard" . | indent 4 }}
   annotations:
-{{ toYaml .Values.service.annotations | indent 4 }}
-{{- end }}
+  {{ include "common.service.annotations.tpl" . | indent 4 }}
 spec:
   type: {{ .Values.service.type }}
   ports:
@@ -26,6 +24,11 @@ spec:
   selector:
     app: {{ template "common.fullname" . }}
 {{- end -}}
-{{- define "common.service" -}}
-{{- template "common.util.merge" (append . "common.service.tpl") -}}
+
+{{- define "common.service.name" -}}
+{{ .Values.service.name | default (include "common.fullname" .) | quote }}
 {{- end -}}
+
+{{- define "common.service.annotations.tpl" }}
+{{ tpl (toYaml (.Values.service.annotations | default (dict ))) . }}
+{{- end }}

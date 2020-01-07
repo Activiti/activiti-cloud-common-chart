@@ -6,21 +6,26 @@ spec:
   selector:
     matchLabels:
       app: {{ template "common.name" . }} # has to match .spec.template.metadata.labels
-{{- if .Values.service.name }}
-  serviceName: {{ .Values.service.name }}
-{{- else }}
-  serviceName: {{ template "common.fullname" . }}
-{{- end }}      
+  serviceName: {{ template "common.service.name" . }}
   template:
     metadata:
       labels:
         app: {{ template "common.name" . }}
         release: {{ .Release.Name | quote }}
+      annotations:
+      {{ include "common.pod.annotations.tpl" . | indent 8 }}
     spec:
+      {{- if include "common.registry-pull-secrets" . }}
+      imagePullSecrets:
+      {{- include "common.registry-pull-secrets" . | indent 6 }}
+      {{- end }}
       containers:
-      -
+      - 
 {{ include "common.container.tpl" . | indent 8 }}
+      volumes:
+      {{ include "common.container.extraVolumes.tpl" . | indent 6 }}
 {{- end -}}
+
 {{- define "common.statefulset" -}}
 {{- template "common.util.merge" (append . "common.statefulset.tpl") -}}
 {{- end -}}

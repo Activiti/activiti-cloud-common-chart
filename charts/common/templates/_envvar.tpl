@@ -1,41 +1,45 @@
 {{- define "common.envvar.value" -}}
-  {{- $name := index . 0 -}}
-  {{- $value := index . 1 -}}
+{{- $top := first . -}}
+{{- $name := index . 1 -}}
+{{- $value := index . 2 -}}
 
-  name: {{ $name }}
-  value: {{ default "" $value | quote }}
+  name: {{ tpl $name $top }}
+  value: {{ tpl $value $top | default "" | quote }}
 {{- end -}}
 
 {{- define "common.envvar.fieldpath" -}}
-  {{- $name := index . 0 -}}
-  {{- $fieldPath := index . 1 -}}
+  {{- $top := first . -}}
+  {{- $name := index . 1 -}}
+  {{- $fieldPath := index . 2 -}}
 
-  name: {{ $name }}
+  name: {{ tpl $name $top }}
   valueFrom:
     fieldRef:
-      fieldPath: {{ $fieldPath }}
+      fieldPath: {{ tpl $fieldPath $top }}
 {{- end -}}
 
 {{- define "common.envvar.configmap" -}}
-  {{- $name := index . 0 -}}
-  {{- $configMapName := index . 1 -}}
-  {{- $configMapKey := index . 2 -}}
+  {{- $top := first . -}}
+  {{- $name := index . 1 -}}
+  {{- $configMapName := index . 2 -}}
+  {{- $configMapKey := index . 3 -}}
 
-  name: {{ $name }}
+  name: {{ tpl $name $top }}
   valueFrom:
     configMapKeyRef:
-      name: {{ $configMapName }}
-      key: {{ $configMapKey }}
+      name: {{ tpl $configMapName $top }}
+      key: {{ tpl $configMapKey $top }}
 {{- end -}}
 
 {{- define "common.envvar.secret" -}}
-  {{- $name := index . 0 -}}
-  {{- $secretName := index . 1 -}}
-  {{- $secretKey := index . 2 -}}
+  {{- $top := first . -}}
+  {{- $name := index . 1 -}}
+  {{- $secretName := index . 2 -}}
+  {{- $secretKey := index . 3 -}}
 
-  name: {{ $name }}
+  name: {{ tpl $name $top }}
   valueFrom:
     secretKeyRef:
-      name: {{ $secretName }}
-      key: {{ $secretKey }}
+      name: {{ tpl $secretName $top }}
+      key: {{ tpl $secretKey $top }}
 {{- end -}}

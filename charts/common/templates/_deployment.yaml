@@ -1,5 +1,7 @@
 {{- define "common.deployment.tpl" -}}
-{{ include "common.deployment.head" . }}
+apiVersion: extensions/v1beta1
+kind: Deployment
+{{ template "common.metadata" . }}
 spec:
   replicas: {{ .Values.replicaCount }}
   template:
@@ -8,10 +10,8 @@ spec:
         draft: {{ default "draft-app" .Values.draft }}
         app: {{ template "common.fullname" . }}
         release: {{ .Release.Name | quote }}
-{{- if .Values.podAnnotations }}
       annotations:
-{{ toYaml .Values.podAnnotations | indent 8 }}
-{{- end }}
+      {{ include "common.pod.annotations" . | indent 8 }}
     spec:
 {{- if include "common.registry-pull-secrets" . }}
       imagePullSecrets:
@@ -111,7 +111,7 @@ spec:
 {{ include "common.extra-env" . | indent 8 }}
         ports:
         - containerPort: {{ .Values.service.internalPort }}
-{{ include "common.probes.tpl" . | indent 8}}
+{{ include "common.probes.tpl" . | indent 8 }}
         resources:
 {{ toYaml .Values.resources | indent 12 }}
 {{- if .Values.extraVolumeMounts }}

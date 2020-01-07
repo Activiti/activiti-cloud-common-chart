@@ -30,10 +30,14 @@ probePath: "/"
 livenessProbe: {}
 readinessProbe: {}
 
+podAnnotations:
+  test: '{{ .Release.Name }}'
+
 service:
   type: ClusterIP
   internalPort: 80
   externalPort: 80
+  annotations: {}
 
 ingress:
   enabled: false
@@ -67,3 +71,11 @@ tolerations: []
 affinity: {}
 
 javaOpts: {}
+
+extraVolumeMounts: |
+  - name: config
+    mountPath: "/opt/config/"
+
+extraVolumes: |
+  - name: config
+    emptyDir: {}

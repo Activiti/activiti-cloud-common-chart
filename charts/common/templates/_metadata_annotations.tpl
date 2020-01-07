@@ -13,3 +13,8 @@ Any valid hook may be passed in. Separate multiple hooks with a ",".
 {{ $k | quote }}: {{ $v | quote }}
 {{- end -}}
 {{- end -}}
+
+{{- define "common.pod.annotations.tpl" -}}
+{{ tpl (toYaml (.Values.podAnnotations | default (dict ))) . }}
+{{- end -}}
+

@@ -3,13 +3,33 @@ name: {{ .Chart.Name }}
 image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
 imagePullPolicy: {{ .Values.image.pullPolicy }}
 ports:
-- name: http
-  containerPort: 80
+- containerPort: {{ .Values.service.internalPort | default 80 }}
+{{ include "common.probes.tpl" . }}
 resources:
-{{ toYaml .Values.resources | indent 2 }}
+{{ tpl (toYaml .Values.resources) . | indent 2 }}
+volumeMounts:
+{{ include "common.container.extraVolumeMounts.tpl" . | indent 2 }}
 {{- end -}}
+
 {{- define "common.container" -}}
 {{- /* clear new line so indentation works correctly */ -}}
 {{- println "" -}}
 {{- include "common.util.merge" (append . "common.container.tpl") | indent 8 -}}
 {{- end -}}
+
+{{- define "common.container.extraVolumeMounts.tpl" -}}
+{{- if .Values.extraVolumeMounts }}
+{{- with .Values.extraVolumeMounts }}
+{{ tpl . $ }}
+{{- end }}
+{{- end }}
+{{- end -}}
+
+{{- define "common.container.extraVolumes.tpl" -}}
+{{- if .Values.extraVolumes }}
+{{- with .Values.extraVolumes }}
+{{ tpl . $  }}
+{{- end }}
+{{- end }}
+{{- end -}}
+
