@@ -26,3 +26,5 @@ github:
     - name: activiti-cloud-gateway
       branch: master
       useSinglePullRequest: true
+    - name: activiti-cloud-dependencies
+      useSinglePullRequest: true
