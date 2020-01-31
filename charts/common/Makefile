@@ -66,4 +66,4 @@ endif
 	git tag -fa v$(RELEASE_VERSION) -m "Release version $(RELEASE_VERSION)"
 	git push origin v$(RELEASE_VERSION)
 updatebot/push-version:
-	cd ../../ && updatebot push-version --kind helm $(NAME) $(RELEASE_VERSION)
+	cd ../../ && updatebot push-version --kind helm $(NAME) $(RELEASE_VERSION) ACTIVITI_CLOUD_COMMON_HELM_CHART $(RELEASE_VERSION)
