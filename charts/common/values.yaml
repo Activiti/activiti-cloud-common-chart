@@ -75,8 +75,15 @@ ingress:
   tlsSecret: 
 
   ## If set, overrides .Values.global.gateway.host configuration 
-  hostName: 
- 
+  hostName:
+  
+  rewriteRegexp: '?(.*)'
+  
   ## Configure default ingress annotations 
-  annotations: {}
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/cors-allow-headers: '*'
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
+    nginx.ingress.kubernetes.io/x-forwarded-prefix: "true"
 

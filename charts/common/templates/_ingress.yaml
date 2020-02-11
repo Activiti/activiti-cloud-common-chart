@@ -21,7 +21,7 @@ spec:
     - http:
     {{- end }}
         paths:
-          - path: {{ template "common.ingress-path" . }}
+          - path: {{ template "common.ingress-path" . }}/{{ .Values.ingress.rewriteRegexp }}
             backend:
             {{- if .Values.service.name }}
               serviceName: {{ .Values.service.name }}
