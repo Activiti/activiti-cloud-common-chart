@@ -20,11 +20,11 @@ github:
     - name: activiti-cloud-notifications-graphql
       branch: master
       useSinglePullRequest: true
-    - name: activiti-keycloak
-      branch: master
-      useSinglePullRequest: true
-    - name: activiti-cloud-gateway
-      branch: master
-      useSinglePullRequest: true
+#     - name: activiti-keycloak
+#       branch: master
+#       useSinglePullRequest: true
+#     - name: activiti-cloud-gateway
+#       branch: master
+#       useSinglePullRequest: true
     - name: activiti-cloud-dependencies
       useSinglePullRequest: true
