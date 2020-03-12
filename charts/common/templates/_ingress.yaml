@@ -39,12 +39,12 @@ spec:
           {{- else}}
           - path: {{ template "common.ingress-path" . }}
             backend:
-              {{- if $serviceName }}
-              serviceName: {{ $serviceName }}
+              {{- if .Values.service.name }}
+              serviceName: {{ .Values.service.name }}
               {{- else }}
-              serviceName: {{ $serviceNameTemplate }}
+              serviceName: {{ template "fullname" . }}
               {{- end }}
-              servicePort: {{ $externalPort }}
+              servicePort: {{ .Values.service.externalPort }}
           {{- end}}
   {{- if include "common.ingress-tls" . }}
   tls:
