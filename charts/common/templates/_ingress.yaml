@@ -20,27 +20,44 @@ spec:
     {{- else }}
     - http:
     {{- end }}
-        paths:
+      paths:
+        {{- if .Values.ingress.subPaths }}
+          {{- $serviceName := .Values.service.name -}}
+          {{- $externalPort := .Values.service.externalPort -}}
+          {{- $contextPath := include "common.ingress-path" . -}}
+          {{- $serviceNameTemplate := include "fullname" . -}}
+          {{- range .Values.ingress.subPaths }}
+          - path: {{ $contextPath | default "" }}{{ . }}
+            backend:
+              {{- if $serviceName }}
+              serviceName: {{ $serviceName }}
+              {{- else }}
+              serviceName: {{ $serviceNameTemplate }}
+              {{- end}}
+              servicePort: {{ $externalPort }}
+          {{- end}}
+          {{- else}}
           - path: {{ template "common.ingress-path" . }}
             backend:
-            {{- if .Values.service.name }}
-              serviceName: {{ .Values.service.name }}
-            {{- else }}
-              serviceName: {{ template "fullname" . }}
-            {{- end }}
-              servicePort: {{ .Values.service.externalPort }}
+              {{- if $serviceName }}
+              serviceName: {{ $serviceName }}
+              {{- else }}
+              serviceName: {{ $serviceNameTemplate }}
+              {{- end }}
+              servicePort: {{ $externalPort }}
+          {{- end}}
   {{- if include "common.ingress-tls" . }}
   tls:
-  - secretName: {{ template "common.ingress-tlssecretname" . }}
-    {{- if (include "common.ingress-host" .) }}
-    hosts:
-    - {{ template "common.ingress-host" . }}
-    {{- end }}
+    - secretName: {{ template "common.ingress-tlssecretname" . }}
+      {{- if (include "common.ingress-host" .) }}
+      hosts:
+        - {{ template "common.ingress-host" . }}
+      {{- end }}
   {{- end }}
-{{- end }}
-{{- define "common.ingress" -}}
+  {{- end }}
+  {{- define "common.ingress" -}}
   {{- if index (first .) "Values" "ingress" "enabled" -}}
   {{- template "common.util.merge" (append . "common.ingress.tpl") -}}
   {{- end -}}
 
-{{- end -}}
+  {{- end -}}
