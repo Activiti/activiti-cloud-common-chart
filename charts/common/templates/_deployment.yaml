@@ -1,17 +1,17 @@
 {{- define "common.deployment.tpl" -}}
-{{ include "common.deployment.head" . }}
+apiVersion: extensions/v1beta1
+kind: Deployment
+{{ template "common.metadata" . }}
 spec:
   replicas: {{ .Values.replicaCount }}
   template:
     metadata:
       labels:
         draft: {{ default "draft-app" .Values.draft }}
-        app: {{ template "fullname" . }}
-        release: {{ .Release.Name }}
-{{- if .Values.podAnnotations }}
+        app: {{ template "common.fullname" . }}
+        release: {{ .Release.Name | quote }}
       annotations:
-{{ toYaml .Values.podAnnotations | indent 8 }}
-{{- end }}
+      {{ include "common.pod.annotations" . | indent 8 }}
     spec:
 {{- if include "common.registry-pull-secrets" . }}
       imagePullSecrets:
@@ -28,7 +28,7 @@ spec:
 {{- if .Values.service.name }}
           value: "{{ .Values.service.name }}"
 {{- else }}
-          value: {{ template "fullname" . }}
+          value: {{ template "common.fullname" . }}
 {{- end }}
         - name: SPRING_RABBITMQ_HOST
         {{- if .Values.global.rabbitmq.host.value }}
@@ -111,7 +111,7 @@ spec:
 {{ include "common.extra-env" . | indent 8 }}
         ports:
         - containerPort: {{ .Values.service.internalPort }}
-{{ include "common.probes.tpl" . | indent 8}}
+{{ include "common.probes.tpl" . | indent 8 }}
         resources:
 {{ toYaml .Values.resources | indent 12 }}
 {{- if .Values.extraVolumeMounts }}
