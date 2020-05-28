@@ -13,7 +13,7 @@ build: clean
 	
 	helm dependency build
 	helm lint
-	helm install . --name ${NAME} --debug --dry-run
+	#helm install . --name ${NAME} --debug --dry-run
 
 install:  build	
 	helm install . --name ${NAME}
