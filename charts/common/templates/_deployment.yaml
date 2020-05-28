@@ -2,6 +2,9 @@
 {{ include "common.deployment.head" . }}
 spec:
   replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ template "fullname" . }}
   template:
     metadata:
       labels:
