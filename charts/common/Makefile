@@ -53,7 +53,7 @@ tag:
 	git add -u
 	git commit -m "release $(RELEASE_VERSION)" --allow-empty # if first release then no verion update is performed
 	git tag -fa v$(RELEASE_VERSION) -m "Release version $(RELEASE_VERSION)"
-	git push https://${GITHUB_TOKEN}@github.com/Activiti/activiti-cloud-common-chart.git origin v$(RELEASE_VERSION)
+	git push -f -q https://${GITHUB_TOKEN}@github.com/Activiti/activiti-cloud-common-chart.git v$(RELEASE_VERSION)	
 
 updatebot/push-version:
 	cd ../../ && updatebot push-version --kind helm $(NAME) $(RELEASE_VERSION) ACTIVITI_CLOUD_COMMON_HELM_CHART $(RELEASE_VERSION)
