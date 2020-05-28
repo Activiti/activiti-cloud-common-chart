@@ -16,6 +16,8 @@ env:
     - GIT_EMAIL="build_user@alfresco.com"
     
 before_install: |
+
+  echo -e "https://$GITHUB_USER:$GITHUB_TOKEN@github.com" >>  ~/.git-credentials
   git config --global user.email "${GIT_EMAIL}"
   echo TRAVIS_PULL_REQUEST_BRANCH=$(TRAVIS_PULL_REQUEST_BRANCH)
   echo TRAVIS_BRANCH=$(TRAVIS_BRANCH)
@@ -58,6 +60,3 @@ jobs:
         - make release || travis_terminate 1;
         - make github || travis_terminate 1;
         - make updatebot/push-version|| travis_terminate 1;
-
-before_install:
-  - echo -e "https://$GITHUB_USER:$GITHUB_TOKEN@github.com" >>  ~/.git-credentials
