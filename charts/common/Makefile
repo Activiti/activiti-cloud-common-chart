@@ -1,10 +1,9 @@
-#CHART_REPO := http://jenkins-x-chartmuseum:8080
 CURRENT=$(pwd)
 NAME := common
 OS := $(shell uname)
 RELEASE_VERSION := $(shell cat ../../VERSION)
 
-GITHUB_CHARTS_REPO := $(or $(GITHUB_CHARTS_REPO),$(shell git config --get remote.origin.url))
+GITHUB_CHARTS_REPO := "https://${GITHUB_TOKEN}@github.com/Activiti/activiti-cloud-helm-charts.git"
 GITHUB_CHARTS_BRANCH := $(or $(GITHUB_CHARTS_BRANCH),gh-pages)
 
 build: clean
@@ -14,9 +13,9 @@ build: clean
 	
 	helm dependency build
 	helm lint
-	helm install . --name ${NAME} --debug --dry-run
+	#helm install . --name ${NAME} --debug --dry-run
 
-install:  build
+install:  build	
 	helm install . --name ${NAME}
 
 upgrade: clean build
@@ -31,13 +30,12 @@ clean:
 	rm -rf ${NAME}*.tgz
 
 release: build
-	helm package .
-#	curl  -u $(CHARTMUSEUM_CREDS_USR):$(CHARTMUSEUM_CREDS_PSW) --data-binary "@$(NAME)-$(shell sed -n 's/^version: //p' Chart.yaml).tgz" $(CHART_REPO)/api/charts
-#	rm -rf ${NAME}*.tgz%
+	helm package .	 
 
 github:
 	$(eval GITHUB_CHARTS_DIR := $(shell basename $(GITHUB_CHARTS_REPO) .git))
-	[[ -d $(GITHUB_CHARTS_DIR) ]] ||git clone -b "$(GITHUB_CHARTS_BRANCH)" "$(GITHUB_CHARTS_REPO)" $(GITHUB_CHARTS_DIR)
+	rm -rf $$GITHUB_CHARTS_DIR || echo "try to remove $$GITHUB_CHARTS_DIR"	
+	git clone -b "$(GITHUB_CHARTS_BRANCH)" "$(GITHUB_CHARTS_REPO)" $(GITHUB_CHARTS_DIR)	
 	cp "$(NAME)-$(RELEASE_VERSION).tgz" $(GITHUB_CHARTS_DIR)
 	cd $(GITHUB_CHARTS_DIR) && \
 	   helm repo index . && \
@@ -45,25 +43,17 @@ github:
 	   git status && \
 	   git commit -m "fix:(version) release $(NAME)-$(RELEASE_VERSION).tgz" && \
 	   git pull && \
-	   git push origin "$(GITHUB_CHARTS_BRANCH)"
+	   git push --force origin "$(GITHUB_CHARTS_BRANCH)"
 	rm -rf $(GITHUB_CHARTS_DIR)
 
-
-tag:
-ifeq ($(OS),Darwin)
-	sed -i "" -e "s/version:.*/version: $(RELEASE_VERSION)/" Chart.yaml
-	sed -i "" -e "s/tag: .*/tag: $(RELEASE_VERSION)/" values.yaml
-else ifeq ($(OS),Linux)
+version:
 	sed -i -e "s/version:.*/version: $(RELEASE_VERSION)/" Chart.yaml
-	sed -i -e "s|repository: .*|repository: $(DOCKER_REGISTRY)/activiti/activiti-cloud-application-chart|" values.yaml
 	sed -i -e "s/tag: .*/tag: $(RELEASE_VERSION)/" values.yaml
-else  
-	echo "platfrom $(OS) not supported to release from"
-	exit -1
-endif
-	git add --all
+tag:
+	git add -u
 	git commit -m "release $(RELEASE_VERSION)" --allow-empty # if first release then no verion update is performed
 	git tag -fa v$(RELEASE_VERSION) -m "Release version $(RELEASE_VERSION)"
-	git push origin v$(RELEASE_VERSION)
+	git push https://${GITHUB_TOKEN}@github.com/Activiti/activiti-cloud-common-chart.git origin v$(RELEASE_VERSION)
+
 updatebot/push-version:
 	cd ../../ && updatebot push-version --kind helm $(NAME) $(RELEASE_VERSION) ACTIVITI_CLOUD_COMMON_HELM_CHART $(RELEASE_VERSION)
