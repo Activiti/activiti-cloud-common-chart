@@ -1,0 +1,47 @@
+import: Activiti/activiti-scripts:.travis.java.yml@master
+env:
+  global:
+    - GITHUB_CHARTS_REPO="https://${GITHUB_TOKEN}@github.com/Activiti/activiti-cloud-helm-charts.git"
+    - RELEASE_BRANCH="master"
+    - RELEASE_TAG_REGEX="*M*"
+    - HELM_VERSION=2.12.3
+    - HELM_REPO_BASE_URL=https://kubernetes-charts.alfresco.com
+    - HELM_REPO=stable
+    - KUBERNETES_VERSION=1.14.8
+    - TRAVIS_WAIT_TIMEOUT=${TRAVIS_WAIT_TIMEOUT:-180}
+
+before_script:
+  - echo -e "https://${GITHUB_USER}:${GITHUB_TOKEN}@github.com" >>  ~/.git-credentials
+  - curl -s https://kubernetes-helm.storage.googleapis.com/helm-v${HELM_VERSION}-linux-amd64.tar.gz | tar zx
+  - sudo mv linux-amd64/helm /usr/local/bin/
+  - curl -Lo kubectl https://storage.googleapis.com/kubernetes-release/release/v${KUBERNETES_VERSION}/bin/linux/amd64/kubectl
+  - chmod +x kubectl && sudo mv kubectl /usr/local/bin/
+  - kubectl config set-cluster default-cluster --server=${K8S_API_URL} || travis_terminate 1
+  - kubectl config set-credentials default-admin --token=${K8S_API_TOKEN} || travis_terminate 1
+  - kubectl config set-context default-system --cluster=default-cluster --user=default-admin || travis_terminate 1
+  - kubectl config use-context default-system || travis_terminate 1
+  - kubectl get ns || travis_terminate 1
+
+stages:
+- name: build
+- name: tag_updatebot
+  if: type != pull_request
+
+install: true
+
+jobs:
+  include:
+    - name: build helm
+      stage: build
+      script: 
+        - cd ./charts/common
+        - make build|| travis_terminate 1;
+
+    - name: tag_updatebot
+      stage: tag_updatebot
+      script:
+        - make version || travis_terminate 1;
+        - make tag || travis_terminate 1;
+
+before_install:
+  - echo -e "https://$GITHUB_USER:$GITHUB_TOKEN@github.com" >>  ~/.git-credentials
