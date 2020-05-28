@@ -55,6 +55,7 @@ jobs:
     - name: tag_updatebot
       stage: tag_updatebot
       script:
+        - cd ./charts/common
         - make version || travis_terminate 1;
         - make tag || travis_terminate 1;
         - make release || travis_terminate 1;
