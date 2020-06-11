@@ -16,10 +16,10 @@ spec:
         {{- toYaml . | nindent 8 }}
     {{- end }}
     spec:
-{{- if include "common.registry-pull-secrets" . }}
+      {{- if include "common.registry-pull-secrets" . }}
       imagePullSecrets:
-      {{- include "common.registry-pull-secrets" . | indent 6 }}
-{{- end }}
+        {{- include "common.registry-pull-secrets" . | nindent 8 }}
+      {{- end }}
       containers:
       - name: {{ .Chart.Name }}
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
@@ -55,13 +55,13 @@ spec:
         - name: ACT_KEYCLOAK_RESOURCE
           value: {{ include "common.keycloak-resource" . | quote }}
         {{- end }}
-{{- if .Values.postgres.enabled }}
+        {{- if .Values.postgres.enabled }}
         - name: SPRING_DATASOURCE_URL
-          {{- if .Values.postgres.uri }}
+        {{- if .Values.postgres.uri }}
           value: {{ .Values.postgres.uri | quote }}
           {{- else }}
           value: "jdbc:postgresql://{{ .Release.Name }}-{{ .Values.postgres.name }}:{{ .Values.postgres.port }}/postgres"
-          {{- end }}
+        {{- end }}
         - name: SPRING_DATASOURCE_DRIVER_CLASS_NAME
           value: {{ default "org.postgresql.Driver" .Values.postgres.driver | quote }}
         - name: SPRING_DATASOURCE_USERNAME
@@ -81,42 +81,44 @@ spec:
           value: {{ default  "true"  .Values.postgres.generateDdl | quote }}
         - name: SPRING_JPA_HIBERNATE_DDL_AUTO
           value: {{ default "update"  .Values.postgres.ddlAuto | quote}}
-{{- else }}
+        {{- else }}
         {{- if .Values.db.uri }}
         - name: SPRING_DATASOURCE_URL
           value: {{ .Values.db.uri | quote }}
         {{- end }}
-          {{- if .Values.db.driver }}
+        {{- if .Values.db.driver }}
         - name: SPRING_DATASOURCE_DRIVER_CLASS_NAME
           value: {{ .Values.db.driver | quote }}
-          {{- end }}
-          {{- if .Values.db.username }}
+        {{- end }}
+        {{- if .Values.db.username }}
         - name: SPRING_DATASOURCE_USERNAME
           value: {{ .Values.db.username | quote }}
-          {{- end }}
-          {{- if .Values.db.password}}
+        {{- end }}
+        {{- if .Values.db.password}}
         - name: SPRING_DATASOURCE_PASSWORD
           value: {{ .Values.db.password | quote }}
-          {{- end }}
-          {{- if .Values.db.platform }}
+        {{- end }}
+        {{- if .Values.db.platform }}
         - name: SPRING_JPA_DATABASE_PLATFORM
           value: {{ .Values.db.platform | quote }}
-          {{- end }}
-          {{- if .Values.db.generateDdl}}
+        {{- end }}
+        {{- if .Values.db.generateDdl}}
         - name: SPRING_JPA_GENERATE_DDL
           value: {{ .Values.db.generateDdl | quote }}
-          {{- end }}
-          {{- if .Values.db.ddlAuto}}
+        {{- end }}
+        {{- if .Values.db.ddlAuto}}
         - name: SPRING_JPA_HIBERNATE_DDL_AUTO
           value: {{ default "update"  .Values.db.ddlAuto | quote }}
-          {{- end }}
-{{- end }}
-{{ include "common.extra-env" . | indent 8 }}
+        {{- end }}
+        {{- end }}
+        {{ include "common.extra-env" . | nindent 8 }}
         ports:
         - containerPort: {{ .Values.service.internalPort }}
-{{ include "common.probes.tpl" . | indent 8}}
+        {{ include "common.probes.tpl" . | nindent 8}}
+        {{- with .Values.resources }}
         resources:
-{{ toYaml .Values.resources | indent 12 }}
+          {{ toYaml . | nindent 10 }}
+        {{- end }}
         {{- with .Values.extraVolumeMounts }}
         volumeMounts:
           {{ tpl . $ | nindent 10 }}
@@ -126,7 +128,6 @@ spec:
         {{ tpl . $ | nindent 8 }}
       {{- end }}
       terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
-{{- end -}}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
@@ -139,6 +140,7 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+{{- end -}}
 {{- define "common.deployment" -}}
 {{- template "common.util.merge" (append . "common.deployment.tpl") -}}
 {{- end -}}
