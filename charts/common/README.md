@@ -13,9 +13,6 @@ Current chart version is `1.1.4`
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | affinity | object | `{}` | allows customising affinity |
-| expose.config.domain | string | `""` |  |
-| expose.config.http | string | `"true"` |  |
-| expose.config.tlsacme | string | `"false"` |  |
 | extraEnv | string | `""` | adds extraEnv to deployments |
 | global.extraEnv | string | `""` | adds global extraEnv to deployments |
 | global.extraInitContainers | string | `""` |  |

@@ -40,26 +40,6 @@ extraEnv: ""
 # registryPullSecrets -- configures additional pull secrets for this deployment
 registryPullSecrets: []
 
-## Allows to template gateway values from Jx Expose controller configuration in GitOps environment, i.e.
-# expose:
-#   config:
-#     domain: 1.2.3.4.nip.io
-#     http: "true"
-#     tlsacme: "false"
-#
-# global:
-#   keycloak:
-#     host: "activiti-keycloak.{{ tpl .Values.global.gateway.domain . }}"
-#   gateway:
-#     domain: "{{ .Values.expose.config.domain }}"
-#     http: "{{ .Values.expose.config.http }}"
-#     tlsacme: "{{ .Values.expose.config.tlsacme }}"
-expose:
-  config:
-    domain: ""
-    http: "true"
-    tlsacme: "false"
-
 ingress:
   enabled: false
   # ingress.tls -- set this to true in order to enable TLS on the ingress record
