@@ -2,44 +2,42 @@
 
 global:
   gateway:
-    ## Configure default domain for gateway host, i.e. "{{ .Relase.Name }}.127.0.0.1.nip.io"
+    # global.gateway.domain -- configure default domain for gateway host, i.e. "{{ .Release.Name }}.127.0.0.1.nip.io"
     domain: ""
-    ## Confige default gateway host Helm template, i.e. "activiti-cloud-gateway.{{ .Values.global.gateway.domain }}"
+    # global.gateway.host -- configure default gateway host Helm template, i.e. "activiti-cloud-gateway.{{ .Values.global.gateway.domain }}"
     host: ""
-    ## Toggle creating http or https ingress rules, supports literal or boolean values
+    # global.gateway.http -- toggle creating http or https ingress rules, supports literal or boolean values
     http: true
-
-    ## Used to enable automatic TLS for ingress if http is false
+    # global.gateway.tlsacme -- used to enable automatic TLS for ingress if http is false
     tlsacme: false
 
   keycloak:
     enabled: true
-    ## Overrides gateway host configuration
-    url: "" 
-    ## Configure default keycloak path 
+    # keycloak.url -- overrides gateway host configuration
+    url: ""
+    # keycloak.path -- configure default keycloak path
     path: "/auth"
     ## Configure default keycloak host template, i.e "activiti-keycloak.{{ .Values.global.gateway.domain }}"
     host: ""
-
-    ## Configure default Keycloak realm
+    # keycloak.realm -- configure default Keycloak realm
     realm: "activiti"
+    # keycloak.resource -- configure default Keycloak resource
     resource: "activiti"
-    client: "activiti"
-
-    ## Adds Keycloak extraEnv to deployments
+    # keycloak.extraEnv -- adds Keycloak extraEnv to deployments
     extraEnv: ""
 
-  ## Configure pull secrets for all deployments
+  # global.registryPullSecrets -- configure pull secrets for all deployments
   registryPullSecrets: []
 
-  ## Adds global extraEnv to deployments
+  # global.extraEnv -- adds global extraEnv to deployments
   extraEnv: ""
+
   extraInitContainers: ""
 
-## Adds extraEnv to deployments
+# extraEnv -- adds extraEnv to deployments
 extraEnv: ""
 
-## Configures additional pull secrets for this deployment
+# registryPullSecrets -- configures additional pull secrets for this deployment
 registryPullSecrets: []
 
 ## Allows to template gateway values from Jx Expose controller configuration in GitOps environment, i.e.
@@ -62,21 +60,27 @@ expose:
     http: "true"
     tlsacme: "false"
 
-
 ingress:
   enabled: false
-  ## Set this to true in order to enable TLS on the ingress record
+  # ingress.tls -- set this to true in order to enable TLS on the ingress record
   tls:
-
-  ## Empty default. Each ingress should provide its own value or template
-  path: 
-
-  ## If TLS is set to true, you must declare what secret will store the key/certificate for TLS
-  tlsSecret: 
-
-  ## If set, overrides .Values.global.gateway.host configuration 
-  hostName: 
- 
-  ## Configure default ingress annotations 
+  # ingress.path -- set ingress path
+  # @default empty, each ingress should provide its own value or template
+  path:
+  # ingress.subPaths -- set multiple ingress subpaths
+  subPaths:
+  # ingress.tlsSecret -- if TLS is set to true, you must declare what secret will store the key/certificate for TLS
+  tlsSecret:
+  # ingress.hostName -- if set, overrides .Values.global.gateway.host configuration
+  hostName:
+  # ingress.annotations -- configure default ingress annotations
   annotations: {}
 
+# nodeSelector -- allows customising nodeSelector
+nodeSelector: {}
+
+# tolerations -- allows customising tolerations
+tolerations: []
+
+# affinity -- allows customising affinity
+affinity: {}

@@ -11,10 +11,10 @@ spec:
         draft: {{ default "draft-app" .Values.draft }}
         app: {{ template "fullname" . }}
         release: {{ .Release.Name }}
-{{- if .Values.podAnnotations }}
+    {{- with .Values.podAnnotations }}
       annotations:
-{{ toYaml .Values.podAnnotations | indent 8 }}
-{{- end }}
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
     spec:
 {{- if include "common.registry-pull-secrets" . }}
       imagePullSecrets:
@@ -28,11 +28,11 @@ spec:
         - name: JAVA_OPTS
           value: "-Xmx{{ .Values.javaOpts.xmx }} -Xms{{ .Values.javaOpts.xms }} {{ .Values.javaOpts.other}}"
         - name: SPRING_APPLICATION_NAME
-{{- if .Values.service.name }}
+        {{- if .Values.service.name }}
           value: "{{ .Values.service.name }}"
-{{- else }}
+        {{- else }}
           value: {{ template "fullname" . }}
-{{- end }}
+        {{- end }}
         - name: SPRING_RABBITMQ_HOST
         {{- if .Values.global.rabbitmq.host.value }}
           value: {{ .Values.global.rabbitmq.host.value | quote }}
@@ -67,14 +67,14 @@ spec:
         - name: SPRING_DATASOURCE_USERNAME
           value: {{ default "postgres" .Values.postgres.username | quote }}
         - name: SPRING_DATASOURCE_PASSWORD
-          {{- if .Values.postgres.password }}
+        {{- if .Values.postgres.password }}
           value: {{ .Values.postgres.password | quote }}
-          {{- else }}
+        {{- else }}
           valueFrom:
             secretKeyRef:
               name: {{ .Release.Name }}-{{ .Values.postgres.name }}
               key: postgresql-password
-          {{- end }}
+        {{- end }}
         - name: SPRING_JPA_DATABASE_PLATFORM
           value: {{ default "org.hibernate.dialect.PostgreSQLDialect" .Values.postgres.platform | quote }}
         - name: SPRING_JPA_GENERATE_DDL
@@ -82,10 +82,10 @@ spec:
         - name: SPRING_JPA_HIBERNATE_DDL_AUTO
           value: {{ default "update"  .Values.postgres.ddlAuto | quote}}
 {{- else }}
-          {{- if .Values.db.uri }}
+        {{- if .Values.db.uri }}
         - name: SPRING_DATASOURCE_URL
           value: {{ .Values.db.uri | quote }}
-          {{- end }}
+        {{- end }}
           {{- if .Values.db.driver }}
         - name: SPRING_DATASOURCE_DRIVER_CLASS_NAME
           value: {{ .Values.db.driver | quote }}
@@ -117,20 +117,28 @@ spec:
 {{ include "common.probes.tpl" . | indent 8}}
         resources:
 {{ toYaml .Values.resources | indent 12 }}
-{{- if .Values.extraVolumeMounts }}
+        {{- with .Values.extraVolumeMounts }}
         volumeMounts:
-{{- with .Values.extraVolumeMounts }}
-{{ tpl . $ | indent 10 }}
-{{- end }}
-{{- end }}
-{{- if .Values.extraVolumes }}
+          {{ tpl . $ | nindent 10 }}
+        {{- end }}
+      {{- with .Values.extraVolumes }}
       volumes:
-{{- with .Values.extraVolumes }}
-{{ tpl . $ | indent 8 }}
-{{- end }}
-{{- end }}
+        {{ tpl . $ | nindent 8 }}
+      {{- end }}
       terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
-{{- end -}}      
+{{- end -}}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
 {{- define "common.deployment" -}}
 {{- template "common.util.merge" (append . "common.deployment.tpl") -}}
 {{- end -}}
