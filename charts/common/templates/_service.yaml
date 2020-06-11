@@ -8,10 +8,7 @@ metadata:
   name: {{ template "fullname" . }}
 {{- end }}
   labels:
-    app: {{ template "fullname" . }}
-    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
-    release: {{ .Release.Name }}
-    heritage: {{ .Release.Service }}
+    {{- include "common.labels" . | nindent 4 }}
 {{- if .Values.service.annotations }}
   annotations:
 {{ toYaml .Values.service.annotations | indent 4 }}
@@ -27,7 +24,7 @@ spec:
     protocol: TCP
     name: http
   selector:
-    app: {{ template "fullname" . }}
+    {{- include "common.selectorLabels" . | nindent 4 }}
 {{- end -}}
 {{- define "common.service" -}}
 {{- template "common.util.merge" (append . "common.service.tpl") -}}

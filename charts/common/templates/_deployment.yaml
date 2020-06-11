@@ -4,13 +4,11 @@ spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: {{ template "fullname" . }}
+      {{- include "common.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       labels:
-        draft: {{ default "draft-app" .Values.draft }}
-        app: {{ template "fullname" . }}
-        release: {{ .Release.Name }}
+        {{- include "common.selectorLabels" . | nindent 8 }}
     {{- with .Values.podAnnotations }}
       annotations:
         {{- toYaml . | nindent 8 }}
