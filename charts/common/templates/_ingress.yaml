@@ -1,17 +1,18 @@
 {{- define "common.ingress.tpl" -}}
+{{- if semverCompare ">=1.14-0" .Capabilities.KubeVersion.GitVersion -}}
+apiVersion: networking.k8s.io/v1beta1
+{{- else -}}
 apiVersion: extensions/v1beta1
+{{- end }}
 kind: Ingress
 metadata:
   name: {{ template "fullname" . }}
   labels:
-    app: {{ template "fullname" . }}
-    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
-    release: {{ .Release.Name }}
-    heritage: {{ .Release.Service }}
+    {{- include "common.labels" . | nindent 4 }}
   {{- if (include "common.ingress-annotations" .) }}
   annotations:
     {{- include "common.ingress-annotations" . | indent 4 }}
-   {{- end }}
+  {{- end }}
 spec:
   rules:
     {{- if (include "common.ingress-host" .) }}
@@ -59,5 +60,4 @@ spec:
   {{- if index (first .) "Values" "ingress" "enabled" -}}
   {{- template "common.util.merge" (append . "common.ingress.tpl") -}}
   {{- end -}}
-
-  {{- end -}}
+{{- end -}}
