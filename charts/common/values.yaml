@@ -4,7 +4,7 @@ global:
   gateway:
     # global.gateway.domain -- configure default domain for gateway host, i.e. "{{ .Release.Name }}.127.0.0.1.nip.io"
     domain: ""
-    # global.gateway.host -- configure default gateway host Helm template, i.e. "activiti-cloud-gateway.{{ .Values.global.gateway.domain }}"
+    # global.gateway.host -- configure default gateway host Helm template, i.e. "gateway.{{ .Values.global.gateway.domain }}"
     host: ""
     # global.gateway.http -- toggle creating http or https ingress rules, supports literal or boolean values
     http: true
@@ -13,17 +13,19 @@ global:
 
   keycloak:
     enabled: true
-    # keycloak.url -- overrides gateway host configuration
+    # global.keycloak.url -- overrides gateway host configuration
     url: ""
-    # keycloak.path -- configure default keycloak path
+    # global.keycloak.path -- configure default keycloak path
     path: "/auth"
-    ## Configure default keycloak host template, i.e "activiti-keycloak.{{ .Values.global.gateway.domain }}"
+    # global.keycloak.host -- configure default keycloak host template, i.e "identity.{{ .Values.global.gateway.domain }}"
     host: ""
-    # keycloak.realm -- configure default Keycloak realm
+    # global.keycloak.realm -- configure default Keycloak realm
     realm: "activiti"
-    # keycloak.resource -- configure default Keycloak resource
+    # global.keycloak.resource -- configure default Keycloak resource
     resource: "activiti"
-    # keycloak.extraEnv -- adds Keycloak extraEnv to deployments
+    # global.keycloak.client -- obsolete, same as global.keycloak.resource
+    client: "activiti"
+    # global.keycloak.extraEnv -- adds Keycloak extraEnv to deployments
     extraEnv: ""
 
   # global.registryPullSecrets -- configure pull secrets for all deployments

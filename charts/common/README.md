@@ -17,16 +17,17 @@ Current chart version is `1.1.4`
 | global.extraEnv | string | `""` | adds global extraEnv to deployments |
 | global.extraInitContainers | string | `""` |  |
 | global.gateway.domain | string | `""` | configure default domain for gateway host, i.e. "{{ .Release.Name }}.127.0.0.1.nip.io" |
-| global.gateway.host | string | `""` | configure default gateway host Helm template, i.e. "activiti-cloud-gateway.{{ .Values.global.gateway.domain }}" |
+| global.gateway.host | string | `""` | configure default gateway host Helm template, i.e. "gateway.{{ .Values.global.gateway.domain }}" |
 | global.gateway.http | bool | `true` | toggle creating http or https ingress rules, supports literal or boolean values |
 | global.gateway.tlsacme | bool | `false` | used to enable automatic TLS for ingress if http is false |
+| global.keycloak.client | string | `"activiti"` | obsolete, same as global.keycloak.resource |
 | global.keycloak.enabled | bool | `true` |  |
-| global.keycloak.extraEnv | string | `""` |  |
-| global.keycloak.host | string | `""` |  |
-| global.keycloak.path | string | `"/auth"` |  |
-| global.keycloak.realm | string | `"activiti"` |  |
-| global.keycloak.resource | string | `"activiti"` |  |
-| global.keycloak.url | string | `""` |  |
+| global.keycloak.extraEnv | string | `""` | adds Keycloak extraEnv to deployments |
+| global.keycloak.host | string | `""` | configure default keycloak host template, i.e "identity.{{ .Values.global.gateway.domain }}" |
+| global.keycloak.path | string | `"/auth"` | configure default keycloak path |
+| global.keycloak.realm | string | `"activiti"` | configure default Keycloak realm |
+| global.keycloak.resource | string | `"activiti"` | configure default Keycloak resource |
+| global.keycloak.url | string | `""` | overrides gateway host configuration |
 | global.registryPullSecrets | list | `[]` | configure pull secrets for all deployments |
 | ingress.annotations | object | `{}` | configure default ingress annotations |
 | ingress.enabled | bool | `false` |  |
