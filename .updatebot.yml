@@ -5,3 +5,6 @@ github:
     - name: activiti-cloud-application
       branch: develop
       useSinglePullRequest: true
+    - name: activiti-cloud-identity-chart
+      branch: master
+      useSinglePullRequest: true
