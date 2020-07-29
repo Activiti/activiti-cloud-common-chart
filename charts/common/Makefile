@@ -1,8 +1,7 @@
 CURRENT=$(pwd)
 NAME := common
 OS := $(shell uname)
-RELEASE_VERSION := $(shell cat ../../VERSION)
-
+VERSION := $(or $(VERSION), $(shell cat ../../VERSION))
 GITHUB_CHARTS_REPO := "https://${GITHUB_TOKEN}@github.com/Activiti/activiti-cloud-helm-charts.git"
 GITHUB_CHARTS_BRANCH := $(or $(GITHUB_CHARTS_BRANCH),gh-pages)
 
@@ -13,7 +12,6 @@ build: clean
 	
 	helm dependency build
 	helm lint
-	#helm install . --name ${NAME} --debug --dry-run
 
 install:  build	
 	helm install . --name ${NAME}
@@ -36,24 +34,24 @@ github:
 	$(eval GITHUB_CHARTS_DIR := $(shell basename $(GITHUB_CHARTS_REPO) .git))
 	rm -rf $$GITHUB_CHARTS_DIR || echo "try to remove $$GITHUB_CHARTS_DIR"	
 	git clone -b "$(GITHUB_CHARTS_BRANCH)" "$(GITHUB_CHARTS_REPO)" $(GITHUB_CHARTS_DIR)	
-	cp "$(NAME)-$(RELEASE_VERSION).tgz" $(GITHUB_CHARTS_DIR)
+	cp "$(NAME)-$(VERSION).tgz" $(GITHUB_CHARTS_DIR)
 	cd $(GITHUB_CHARTS_DIR) && \
 	   helm repo index . && \
 	   git add . && \
 	   git status && \
-	   git commit -m "fix:(version) release $(NAME)-$(RELEASE_VERSION).tgz" && \
+	   git commit -m "fix:(version) release $(NAME)-$(VERSION).tgz" && \
 	   git pull && \
 	   git push --force origin "$(GITHUB_CHARTS_BRANCH)"
 	rm -rf $(GITHUB_CHARTS_DIR)
 
 version:
-	sed -i -e "s/version:.*/version: $(RELEASE_VERSION)/" Chart.yaml
-	sed -i -e "s/tag: .*/tag: $(RELEASE_VERSION)/" values.yaml
+	sed -i -e "s/version:.*/version: $(VERSION)/" Chart.yaml
+	sed -i -e "s/tag: .*/tag: $(VERSION)/" values.yaml
 tag:
 	git add -u
-	git commit -m "release $(RELEASE_VERSION)" --allow-empty # if first release then no verion update is performed
-	git tag -fa v$(RELEASE_VERSION) -m "Release version $(RELEASE_VERSION)"
-	git push -f -q https://${GITHUB_TOKEN}@github.com/Activiti/activiti-cloud-common-chart.git v$(RELEASE_VERSION)	
+	git commit -m "release $(VERSION)" --allow-empty # if first release then no verion update is performed
+	git tag -fa v$(VERSION) -m "Release version $(VERSION)"
+	git push -f -q https://${GITHUB_TOKEN}@github.com/Activiti/activiti-cloud-common-chart.git v$(VERSION)	
 
 updatebot/push-version:
-	cd ../../ && updatebot push-version --kind helm $(NAME) $(RELEASE_VERSION) ACTIVITI_CLOUD_COMMON_HELM_CHART $(RELEASE_VERSION)
+	cd ../../ && updatebot push-version --kind helm $(NAME) $(VERSION) ACTIVITI_CLOUD_COMMON_HELM_CHART $(VERSION)
