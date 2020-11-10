@@ -9,11 +9,11 @@ build: clean
 	helm init --client-only
 	helm repo add activiti-cloud-helm-charts https://activiti.github.io/activiti-cloud-helm-charts/
 	helm repo add activiti-cloud-charts https://activiti.github.io/activiti-cloud-charts/
-	
+
 	helm dependency build
 	helm lint
 
-install:  build	
+install:  build
 	helm install . --name ${NAME}
 
 upgrade: clean build
@@ -22,21 +22,24 @@ upgrade: clean build
 delete:
 	helm delete --purge ${NAME}
 
-clean:	
+clean:
 	rm -rf requirements.lock
 	rm -rf charts
 	rm -rf ${NAME}*.tgz
 
 release: build
-	helm package .	 
+	helm package .
 
 github:
 	$(eval GITHUB_CHARTS_DIR := $(shell basename $(GITHUB_CHARTS_REPO) .git))
-	rm -rf $$GITHUB_CHARTS_DIR || echo "try to remove $$GITHUB_CHARTS_DIR"	
-	git clone -b "$(GITHUB_CHARTS_BRANCH)" "$(GITHUB_CHARTS_REPO)" $(GITHUB_CHARTS_DIR)	
-	cp "$(NAME)-$(VERSION).tgz" $(GITHUB_CHARTS_DIR)
+	rm -rf $$GITHUB_CHARTS_DIR || echo "try to remove $$GITHUB_CHARTS_DIR"
+	git clone -b "$(GITHUB_CHARTS_BRANCH)" "$(GITHUB_CHARTS_REPO)" $(GITHUB_CHARTS_DIR)
+	mkdir $(GITHUB_CHARTS_DIR)/new-charts
+	cp "$(NAME)-$(VERSION).tgz" $(GITHUB_CHARTS_DIR)/new-charts
 	cd $(GITHUB_CHARTS_DIR) && \
-	   helm repo index . && \
+	   helm repo index new-charts --merge index.yaml && \
+	   cp new-charts/* . && \
+	   rm -fr new-charts && \
 	   git add . && \
 	   git status && \
 	   git commit -m "fix:(version) release $(NAME)-$(VERSION).tgz" && \
@@ -51,7 +54,7 @@ tag:
 	git add -u
 	git commit -m "release $(VERSION)" --allow-empty # if first release then no verion update is performed
 	git tag -fa v$(VERSION) -m "Release version $(VERSION)"
-	git push -f -q https://${GITHUB_TOKEN}@github.com/Activiti/activiti-cloud-common-chart.git v$(VERSION)	
+	git push -f -q https://${GITHUB_TOKEN}@github.com/Activiti/activiti-cloud-common-chart.git v$(VERSION)
 
 updatebot/push-version:
 	cd ../../ && updatebot push-version --kind helm $(NAME) $(VERSION) ACTIVITI_CLOUD_COMMON_HELM_CHART $(VERSION)
