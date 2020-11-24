@@ -6,21 +6,17 @@ GITHUB_CHARTS_REPO := "https://${GITHUB_TOKEN}@github.com/Activiti/activiti-clou
 GITHUB_CHARTS_BRANCH := $(or $(GITHUB_CHARTS_BRANCH),gh-pages)
 
 build: clean
-	helm init --client-only
-	helm repo add activiti-cloud-helm-charts https://activiti.github.io/activiti-cloud-helm-charts/
-	helm repo add activiti-cloud-charts https://activiti.github.io/activiti-cloud-charts/
-
-	helm dependency build
+	helm dep up
 	helm lint
 
 install:  build
-	helm install . --name ${NAME}
+	helm install . ${NAME}
 
 upgrade: clean build
 	helm upgrade ${NAME} .
 
 delete:
-	helm delete --purge ${NAME}
+	helm delete ${NAME} --namespace ${PREVIEW_NAMESPACE}
 
 clean:
 	rm -rf requirements.lock
@@ -52,7 +48,7 @@ version:
 	sed -i -e "s/tag: .*/tag: $(VERSION)/" values.yaml
 tag:
 	git add -u
-	git commit -m "release $(VERSION)" --allow-empty # if first release then no verion update is performed
+	git commit -m "release $(VERSION)" --allow-empty # if first release then no version update is performed
 	git tag -fa v$(VERSION) -m "Release version $(VERSION)"
 	git push -f -q https://${GITHUB_TOKEN}@github.com/Activiti/activiti-cloud-common-chart.git v$(VERSION)
 
