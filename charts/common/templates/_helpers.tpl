@@ -9,13 +9,14 @@ Create chart name and version as used by the chart label.
 
 {{/*
 Common labels
-*NB* a fullname macro must be defined in the consumer chart
 */}}
 {{- define "common.labels" -}}
-app: {{ template "fullname" . }}
-chart: {{ include "common.chart" . }}
-release: {{ .Release.Name }}
-heritage: {{ .Release.Service }}
+helm.sh/chart: {{ include "common.chart" . }}
+{{ include "common.selectorLabels" . }}
+{{- if .Chart.AppVersion }}
+app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+{{- end }}
+app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end }}
 
 {{/*
@@ -23,6 +24,6 @@ Selector labels
 *NB* a fullname macro must be defined in the consumer chart
 */}}
 {{- define "common.selectorLabels" -}}
-app: {{ template "fullname" . }}
-release: {{ .Release.Name }}
+app.kubernetes.io/name: {{ template "fullname" . }}
+app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}

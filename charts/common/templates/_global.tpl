@@ -138,8 +138,15 @@ Create a default extra env templated values
 {{- $overrides := dict "Values" $noCommon -}}
 {{- $noValues := omit . "Values" -}}
 {{- with merge $noValues $overrides $common -}}
-{{- tpl .Values.global.keycloak.extraEnv . -}}
 {{- tpl .Values.global.extraEnv . -}}
 {{- tpl .Values.extraEnv . -}}
 {{- end -}}
+{{- end -}}
+
+{{/*
+Create a default fully qualified app name for the postgres requirement.
+*/}}
+{{- define "common.postgresql.fullname" -}}
+{{- $postgresContext := dict "Values" .Values.postgresql "Release" .Release "Chart" (dict "Name" "postgresql") -}}
+{{ include "postgresql.fullname" $postgresContext }}
 {{- end -}}

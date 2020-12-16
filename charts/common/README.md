@@ -13,31 +13,92 @@ A Helm chart for Activiti Cloud Common Templates
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | affinity | object | `{}` | allows customising affinity |
+| db.ddlAuto | string | `nil` |  |
+| db.driver | string | `nil` |  |
+| db.generateDdl | string | `nil` |  |
+| db.password | string | `nil` |  |
+| db.platform | string | `nil` |  |
+| db.uri | string | `nil` |  |
+| db.username | string | `nil` |  |
 | extraEnv | string | `""` | adds extraEnv to deployments |
+| extraInitContainers | string | `""` | adds extraInitContainers to deployments |
+| extraVolumeMounts | string | `""` | add additional volume mounts |
+| extraVolumes | string | `""` | add additional volumes |
 | global.extraEnv | string | `""` | adds global extraEnv to deployments |
-| global.extraInitContainers | string | `""` |  |
 | global.gateway.domain | string | `""` | configure default domain for gateway host, i.e. "{{ .Release.Name }}.127.0.0.1.nip.io" |
 | global.gateway.host | string | `""` | configure default gateway host Helm template, i.e. "gateway.{{ .Values.global.gateway.domain }}" |
 | global.gateway.http | bool | `true` | toggle creating http or https ingress rules, supports literal or boolean values |
 | global.gateway.tlsacme | bool | `false` | used to enable automatic TLS for ingress if http is false |
 | global.keycloak.client | string | `"activiti"` | obsolete, same as global.keycloak.resource |
 | global.keycloak.enabled | bool | `true` |  |
-| global.keycloak.extraEnv | string | `""` | adds Keycloak extraEnv to deployments |
 | global.keycloak.host | string | `""` | configure default keycloak host template, i.e "identity.{{ .Values.global.gateway.domain }}" |
 | global.keycloak.path | string | `"/auth"` | configure default keycloak path |
 | global.keycloak.realm | string | `"activiti"` | configure default Keycloak realm |
 | global.keycloak.resource | string | `"activiti"` | configure default Keycloak resource |
 | global.keycloak.url | string | `""` | overrides gateway host configuration |
+| global.pgchecker.image | string | `nil` |  |
+| global.postgresql.name | string | `"postgresql"` |  |
+| global.postgresql.password | string | `nil` |  |
+| global.postgresql.port | int | `5432` |  |
+| global.postgresql.username | string | `"postgres"` |  |
+| global.rabbitmq.host | string | `""` |  |
+| global.rabbitmq.password | string | `"guest"` |  |
+| global.rabbitmq.username | string | `"guest"` |  |
 | global.registryPullSecrets | list | `[]` | configure pull secrets for all deployments |
-| ingress.annotations | object | `{}` | configure default ingress annotations |
-| ingress.enabled | bool | `false` |  |
+| image.pullPolicy | string | `"IfNotPresent"` |  |
+| image.repository | string | `"activiti/replaceme"` |  |
+| image.tag | string | `"0.0.0+REPLACEME"` |  |
+| ingress.annotations | object | `{}` | configure ingress annotations as key:value pairs |
+| ingress.enabled | bool | `false` | set to true to enable ingress record generation |
 | ingress.hostName | string | `nil` | if set, overrides .Values.global.gateway.host configuration |
 | ingress.path | string | `nil` | set ingress path @default empty, each ingress should provide its own value or template |
 | ingress.subPaths | string | `nil` | set multiple ingress subpaths |
-| ingress.tls | string | `nil` | set this to true in order to enable TLS on the ingress record |
-| ingress.tlsSecret | string | `nil` | if TLS is set to true, you must declare what secret will store the key/certificate for TLS |
+| ingress.tls | string | `nil` | set to true in order to enable TLS on the ingress record |
+| ingress.tlsSecret | string | `nil` | if tls is set to true, you must declare what secret will store the key/certificate for TLS |
+| javaOpts.other | string | `"-XX:+UnlockExperimentalVMOptions -Dsun.zip.disableMemoryMapping=true\n-XX:+UseParallelGC -XX:MinHeapFreeRatio=5 -XX:MaxHeapFreeRatio=10 -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90"` |  |
+| javaOpts.xms | string | `"256m"` |  |
+| javaOpts.xmx | string | `"1024m"` |  |
+| livenessProbe.failureThreshold | int | `4` |  |
+| livenessProbe.initialDelaySeconds | int | `60` |  |
+| livenessProbe.path | string | `nil` | set liveness probe path, each service should provide its own value or default @default empty, each service should provide its own value or template or default probePath |
+| livenessProbe.periodSeconds | int | `15` |  |
+| livenessProbe.successThreshold | int | `1` |  |
+| livenessProbe.timeoutSeconds | int | `4` |  |
 | nodeSelector | object | `{}` | allows customising nodeSelector |
+| pgchecker.image.pullPolicy | string | `"IfNotPresent"` | Image pull policy for the pgchecker image |
+| pgchecker.image.repository | string | `"docker.io/busybox"` | Docker image used to check Postgresql readiness at startup |
+| pgchecker.image.tag | float | `1.32` | Image tag for the pgchecker image |
+| pgchecker.resources | object | `{"limits":{"cpu":"10m","memory":"16Mi"},"requests":{"cpu":"10m","memory":"16Mi"}}` | Resource requests and limits for the pgchecker container |
+| pgchecker.securityContext | object | `{"allowPrivilegeEscalation":false,"runAsGroup":1000,"runAsNonRoot":true,"runAsUser":1000}` | SecurityContext for the pgchecker container |
+| podAnnotations | object | `{}` |  |
+| podSecurityContext | object | `{}` |  |
+| postgresql.enabled | bool | `false` |  |
+| postgresql.name | string | `"postgresql"` |  |
+| postgresql.password | string | `nil` |  |
+| postgresql.port | int | `5432` |  |
+| postgresql.username | string | `"postgres"` |  |
+| probePath | string | `nil` | set default probe path for both liveness and readiness @default empty, each service should provide its own value or template, i.e. '{{ tpl .Values.ingress.path . }}/actuator/info' |
+| rabbitmq.enabled | bool | `false` |  |
+| rabbitmq.host | string | `""` |  |
+| rabbitmq.password | string | `"guest"` |  |
+| rabbitmq.username | string | `"guest"` |  |
+| readinessProbe.failureThreshold | int | `4` |  |
+| readinessProbe.initialDelaySeconds | int | `20` |  |
+| readinessProbe.path | string | `nil` | set readiness probe path, each service should provide its own value or default @default empty, each service should provide its own value or template or default probePath |
+| readinessProbe.periodSeconds | int | `15` |  |
+| readinessProbe.successThreshold | int | `1` |  |
+| readinessProbe.timeoutSeconds | int | `3` |  |
 | registryPullSecrets | list | `[]` | configures additional pull secrets for this deployment |
+| replicaCount | int | `1` | number of replicas |
+| resources | object | `{}` | configure resources requests and limits for deployment |
+| securityContext | object | `{}` |  |
+| service.annotations | object | `{}` |  |
+| service.externalPort | int | `80` |  |
+| service.internalPort | int | `8080` |  |
+| service.name | string | `"replaceme"` |  |
+| service.nodePort | string | `nil` |  |
+| service.type | string | `"ClusterIP"` |  |
+| terminationGracePeriodSeconds | int | `20` |  |
 | tolerations | list | `[]` | allows customising tolerations |
 
 ----------------------------------------------
