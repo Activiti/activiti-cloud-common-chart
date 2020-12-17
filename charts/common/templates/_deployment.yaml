@@ -55,15 +55,14 @@ spec:
               value: "-Xmx{{ .Values.javaOpts.xmx }} -Xms{{ .Values.javaOpts.xms }} {{ .Values.javaOpts.other}}"
             - name: SPRING_APPLICATION_NAME
               value: {{ .Values.service.name | default (include "common.fullname" .) }}
-            {{- if .Values.rabbitmq.enabled -}}
-  {{/*          - name: SPRING_RABBITMQ_HOST*/}}
-  {{/*            value: {{ .Values.rabbitmq.host | default (tpl "{{ .Release.Name }}-rabbitmq" .) }}*/}}
+            {{- if .Values.rabbitmq.enabled }}
+            - name: SPRING_RABBITMQ_HOST
+              value: {{ .Values.rabbitmq.host | default (tpl "{{ .Release.Name }}-rabbitmq" .) }}
             - name: SPRING_RABBITMQ_USERNAME
               value: {{ .Values.rabbitmq.username }}
             - name: SPRING_RABBITMQ_PASSWORD
               value: {{ .Values.rabbitmq.password }}
             {{- end }}
-
             {{- if include "common.keycloak-enabled" . }}
             - name: ACT_KEYCLOAK_URL
               value: {{ include "common.keycloak-url" . }}
@@ -76,11 +75,9 @@ spec:
               value: {{ . }}
             {{- end }}
             {{- end }}
-
             {{- if or .Values.db.uri .Values.postgresql.enabled }}
-  {{/*          - name: SPRING_DATASOURCE_URL*/}}
-  {{/*            value: ""*/}}
-  {{/*            value: {{ .Values.db.uri | default (tpl "jdbc:postgresql://{{ include \"common.postgresql.fullname\" . }}:{{ .Values.postgresql.port }}/postgres" .) }}*/}}
+            - name: SPRING_DATASOURCE_URL
+              value: {{ .Values.db.uri | default (tpl "jdbc:postgresql://{{ include \"common.postgresql.fullname\" . }}:{{ .Values.postgresql.port }}/{{ .Values.db.username }}" .) }}
             - name: SPRING_DATASOURCE_DRIVER_CLASS_NAME
               value: {{ .Values.db.driver }}
             - name: SPRING_DATASOURCE_USERNAME
