@@ -22,31 +22,31 @@ spec:
     - http:
     {{- end }}
         paths:
+          {{- $serviceName := .Values.service.name -}}
+          {{- $externalPort := .Values.service.externalPort -}}
+          {{- $ingressPath := include "common.ingress-path" . -}}
+          {{- $serviceNameTemplate := include "common.fullname" . -}}
           {{- if .Values.ingress.subPaths }}
-            {{- $serviceName := .Values.service.name -}}
-            {{- $externalPort := .Values.service.externalPort -}}
-            {{- $contextPath := include "common.ingress-path" . -}}
-            {{- $serviceNameTemplate := include "common.fullname" . -}}
             {{- range .Values.ingress.subPaths }}
-            - path: {{ $contextPath | default "" }}{{ . }}
+            - path: {{ $ingressPath }}{{ . }}
               backend:
                 {{- if $serviceName }}
                 serviceName: {{ $serviceName }}
                 {{- else }}
                 serviceName: {{ $serviceNameTemplate }}
-                {{- end}}
-                servicePort: {{ $externalPort }}
-            {{- end}}
-            {{- else}}
-            - path: {{ template "common.ingress-path" . }}
-              backend:
-                {{- if .Values.service.name }}
-                serviceName: {{ .Values.service.name }}
-                {{- else }}
-                serviceName: {{ template "common.fullname" . }}
                 {{- end }}
-                servicePort: {{ .Values.service.externalPort }}
-            {{- end}}
+                servicePort: {{ $externalPort }}
+            {{- end }}
+          {{- else }}
+            - path: {{ $ingressPath }}
+              backend:
+                {{- if $serviceName }}
+                serviceName: {{ $serviceName }}
+                {{- else }}
+                serviceName: {{ $serviceNameTemplate }}
+                {{- end }}
+                servicePort: {{ $externalPort }}
+          {{- end }}
   {{- if include "common.ingress-tls" . }}
   tls:
     - secretName: {{ template "common.ingress-tlssecretname" . }}

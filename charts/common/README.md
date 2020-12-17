@@ -50,7 +50,7 @@ A Helm chart for Activiti Cloud Common Templates
 | image.repository | string | `"activiti/replaceme"` |  |
 | image.tag | string | `"0.0.0+REPLACEME"` |  |
 | ingress.annotations | object | `{}` | configure ingress annotations as key:value pairs |
-| ingress.enabled | bool | `false` | set to true to enable ingress record generation |
+| ingress.enabled | bool | `true` | set to false to disable ingress record generation |
 | ingress.hostName | string | `nil` | if set, overrides .Values.global.gateway.host configuration |
 | ingress.path | string | `nil` | set ingress path @default empty, each ingress should provide its own value or template |
 | ingress.subPaths | list | `[]` | set multiple ingress subpaths |
