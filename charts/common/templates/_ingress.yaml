@@ -1,5 +1,7 @@
 {{- define "common.ingress.tpl" -}}
-{{- if semverCompare ">=1.14-0" .Capabilities.KubeVersion.GitVersion -}}
+{{- if .Capabilities.APIVersions.Has "networking.k8s.io/v1" -}}
+apiVersion: networking.k8s.io/v1
+{{- else if semverCompare ">=1.14-0" .Capabilities.KubeVersion.GitVersion -}}
 apiVersion: networking.k8s.io/v1beta1
 {{- else -}}
 apiVersion: extensions/v1beta1
@@ -26,26 +28,29 @@ spec:
           {{- $externalPort := .Values.service.externalPort -}}
           {{- $ingressPath := include "common.ingress-path" . -}}
           {{- $serviceNameTemplate := include "common.fullname" . -}}
-          {{- if .Values.ingress.subPaths }}
+          {{- $paths := list }}
+          {{- if .Values.ingress.subPaths -}}
             {{- range .Values.ingress.subPaths }}
-            - path: {{ $ingressPath }}{{ . }}
-              backend:
-                {{- if $serviceName }}
-                serviceName: {{ $serviceName }}
-                {{- else }}
-                serviceName: {{ $serviceNameTemplate }}
-                {{- end }}
-                servicePort: {{ $externalPort }}
+              {{- $path := list $ingressPath . | join "" }}
+              {{- $paths = append $paths $path }}
             {{- end }}
-          {{- else }}
-            - path: {{ $ingressPath }}
+          {{- else -}}
+            {{- $paths = append $paths $ingressPath }}
+          {{- end -}}
+          {{- range $paths }}
+            - path: {{ . }}
+              {{- if $.Capabilities.APIVersions.Has "networking.k8s.io/v1" }}
+              pathType: Prefix
               backend:
-                {{- if $serviceName }}
-                serviceName: {{ $serviceName }}
-                {{- else }}
-                serviceName: {{ $serviceNameTemplate }}
-                {{- end }}
+                service:
+                  name: {{ coalesce $serviceName $serviceNameTemplate }}
+                  port:
+                    number: {{ $externalPort }}
+              {{- else }}
+              backend:
+                serviceName: {{ coalesce $serviceName $serviceNameTemplate }}
                 servicePort: {{ $externalPort }}
+              {{- end }}
           {{- end }}
   {{- if include "common.ingress-tls" . }}
   tls:
