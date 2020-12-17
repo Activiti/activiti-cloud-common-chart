@@ -13,13 +13,14 @@ A Helm chart for Activiti Cloud Common Templates
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | affinity | object | `{}` | allows customising affinity |
-| db.ddlAuto | string | `nil` |  |
-| db.driver | string | `nil` |  |
-| db.generateDdl | string | `nil` |  |
+| db.ddlAuto | string | `"update"` |  |
+| db.driver | string | `"org.hibernate.dialect.PostgreSQLDialect"` |  |
+| db.generateDdl | bool | `true` |  |
 | db.password | string | `nil` |  |
-| db.platform | string | `nil` |  |
+| db.platform | string | `"postgresql"` |  |
 | db.uri | string | `nil` |  |
 | db.username | string | `nil` |  |
+| enabled | bool | `false` | generate resources only if true, false by default so you can just use the partials |
 | extraEnv | string | `""` | adds extraEnv to deployments |
 | extraInitContainers | string | `""` | adds extraInitContainers to deployments |
 | extraVolumeMounts | string | `""` | add additional volume mounts |
@@ -36,7 +37,6 @@ A Helm chart for Activiti Cloud Common Templates
 | global.keycloak.realm | string | `"activiti"` | configure default Keycloak realm |
 | global.keycloak.resource | string | `"activiti"` | configure default Keycloak resource |
 | global.keycloak.url | string | `""` | overrides gateway host configuration |
-| global.pgchecker.image | string | `nil` |  |
 | global.postgresql.name | string | `"postgresql"` |  |
 | global.postgresql.password | string | `nil` |  |
 | global.postgresql.port | int | `5432` |  |
@@ -52,7 +52,7 @@ A Helm chart for Activiti Cloud Common Templates
 | ingress.enabled | bool | `false` | set to true to enable ingress record generation |
 | ingress.hostName | string | `nil` | if set, overrides .Values.global.gateway.host configuration |
 | ingress.path | string | `nil` | set ingress path @default empty, each ingress should provide its own value or template |
-| ingress.subPaths | string | `nil` | set multiple ingress subpaths |
+| ingress.subPaths | list | `[]` | set multiple ingress subpaths |
 | ingress.tls | string | `nil` | set to true in order to enable TLS on the ingress record |
 | ingress.tlsSecret | string | `nil` | if tls is set to true, you must declare what secret will store the key/certificate for TLS |
 | javaOpts.other | string | `"-XX:+UnlockExperimentalVMOptions -Dsun.zip.disableMemoryMapping=true\n-XX:+UseParallelGC -XX:MinHeapFreeRatio=5 -XX:MaxHeapFreeRatio=10 -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90"` |  |
@@ -76,6 +76,7 @@ A Helm chart for Activiti Cloud Common Templates
 | postgresql.name | string | `"postgresql"` |  |
 | postgresql.password | string | `nil` |  |
 | postgresql.port | int | `5432` |  |
+| postgresql.uri | string | `nil` |  |
 | postgresql.username | string | `"postgres"` |  |
 | probePath | string | `nil` | set default probe path for both liveness and readiness @default empty, each service should provide its own value or template, i.e. '{{ tpl .Values.ingress.path . }}/actuator/info' |
 | rabbitmq.enabled | bool | `false` |  |
@@ -95,7 +96,7 @@ A Helm chart for Activiti Cloud Common Templates
 | service.annotations | object | `{}` |  |
 | service.externalPort | int | `80` |  |
 | service.internalPort | int | `8080` |  |
-| service.name | string | `"replaceme"` |  |
+| service.name | string | `nil` |  |
 | service.nodePort | string | `nil` |  |
 | service.type | string | `"ClusterIP"` |  |
 | terminationGracePeriodSeconds | int | `20` |  |

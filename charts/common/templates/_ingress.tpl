@@ -94,7 +94,6 @@ Create default ingress annotations
 {{- $noValues := omit . "Values" -}}
 {{- $values := merge $noValues $overrides $common -}}
 {{- with $values -}}
-
 {{- range $key, $value := .Values.global.gateway.annotations }}
 {{ $key }}: {{ tpl (printf "%s" $value) $values | quote }}
 {{- end }}

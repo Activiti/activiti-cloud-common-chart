@@ -1,6 +1,4 @@
 {{- define "common.ingress.tpl" -}}
-{{/* magic one-liner to get values merged from common and chart */}}
-{{- $values := index (merge (omit . "Values") (dict "Values" (omit .Values "common")) (dict "Values" .Values.common)) "Values" -}}
 {{- if semverCompare ">=1.14-0" .Capabilities.KubeVersion.GitVersion -}}
 apiVersion: networking.k8s.io/v1beta1
 {{- else -}}
@@ -8,7 +6,7 @@ apiVersion: extensions/v1beta1
 {{- end }}
 kind: Ingress
 metadata:
-  name: {{ template "fullname" . }}
+  name: {{ template "common.fullname" . }}
   labels:
     {{- include "common.labels" . | nindent 4 }}
   {{- with (include "common.ingress-annotations" .) }}
@@ -24,12 +22,12 @@ spec:
     - http:
     {{- end }}
         paths:
-          {{- if $values.ingress.subPaths }}
-            {{- $serviceName := $values.service.name -}}
-            {{- $externalPort := $values.service.externalPort -}}
+          {{- if .Values.ingress.subPaths }}
+            {{- $serviceName := .Values.service.name -}}
+            {{- $externalPort := .Values.service.externalPort -}}
             {{- $contextPath := include "common.ingress-path" . -}}
-            {{- $serviceNameTemplate := include "fullname" . -}}
-            {{- range $values.ingress.subPaths }}
+            {{- $serviceNameTemplate := include "common.fullname" . -}}
+            {{- range .Values.ingress.subPaths }}
             - path: {{ $contextPath | default "" }}{{ . }}
               backend:
                 {{- if $serviceName }}
@@ -45,7 +43,7 @@ spec:
                 {{- if .Values.service.name }}
                 serviceName: {{ .Values.service.name }}
                 {{- else }}
-                serviceName: {{ template "fullname" . }}
+                serviceName: {{ template "common.fullname" . }}
                 {{- end }}
                 servicePort: {{ .Values.service.externalPort }}
             {{- end}}

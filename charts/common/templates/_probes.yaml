@@ -1,22 +1,21 @@
 {{- define "common.probes.tpl" -}}
-{{/* magic one-liner to get values merged from common and chart */}}
-{{- $values := index (merge (omit . "Values") (dict "Values" (omit .Values "common")) (dict "Values" .Values.common)) "Values" -}}
+{{- $ingressPath := include "common.ingress-path" . -}}
 livenessProbe:
   httpGet:
-    path: {{ tpl (default $values.probePath $values.livenessProbePath) . }}
-    port: {{ $values.service.internalPort }}
-  initialDelaySeconds: {{ $values.livenessProbe.initialDelaySeconds }}
-  periodSeconds: {{ $values.livenessProbe.periodSeconds }}
-  successThreshold: {{ $values.livenessProbe.successThreshold }}
-  timeoutSeconds: {{ $values.livenessProbe.timeoutSeconds }}
-  failureThreshold: {{ $values.livenessProbe.failureThreshold }}
+    path: {{ tpl (coalesce .Values.livenessProbe.path .Values.probePath $ingressPath) . }}
+    port: {{ .Values.service.internalPort }}
+  initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }}
+  periodSeconds: {{ .Values.livenessProbe.periodSeconds }}
+  successThreshold: {{ .Values.livenessProbe.successThreshold }}
+  timeoutSeconds: {{ .Values.livenessProbe.timeoutSeconds }}
+  failureThreshold: {{ .Values.livenessProbe.failureThreshold }}
 readinessProbe:
-    httpGet:
-      path: {{ tpl (default $values.probePath $values.readinessProbePath) . }}
-      port: {{ $values.service.internalPort }}
-    initialDelaySeconds: {{ $values.readinessProbe.initialDelaySeconds }}
-    periodSeconds: {{ $values.readinessProbe.periodSeconds }}
-    successThreshold: {{ $values.readinessProbe.successThreshold }}
-    timeoutSeconds: {{ $values.readinessProbe.timeoutSeconds }}
-    failureThreshold: {{ $values.readinessProbe.failureThreshold }}
+  httpGet:
+    path: {{ tpl (coalesce .Values.readinessProbe.path .Values.probePath $ingressPath) . }}
+    port: {{ .Values.service.internalPort }}
+  initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds }}
+  periodSeconds: {{ .Values.readinessProbe.periodSeconds }}
+  successThreshold: {{ .Values.readinessProbe.successThreshold }}
+  timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds }}
+  failureThreshold: {{ .Values.readinessProbe.failureThreshold }}
 {{- end -}}

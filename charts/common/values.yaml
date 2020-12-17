@@ -43,8 +43,8 @@ global:
     username: postgres
     password:
 
-  pgchecker:
-    image:
+# enabled -- generate resources only if true, false by default so you can just use the partials
+enabled: false
 
 # replicaCount -- number of replicas
 replicaCount: 1
@@ -83,7 +83,7 @@ image:
 # extraEnv -- adds extraEnv to deployments
 extraEnv: ""
 
-#extraEnv: |
+#extraEnv: |-
   # - name: ACT_KEYCLOAK_URL
   #   valueFrom:
   #     configMapKeyRef:
@@ -95,6 +95,7 @@ registryPullSecrets: []
 
 postgresql:
   enabled: false
+  uri:
   name: postgresql
   port: 5432
   username: postgres
@@ -104,10 +105,10 @@ db:
   uri:
   username:
   password:
-  driver:
-  platform:
-  generateDdl:
-  ddlAuto:
+  driver: org.hibernate.dialect.PostgreSQLDialect
+  platform: postgresql
+  generateDdl: true
+  ddlAuto: update
 
 rabbitmq:
   enabled: false
@@ -146,7 +147,7 @@ readinessProbe:
 terminationGracePeriodSeconds: 20
 
 service:
-  name: replaceme
+  name:
   type: ClusterIP
   externalPort: 80
   internalPort: 8080
@@ -162,7 +163,7 @@ ingress:
   # @default empty, each ingress should provide its own value or template
   path:
   # ingress.subPaths -- set multiple ingress subpaths
-  subPaths:
+  subPaths: []
   # ingress.tlsSecret -- if tls is set to true, you must declare what secret will store the key/certificate for TLS
   tlsSecret:
   # ingress.hostName -- if set, overrides .Values.global.gateway.host configuration
