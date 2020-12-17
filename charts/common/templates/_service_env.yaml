@@ -1,0 +1,51 @@
+{{- define "common.service-env" -}}
+- name: JAVA_OPTS
+  value: "-Xmx{{ .Values.javaOpts.xmx }} -Xms{{ .Values.javaOpts.xms }} {{ .Values.javaOpts.other}}"
+- name: SPRING_APPLICATION_NAME
+  value: {{ .Values.service.name | default (include "common.fullname" .) }}
+  {{- if .Values.rabbitmq.enabled }}
+- name: SPRING_RABBITMQ_HOST
+  value: {{ .Values.rabbitmq.host | default (tpl "{{ .Release.Name }}-rabbitmq" .) }}
+- name: SPRING_RABBITMQ_USERNAME
+  value: {{ .Values.rabbitmq.username }}
+- name: SPRING_RABBITMQ_PASSWORD
+  value: {{ .Values.rabbitmq.password }}
+  {{- end }}
+  {{- if include "common.keycloak-enabled" . }}
+- name: ACT_KEYCLOAK_URL
+  value: {{ include "common.keycloak-url" . }}
+  {{- with include "common.keycloak-realm" . }}
+- name: ACT_KEYCLOAK_REALM
+  value: {{ . }}
+  {{- end }}
+  {{- with include "common.keycloak-resource" . }}
+- name: ACT_KEYCLOAK_RESOURCE
+  value: {{ . }}
+  {{- end }}
+  {{- end }}
+  {{- if or .Values.db.uri .Values.postgresql.enabled }}
+- name: SPRING_DATASOURCE_URL
+  value: {{ .Values.db.uri | default (tpl "jdbc:postgresql://{{ include \"common.postgresql.fullname\" . }}:{{ .Values.postgresql.port }}/{{ .Values.db.username }}" .) }}
+- name: SPRING_DATASOURCE_DRIVER_CLASS_NAME
+  value: {{ .Values.db.driver }}
+- name: SPRING_DATASOURCE_USERNAME
+  value: {{ .Values.db.username }}
+- name: SPRING_DATASOURCE_PASSWORD
+  {{- if .Values.db.password }}
+  value: {{ .Values.db.password | quote }}
+  {{- else if .Values.postgresql.enabled }}
+  valueFrom:
+    secretKeyRef:
+      name: {{ include "common.postgresql.fullname" . }}
+      key: postgresql-password
+  {{- else }}
+  value: ""
+  {{- end }}
+- name: SPRING_JPA_DATABASE_PLATFORM
+  value: {{ .Values.db.platform }}
+- name: SPRING_JPA_GENERATE_DDL
+  value: {{ .Values.db.generateDdl | quote }}
+- name: SPRING_JPA_HIBERNATE_DDL_AUTO
+  value: {{ .Values.db.ddlAuto }}
+  {{- end }}
+{{- end -}}

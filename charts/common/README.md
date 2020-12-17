@@ -21,7 +21,8 @@ A Helm chart for Activiti Cloud Common Templates
 | db.uri | string | `nil` |  |
 | db.username | string | `"postgres"` |  |
 | enabled | bool | `false` | generate resources only if true, false by default so you can just use the partials |
-| extraEnv | string | `""` | adds extraEnv to deployments |
+| env | object | `{}` | add env entries to deployments as dict |
+| extraEnv | string | `""` | add env entries to deployments as string |
 | extraInitContainers | string | `""` | adds extraInitContainers to deployments |
 | extraVolumeMounts | string | `""` | add additional volume mounts |
 | extraVolumes | string | `""` | add additional volumes |
@@ -92,6 +93,7 @@ A Helm chart for Activiti Cloud Common Templates
 | resources | object | `{}` | configure resources requests and limits for deployment |
 | securityContext | object | `{}` |  |
 | service.annotations | object | `{}` |  |
+| service.envType | string | `"service"` | which type of env, currently supported ones are either service for backend which is the default or app for frontend |
 | service.externalPort | int | `80` |  |
 | service.internalPort | int | `8080` |  |
 | service.name | string | `nil` |  |
