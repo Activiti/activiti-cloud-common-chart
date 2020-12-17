@@ -18,135 +18,103 @@ spec:
       imagePullSecrets:
         {{- . | nindent 8 }}
       {{- end }}
-{{/*      {{- if or .Values.postgresql.enabled .Values.extraInitContainers }}*/}}
-{{/*      initContainers:*/}}
-{{/*        {{- if .Values.postgresql.enabled }}*/}}
-{{/*        - name: pgchecker*/}}
-{{/*          image: "{{ .Values.pgchecker.image.repository }}:{{ .Values.pgchecker.image.tag }}"*/}}
-{{/*          imagePullPolicy: {{ .Values.pgchecker.image.pullPolicy }}*/}}
-{{/*          securityContext:*/}}
-{{/*          {{- toYaml .Values.pgchecker.securityContext | nindent 12 }}*/}}
-{{/*          command:*/}}
-{{/*            - sh*/}}
-{{/*            - -c*/}}
-{{/*            - |*/}}
-{{/*              echo 'Waiting for PostgreSQL to become ready...'*/}}
+      {{- if or .Values.postgresql.enabled .Values.extraInitContainers }}
+      initContainers:
+        {{- if .Values.postgresql.enabled }}
+          - name: pgchecker
+            image: "{{ .Values.pgchecker.image.repository }}:{{ .Values.pgchecker.image.tag }}"
+            imagePullPolicy: {{ .Values.pgchecker.image.pullPolicy }}
+            securityContext:
+              {{- toYaml .Values.pgchecker.securityContext | nindent 14 }}
+            command:
+              - sh
+              - -c
+              - |
+                echo 'Waiting for PostgreSQL to become ready...'
 
-{{/*              until printf "." && nc -z -w 2 {{ include "common.postgresql.fullname" . }} {{ .Values.postgresql.port }}; do*/}}
-{{/*                  sleep 2;*/}}
-{{/*              done;*/}}
+                until printf "." && nc -z -w 2 {{ include "common.postgresql.fullname" . }} {{ .Values.postgresql.port }}; do
+                    sleep 2;
+                done;
 
-{{/*              echo 'PostgreSQL OK ✓'*/}}
-{{/*          resources:*/}}
-{{/*            {{- toYaml .Values.pgchecker.resources | nindent 12 }}*/}}
-{{/*        {{- end }}*/}}
-{{/*        {{- with .Values.extraInitContainers }}*/}}
-{{/*        {{- tpl . $ | nindent 8 }}*/}}
-{{/*        {{- end }}*/}}
-{{/*      {{- end -}}*/}}
+                echo 'PostgreSQL OK ✓'
+            resources:
+              {{- toYaml .Values.pgchecker.resources | nindent 14 }}
+        {{- end }}
+        {{- with .Values.extraInitContainers }}
+        {{- tpl . $ | nindent 8 }}
+        {{- end -}}
+      {{- end }}
       containers:
-      - name: {{ .Chart.Name }}
-        securityContext:
-          {{- toYaml .Values.securityContext | nindent 12 }}
-        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-        imagePullPolicy: {{ .Values.image.pullPolicy }}
-        env:
-          - name: JAVA_OPTS
-            value: "-Xmx{{ .Values.javaOpts.xmx }} -Xms{{ .Values.javaOpts.xms }} {{ .Values.javaOpts.other}}"
-          - name: SPRING_APPLICATION_NAME
-            {{- with .Values.service.name }}
-            value: {{ . }}
-            {{- else }}
-            value: {{ template "common.fullname" $ }}
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: JAVA_OPTS
+              value: "-Xmx{{ .Values.javaOpts.xmx }} -Xms{{ .Values.javaOpts.xms }} {{ .Values.javaOpts.other}}"
+            - name: SPRING_APPLICATION_NAME
+              value: {{ .Values.service.name | default (include "common.fullname" .) }}
+            {{- if .Values.rabbitmq.enabled -}}
+  {{/*          - name: SPRING_RABBITMQ_HOST*/}}
+  {{/*            value: {{ .Values.rabbitmq.host | default (tpl "{{ .Release.Name }}-rabbitmq" .) }}*/}}
+            - name: SPRING_RABBITMQ_USERNAME
+              value: {{ .Values.rabbitmq.username }}
+            - name: SPRING_RABBITMQ_PASSWORD
+              value: {{ .Values.rabbitmq.password }}
             {{- end }}
-          {{- if .Values.rabbitmq.enabled -}}
-{{/*        - name: SPRING_RABBITMQ_HOST*/}}
-{{/*          value: {{ .Values.rabbitmq.host | default (tpl "{{ .Release.Name }}-rabbitmq" .)}}*/}}
-          - name: SPRING_RABBITMQ_USERNAME
-            value: {{ .Values.rabbitmq.username }}
-          - name: SPRING_RABBITMQ_PASSWORD
-            value: {{ .Values.rabbitmq.password }}
+
+            {{- if include "common.keycloak-enabled" . }}
+            - name: ACT_KEYCLOAK_URL
+              value: {{ include "common.keycloak-url" . }}
+            {{- with include "common.keycloak-realm" . }}
+            - name: ACT_KEYCLOAK_REALM
+              value: {{ . }}
+            {{- end }}
+            {{- with include "common.keycloak-resource" . }}
+            - name: ACT_KEYCLOAK_RESOURCE
+              value: {{ . }}
+            {{- end }}
+            {{- end }}
+
+            {{- if or .Values.db.uri .Values.postgresql.enabled }}
+  {{/*          - name: SPRING_DATASOURCE_URL*/}}
+  {{/*            value: ""*/}}
+  {{/*            value: {{ .Values.db.uri | default (tpl "jdbc:postgresql://{{ include \"common.postgresql.fullname\" . }}:{{ .Values.postgresql.port }}/postgres" .) }}*/}}
+            - name: SPRING_DATASOURCE_DRIVER_CLASS_NAME
+              value: {{ .Values.db.driver }}
+            - name: SPRING_DATASOURCE_USERNAME
+              value: {{ .Values.db.username }}
+            - name: SPRING_DATASOURCE_PASSWORD
+            {{- if .Values.db.password }}
+              value: {{ .Values.db.password | quote }}
+            {{- else if .Values.postgresql.enabled }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "common.postgresql.fullname" . }}
+                  key: postgresql-password
+            {{- else }}
+              value: ""
+            {{- end }}
+            - name: SPRING_JPA_DATABASE_PLATFORM
+              value: {{ .Values.db.platform }}
+            - name: SPRING_JPA_GENERATE_DDL
+              value: {{ .Values.db.generateDdl | quote }}
+            - name: SPRING_JPA_HIBERNATE_DDL_AUTO
+              value: {{ .Values.db.ddlAuto }}
+            {{- end }}
+            {{ include "common.extra-env" . | nindent 12 }}
+          ports:
+            - containerPort: {{ .Values.service.internalPort }}
+          {{ include "common.probes.tpl" . | nindent 10}}
+          {{- with .Values.resources }}
+          resources:
+            {{ toYaml . | nindent 12 }}
           {{- end }}
-{{/*        {{- if include "common.keycloak-enabled" $ }}*/}}
-{{/*        - name: ACT_KEYCLOAK_URL*/}}
-{{/*          value: {{ include "common.keycloak-url" $ | quote }}*/}}
-{{/*        {{- with (include "common.keycloak-realm" .) }}*/}}
-{{/*        - name: ACT_KEYCLOAK_REALM*/}}
-{{/*          value: {{ . }}*/}}
-{{/*        {{- end }}*/}}
-{{/*        {{- with (include "common.keycloak-resource" .)  }}*/}}
-{{/*        - name: ACT_KEYCLOAK_RESOURCE*/}}
-{{/*          value: {{ . }}*/}}
-{{/*        {{- end }}*/}}
-{{/*        {{- end }}*/}}
-{{/*        {{- if .Values.postgresql.enabled }}*/}}
-{{/*        - name: SPRING_DATASOURCE_URL*/}}
-{{/*        {{- if .Values.postgresql.uri }}*/}}
-{{/*          value: {{ .Values.postgresql.uri }}*/}}
-{{/*        {{- else }}*/}}
-{{/*          value: "jdbc:postgresql://{{ include "common.postgresql.fullname" . }}:{{ .Values.postgresql.port }}/postgres"*/}}
-{{/*        {{- end }}*/}}
-{{/*        - name: SPRING_DATASOURCE_DRIVER_CLASS_NAME*/}}
-{{/*          value: {{ default "org.postgresql.Driver" .Values.postgresql.driver | quote }}*/}}
-{{/*        - name: SPRING_DATASOURCE_USERNAME*/}}
-{{/*          value: {{ default "postgres" .Values.postgresql.username | quote }}*/}}
-{{/*        - name: SPRING_DATASOURCE_PASSWORD*/}}
-{{/*        {{- if .Values.postgresql.password }}*/}}
-{{/*          value: {{ .Values.postgresql.password | quote }}*/}}
-{{/*        {{- else }}*/}}
-{{/*          valueFrom:*/}}
-{{/*            secretKeyRef:*/}}
-{{/*              name: {{ include "common.postgresql.fullname" . }}*/}}
-{{/*              key: postgresql-password*/}}
-{{/*        {{- end }}*/}}
-{{/*        - name: SPRING_JPA_DATABASE_PLATFORM*/}}
-{{/*          value: {{ .Values.postgresql.platform }}*/}}
-{{/*        - name: SPRING_JPA_GENERATE_DDL*/}}
-{{/*          value: {{ .Values.postgresql.generateDdl }}*/}}
-{{/*        - name: SPRING_JPA_HIBERNATE_DDL_AUTO*/}}
-{{/*          value: {{ default "update" .Values.postgresql.ddlAuto | quote}}*/}}
-{{/*        {{- else }}*/}}
-{{/*        {{- with .Values.db.uri }}*/}}
-{{/*        - name: SPRING_DATASOURCE_URL*/}}
-{{/*          value: {{ . }}*/}}
-{{/*        {{- end }}*/}}
-{{/*        {{- with .Values.db.driver }}*/}}
-{{/*        - name: SPRING_DATASOURCE_DRIVER_CLASS_NAME*/}}
-{{/*          value: {{ . }}*/}}
-{{/*        {{- end }}*/}}
-{{/*        {{- with .Values.db.username }}*/}}
-{{/*        - name: SPRING_DATASOURCE_USERNAME*/}}
-{{/*          value: {{ . }}*/}}
-{{/*        {{- end }}*/}}
-{{/*        {{- with .Values.db.password}}*/}}
-{{/*        - name: SPRING_DATASOURCE_PASSWORD*/}}
-{{/*          value: {{ . | quote }}*/}}
-{{/*        {{- end }}*/}}
-{{/*        {{- with .Values.db.platform }}*/}}
-{{/*        - name: SPRING_JPA_DATABASE_PLATFORM*/}}
-{{/*          value: {{ . }}*/}}
-{{/*        {{- end }}*/}}
-{{/*        {{- with .Values.db.generateDdl }}*/}}
-{{/*        - name: SPRING_JPA_GENERATE_DDL*/}}
-{{/*          value: {{ . }}*/}}
-{{/*        {{- end }}*/}}
-{{/*        {{- with .Values.db.ddlAuto }}*/}}
-{{/*        - name: SPRING_JPA_HIBERNATE_DDL_AUTO*/}}
-{{/*          value: {{ . }}*/}}
-{{/*        {{- end }}*/}}
-{{/*        {{- end }}*/}}
-{{/*        {{ include "common.extra-env" . | nindent 8 }}*/}}
-        ports:
-          - containerPort: {{ .Values.service.internalPort }}
-        {{ include "common.probes.tpl" . | nindent 8}}
-        {{- with .Values.resources }}
-        resources:
-          {{ toYaml . | nindent 10 }}
-        {{- end }}
-        {{- with .Values.extraVolumeMounts }}
-        volumeMounts:
-          {{ tpl . $ | nindent 10 }}
-        {{- end }}
+          {{- with .Values.extraVolumeMounts }}
+          volumeMounts:
+            {{ tpl . $ | nindent 12 }}
+          {{- end }}
       {{- with .Values.podSecurityContext }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}

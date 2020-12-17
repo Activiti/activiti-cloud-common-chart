@@ -25,6 +25,8 @@ global:
     resource: "activiti"
     # global.keycloak.client -- obsolete, same as global.keycloak.resource
     client: "activiti"
+    # global.keycloak.extraEnv -- adds Keycloak extraEnv to deployments
+    extraEnv: ""
 
   # global.registryPullSecrets -- configure pull secrets for all deployments
   registryPullSecrets: []
@@ -42,6 +44,9 @@ global:
     port: 5432
     username: postgres
     password:
+
+# extraEnv -- adds extraEnv to deployments
+extraEnv: ""
 
 # enabled -- generate resources only if true, false by default so you can just use the partials
 enabled: false
@@ -80,35 +85,22 @@ image:
   tag: 0.0.0+REPLACEME
   pullPolicy: IfNotPresent
 
-# extraEnv -- adds extraEnv to deployments
-extraEnv: ""
-
-#extraEnv: |-
-  # - name: ACT_KEYCLOAK_URL
-  #   valueFrom:
-  #     configMapKeyRef:
-  #       name: {{ .Release.Name }}-keycloak-http
-  #       key: expose-keycloak-service-key
-
 # registryPullSecrets -- configures additional pull secrets for this deployment
 registryPullSecrets: []
 
 postgresql:
   enabled: false
-  uri:
   name: postgresql
   port: 5432
-  username: postgres
-  password:
 
 db:
   uri:
-  username:
+  username: postgres
   password:
-  driver: org.hibernate.dialect.PostgreSQLDialect
-  platform: postgresql
-  generateDdl: true
-  ddlAuto: update
+  driver: org.postgresql.Driver
+  platform: org.hibernate.dialect.PostgreSQLDialect
+  generateDdl: false
+  ddlAuto: validate
 
 rabbitmq:
   enabled: false

@@ -1,5 +1,5 @@
 {{ if .Values.enabled }}
-  {{- template "common.ingress" (list . "activiti.cloud.ingress") -}}
+{{- template "common.ingress" (list . "activiti.cloud.ingress") -}}
 {{- end -}}
 {{- define "activiti.cloud.ingress" -}}
 {{- end -}}

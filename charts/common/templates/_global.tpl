@@ -138,6 +138,7 @@ Create a default extra env templated values
 {{- $overrides := dict "Values" $noCommon -}}
 {{- $noValues := omit . "Values" -}}
 {{- with merge $noValues $overrides $common -}}
+{{- tpl .Values.global.keycloak.extraEnv . -}}
 {{- tpl .Values.global.extraEnv . -}}
 {{- tpl .Values.extraEnv . -}}
 {{- end -}}

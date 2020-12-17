@@ -13,13 +13,13 @@ A Helm chart for Activiti Cloud Common Templates
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | affinity | object | `{}` | allows customising affinity |
-| db.ddlAuto | string | `"update"` |  |
-| db.driver | string | `"org.hibernate.dialect.PostgreSQLDialect"` |  |
-| db.generateDdl | bool | `true` |  |
+| db.ddlAuto | string | `"validate"` |  |
+| db.driver | string | `"org.postgresql.Driver"` |  |
+| db.generateDdl | bool | `false` |  |
 | db.password | string | `nil` |  |
-| db.platform | string | `"postgresql"` |  |
+| db.platform | string | `"org.hibernate.dialect.PostgreSQLDialect"` |  |
 | db.uri | string | `nil` |  |
-| db.username | string | `nil` |  |
+| db.username | string | `"postgres"` |  |
 | enabled | bool | `false` | generate resources only if true, false by default so you can just use the partials |
 | extraEnv | string | `""` | adds extraEnv to deployments |
 | extraInitContainers | string | `""` | adds extraInitContainers to deployments |
@@ -32,6 +32,7 @@ A Helm chart for Activiti Cloud Common Templates
 | global.gateway.tlsacme | bool | `false` | used to enable automatic TLS for ingress if http is false |
 | global.keycloak.client | string | `"activiti"` | obsolete, same as global.keycloak.resource |
 | global.keycloak.enabled | bool | `true` |  |
+| global.keycloak.extraEnv | string | `""` | adds Keycloak extraEnv to deployments |
 | global.keycloak.host | string | `""` | configure default keycloak host template, i.e "identity.{{ .Values.global.gateway.domain }}" |
 | global.keycloak.path | string | `"/auth"` | configure default keycloak path |
 | global.keycloak.realm | string | `"activiti"` | configure default Keycloak realm |
@@ -74,10 +75,7 @@ A Helm chart for Activiti Cloud Common Templates
 | podSecurityContext | object | `{}` |  |
 | postgresql.enabled | bool | `false` |  |
 | postgresql.name | string | `"postgresql"` |  |
-| postgresql.password | string | `nil` |  |
 | postgresql.port | int | `5432` |  |
-| postgresql.uri | string | `nil` |  |
-| postgresql.username | string | `"postgres"` |  |
 | probePath | string | `nil` | set default probe path for both liveness and readiness @default empty, each service should provide its own value or template, i.e. '{{ tpl .Values.ingress.path . }}/actuator/info' |
 | rabbitmq.enabled | bool | `false` |  |
 | rabbitmq.host | string | `""` |  |
