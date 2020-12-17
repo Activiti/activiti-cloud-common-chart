@@ -1,15 +1,15 @@
-{{- define "common.service-env" -}}
+{{- define "common.backend-env" -}}
 - name: JAVA_OPTS
   value: "-Xmx{{ .Values.javaOpts.xmx }} -Xms{{ .Values.javaOpts.xms }} {{ .Values.javaOpts.other}}"
 - name: SPRING_APPLICATION_NAME
   value: {{ .Values.service.name | default (include "common.fullname" .) }}
   {{- if .Values.rabbitmq.enabled }}
 - name: SPRING_RABBITMQ_HOST
-  value: {{ .Values.rabbitmq.host | default (tpl "{{ .Release.Name }}-rabbitmq" .) }}
+  value: {{ coalesce .Values.rabbitmq.host .Values.global.rabbitmq.host (tpl "{{ .Release.Name }}-rabbitmq" .) }}
 - name: SPRING_RABBITMQ_USERNAME
-  value: {{ .Values.rabbitmq.username }}
+  value: {{ coalesce .Values.rabbitmq.username .Values.global.rabbitmq.username }}
 - name: SPRING_RABBITMQ_PASSWORD
-  value: {{ .Values.rabbitmq.password }}
+  value: {{ coalesce .Values.rabbitmq.password .Values.global.rabbitmq.password }}
   {{- end }}
   {{- if include "common.keycloak-enabled" . }}
 - name: ACT_KEYCLOAK_URL

@@ -39,10 +39,6 @@ A Helm chart for Activiti Cloud Common Templates
 | global.keycloak.realm | string | `"activiti"` | configure default Keycloak realm |
 | global.keycloak.resource | string | `"activiti"` | configure default Keycloak resource |
 | global.keycloak.url | string | `""` | overrides gateway host configuration |
-| global.postgresql.name | string | `"postgresql"` |  |
-| global.postgresql.password | string | `nil` |  |
-| global.postgresql.port | int | `5432` |  |
-| global.postgresql.username | string | `"postgres"` |  |
 | global.rabbitmq.host | string | `""` |  |
 | global.rabbitmq.password | string | `"guest"` |  |
 | global.rabbitmq.username | string | `"guest"` |  |
@@ -79,9 +75,9 @@ A Helm chart for Activiti Cloud Common Templates
 | postgresql.port | int | `5432` |  |
 | probePath | string | `nil` | set default probe path for both liveness and readiness @default empty, each service should provide its own value or template, i.e. '{{ tpl .Values.ingress.path . }}/actuator/info' |
 | rabbitmq.enabled | bool | `false` |  |
-| rabbitmq.host | string | `""` |  |
-| rabbitmq.password | string | `"guest"` |  |
-| rabbitmq.username | string | `"guest"` |  |
+| rabbitmq.host | string | `nil` |  |
+| rabbitmq.password | string | `nil` |  |
+| rabbitmq.username | string | `nil` |  |
 | readinessProbe.failureThreshold | int | `4` |  |
 | readinessProbe.initialDelaySeconds | int | `20` |  |
 | readinessProbe.path | string | `nil` | set readiness probe path, each service should provide its own value or default @default empty, each service should provide its own value or template or default probePath |
@@ -93,7 +89,7 @@ A Helm chart for Activiti Cloud Common Templates
 | resources | object | `{}` | configure resources requests and limits for deployment |
 | securityContext | object | `{}` |  |
 | service.annotations | object | `{}` |  |
-| service.envType | string | `"service"` | which type of env, currently supported ones are either service for backend which is the default or app for frontend |
+| service.envType | string | `"backend"` | which type of env, currently supported ones are either backend which is the default or frontend |
 | service.externalPort | int | `80` |  |
 | service.internalPort | int | `8080` |  |
 | service.name | string | `nil` |  |

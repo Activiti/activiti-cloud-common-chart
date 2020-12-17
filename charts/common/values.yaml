@@ -39,12 +39,6 @@ global:
     username: guest
     password: guest
 
-  postgresql:
-    name: postgresql
-    port: 5432
-    username: postgres
-    password:
-
 # extraEnv -- add env entries to deployments as string
 extraEnv: ""
 
@@ -107,9 +101,9 @@ db:
 
 rabbitmq:
   enabled: false
-  host: ""
-  username: guest
-  password: guest
+  host:
+  username:
+  password:
 
 javaOpts:
   xmx: 1024m
@@ -143,8 +137,8 @@ terminationGracePeriodSeconds: 20
 
 service:
   name:
-  # service.envType -- which type of env, currently supported ones are either service for backend which is the default or app for frontend
-  envType: service
+  # service.envType -- which type of env, currently supported ones are either backend which is the default or frontend
+  envType: backend
   type: ClusterIP
   externalPort: 80
   internalPort: 8080

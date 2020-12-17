@@ -1,4 +1,4 @@
-{{- define "common.app-env" -}}
+{{- define "common.frontend-env" -}}
 {{- $ingressPath := include "common.ingress-path" . -}}
 - name: BASE_PATH
   value: {{ $ingressPath }}
