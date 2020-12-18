@@ -118,7 +118,7 @@ javaOpts:
     -XX:AdaptiveSizePolicyWeight=90
 
 # probePath -- set default probe path for both liveness and readiness
-# @default empty, each service should provide its own value or template, i.e. '{{ tpl .Values.ingress.path . }}/actuator/info'
+# @default empty, each service should provide its own value or template, i.e. '{{ tpl .Values.ingress.path . }}/actuator/health'
 probePath:
 livenessProbe:
   # livenessProbe.path -- set liveness probe path, each service should provide its own value or default

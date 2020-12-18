@@ -73,7 +73,7 @@ A Helm chart for Activiti Cloud Common Templates
 | postgresql.enabled | bool | `false` |  |
 | postgresql.name | string | `"postgresql"` |  |
 | postgresql.port | int | `5432` |  |
-| probePath | string | `nil` | set default probe path for both liveness and readiness @default empty, each service should provide its own value or template, i.e. '{{ tpl .Values.ingress.path . }}/actuator/info' |
+| probePath | string | `nil` | set default probe path for both liveness and readiness @default empty, each service should provide its own value or template, i.e. '{{ tpl .Values.ingress.path . }}/actuator/health' |
 | rabbitmq.enabled | bool | `false` |  |
 | rabbitmq.host | string | `nil` |  |
 | rabbitmq.password | string | `nil` |  |
