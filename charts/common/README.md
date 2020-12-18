@@ -45,7 +45,7 @@ A Helm chart for Activiti Cloud Common Templates
 | global.registryPullSecrets | list | `[]` | configure pull secrets for all deployments |
 | image.pullPolicy | string | `"IfNotPresent"` |  |
 | image.repository | string | `"activiti/replaceme"` |  |
-| image.tag | string | `"0.0.0+REPLACEME"` |  |
+| image.tag | string | `"latest"` |  |
 | ingress.annotations | object | `{}` | configure ingress annotations as key:value pairs |
 | ingress.enabled | bool | `true` | set to false to disable ingress record generation |
 | ingress.hostName | string | `nil` | if set, overrides .Values.global.gateway.host configuration |
@@ -53,7 +53,7 @@ A Helm chart for Activiti Cloud Common Templates
 | ingress.subPaths | list | `[]` | set multiple ingress subpaths |
 | ingress.tls | string | `nil` | set to true in order to enable TLS on the ingress record |
 | ingress.tlsSecret | string | `nil` | if tls is set to true, you must declare what secret will store the key/certificate for TLS |
-| javaOpts.other | string | `"-XX:+UnlockExperimentalVMOptions -Dsun.zip.disableMemoryMapping=true\n-XX:+UseParallelGC -XX:MinHeapFreeRatio=5 -XX:MaxHeapFreeRatio=10 -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90"` |  |
+| javaOpts.other | string | `"-XX:+UnlockExperimentalVMOptions -Dsun.zip.disableMemoryMapping=true -XX:+UseParallelGC -XX:MinHeapFreeRatio=5 -XX:MaxHeapFreeRatio=10 -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90"` |  |
 | javaOpts.xms | string | `"256m"` |  |
 | javaOpts.xmx | string | `"1024m"` |  |
 | livenessProbe.failureThreshold | int | `4` |  |

@@ -79,7 +79,7 @@ pgchecker:
 
 image:
   repository: activiti/replaceme
-  tag: 0.0.0+REPLACEME
+  tag: latest
   pullPolicy: IfNotPresent
 
 # registryPullSecrets -- configures additional pull secrets for this deployment
@@ -108,9 +108,14 @@ rabbitmq:
 javaOpts:
   xmx: 1024m
   xms: 256m
-  other: |-
-    -XX:+UnlockExperimentalVMOptions -Dsun.zip.disableMemoryMapping=true
-    -XX:+UseParallelGC -XX:MinHeapFreeRatio=5 -XX:MaxHeapFreeRatio=10 -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90
+  other: >-
+    -XX:+UnlockExperimentalVMOptions
+    -Dsun.zip.disableMemoryMapping=true
+    -XX:+UseParallelGC
+    -XX:MinHeapFreeRatio=5
+    -XX:MaxHeapFreeRatio=10
+    -XX:GCTimeRatio=4
+    -XX:AdaptiveSizePolicyWeight=90
 
 # probePath -- set default probe path for both liveness and readiness
 # @default empty, each service should provide its own value or template, i.e. '{{ tpl .Values.ingress.path . }}/actuator/info'
