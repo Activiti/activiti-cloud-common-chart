@@ -153,6 +153,8 @@ service:
 ingress:
   # ingress.enabled -- set to false to disable ingress record generation
   enabled: true
+  # ingress.servicePort -- the Service port targeted by the Ingress, defaults to service.externalPort
+  servicePort:
   # ingress.tls -- set to true in order to enable TLS on the ingress record
   tls:
   # ingress.path -- set ingress path

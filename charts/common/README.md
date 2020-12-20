@@ -1,6 +1,6 @@
 # common
 
-![Version: 0.0.0+REPLACEME](https://img.shields.io/badge/Version-0.0.0+REPLACEME-informational?style=flat-square)
+![Version: 7.1.5](https://img.shields.io/badge/Version-7.1.5-informational?style=flat-square)
 
 A Helm chart for Activiti Cloud Common Templates
 
@@ -50,6 +50,7 @@ A Helm chart for Activiti Cloud Common Templates
 | ingress.enabled | bool | `true` | set to false to disable ingress record generation |
 | ingress.hostName | string | `nil` | if set, overrides .Values.global.gateway.host configuration |
 | ingress.path | string | `nil` | set ingress path @default empty, each ingress should provide its own value or template |
+| ingress.servicePort | string | `nil` | the Service port targeted by the Ingress, defaults to service.externalPort |
 | ingress.subPaths | list | `[]` | set multiple ingress subpaths |
 | ingress.tls | string | `nil` | set to true in order to enable TLS on the ingress record |
 | ingress.tlsSecret | string | `nil` | if tls is set to true, you must declare what secret will store the key/certificate for TLS |
