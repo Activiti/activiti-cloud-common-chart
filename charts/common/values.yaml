@@ -23,8 +23,6 @@ global:
     realm: "activiti"
     # global.keycloak.resource -- configure default Keycloak resource
     resource: "activiti"
-    # global.keycloak.client -- obsolete, same as global.keycloak.resource
-    client: "activiti"
     # global.keycloak.extraEnv -- adds Keycloak extraEnv to deployments
     extraEnv: ""
 
