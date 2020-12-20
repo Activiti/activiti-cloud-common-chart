@@ -9,7 +9,7 @@ build: clean
 	helm dep up
 	helm lint
 
-install:  build
+install: build
 	helm install . ${NAME}
 
 upgrade: clean build
@@ -44,8 +44,8 @@ github:
 	rm -rf $(GITHUB_CHARTS_DIR)
 
 version:
-	sed -i -e "s/version:.*/version: $(VERSION)/" Chart.yaml
-	sed -i -e "s/tag: .*/tag: $(VERSION)/" values.yaml
+	yq write --inplace Chart.yaml 'version' $(VERSION)
+
 tag:
 	git add -u
 	git commit -m "release $(VERSION)" --allow-empty # if first release then no version update is performed
