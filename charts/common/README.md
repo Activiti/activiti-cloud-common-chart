@@ -1,6 +1,6 @@
 # common
 
-![Version: 7.1.5](https://img.shields.io/badge/Version-7.1.5-informational?style=flat-square)
+![Version: 7.1.7](https://img.shields.io/badge/Version-7.1.7-informational?style=flat-square)
 
 A Helm chart for Activiti Cloud Common Templates
 
@@ -31,7 +31,6 @@ A Helm chart for Activiti Cloud Common Templates
 | global.gateway.host | string | `""` | configure default gateway host Helm template, i.e. "gateway.{{ .Values.global.gateway.domain }}" |
 | global.gateway.http | bool | `true` | toggle creating http or https ingress rules, supports literal or boolean values |
 | global.gateway.tlsacme | bool | `false` | used to enable automatic TLS for ingress if http is false |
-| global.keycloak.client | string | `"activiti"` | obsolete, same as global.keycloak.resource |
 | global.keycloak.enabled | bool | `true` |  |
 | global.keycloak.extraEnv | string | `""` | adds Keycloak extraEnv to deployments |
 | global.keycloak.host | string | `""` | configure default keycloak host template, i.e "identity.{{ .Values.global.gateway.domain }}" |
