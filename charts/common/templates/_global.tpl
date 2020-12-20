@@ -116,20 +116,6 @@ Create a default keycloak resource
 {{- end -}}
 
 {{/*
-Create a default keycloak client
-*/}}
-{{- define "common.keycloak-client" -}}
-	{{- $common := dict "Values" .Values.common -}}
-	{{- $noCommon := omit .Values "common" -}}
-	{{- $overrides := dict "Values" $noCommon -}}
-	{{- $noValues := omit . "Values" -}}
-	{{- with merge $noValues $overrides $common -}}
-		{{- $value := .Values.global.keycloak.client -}}
-		{{- tpl (printf "%s" $value) . -}}
-	{{- end -}}
-{{- end -}}
-
-{{/*
 Create a default extra env templated values
 */}}
 {{- define "common.extra-env" -}}
@@ -142,4 +128,12 @@ Create a default extra env templated values
 {{- tpl .Values.global.extraEnv . -}}
 {{- tpl .Values.extraEnv . -}}
 {{- end -}}
+{{- end -}}
+
+{{/*
+Create a default fully qualified app name for the postgres requirement.
+*/}}
+{{- define "common.postgresql.fullname" -}}
+{{- $postgresContext := dict "Values" .Values.postgresql "Release" .Release "Chart" (dict "Name" "postgresql") -}}
+{{ include "postgresql.fullname" $postgresContext }}
 {{- end -}}

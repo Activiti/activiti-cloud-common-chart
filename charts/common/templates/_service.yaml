@@ -5,21 +5,21 @@ metadata:
 {{- if .Values.service.name }}
   name: {{ .Values.service.name }}
 {{- else }}
-  name: {{ template "fullname" . }}
+  name: {{ template "common.fullname" . }}
 {{- end }}
   labels:
     {{- include "common.labels" . | nindent 4 }}
 {{- if .Values.service.annotations }}
   annotations:
-{{ toYaml .Values.service.annotations | indent 4 }}
+    {{ toYaml .Values.service.annotations | nindent 4 }}
 {{- end }}
 spec:
   type: {{ .Values.service.type }}
   ports:
   - port: {{ .Values.service.externalPort }}
     targetPort: {{ .Values.service.internalPort }}
-    {{- if (and (eq .Values.service.type "NodePort") (not (empty .Values.service.nodePort))) }}
-    nodePort: {{ .Values.service.nodePort }}
+    {{- with .Values.service.nodePort }}
+    nodePort: {{ . }}
     {{- end }}
     protocol: TCP
     name: http

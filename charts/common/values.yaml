@@ -34,29 +34,161 @@ global:
   # global.extraEnv -- adds global extraEnv to deployments
   extraEnv: ""
 
-  extraInitContainers: ""
+  rabbitmq:
+    host: ""
+    username: guest
+    password: guest
 
-# extraEnv -- adds extraEnv to deployments
+# extraEnv -- add env entries to deployments as string
 extraEnv: ""
+
+# env -- add env entries to deployments as dict
+env: {}
+
+# enabled -- generate resources only if true, false by default so you can just use the partials
+enabled: false
+
+# replicaCount -- number of replicas
+replicaCount: 1
+
+# extraInitContainers -- adds extraInitContainers to deployments
+extraInitContainers: ""
+
+pgchecker:
+  image:
+    # pgchecker.image.repository -- Docker image used to check Postgresql readiness at startup
+    repository: docker.io/busybox
+    # pgchecker.image.tag -- Image tag for the pgchecker image
+    tag: 1.32
+    # pgchecker.image.pullPolicy -- Image pull policy for the pgchecker image
+    pullPolicy: IfNotPresent
+  # pgchecker.securityContext -- SecurityContext for the pgchecker container
+  securityContext:
+    allowPrivilegeEscalation: false
+    runAsUser: 1000
+    runAsGroup: 1000
+    runAsNonRoot: true
+  # pgchecker.resources -- Resource requests and limits for the pgchecker container
+  resources:
+    requests:
+      cpu: "10m"
+      memory: "16Mi"
+    limits:
+      cpu: "10m"
+      memory: "16Mi"
+
+image:
+  repository: activiti/replaceme
+  tag: latest
+  pullPolicy: IfNotPresent
 
 # registryPullSecrets -- configures additional pull secrets for this deployment
 registryPullSecrets: []
 
-ingress:
+postgresql:
   enabled: false
-  # ingress.tls -- set this to true in order to enable TLS on the ingress record
+  name: postgresql
+  port: 5432
+
+db:
+  uri:
+  username: postgres
+  password:
+  driver: org.postgresql.Driver
+  platform: org.hibernate.dialect.PostgreSQLDialect
+  generateDdl: false
+  ddlAuto: validate
+
+rabbitmq:
+  enabled: false
+  host:
+  username:
+  password:
+
+javaOpts:
+  xmx: 1024m
+  xms: 256m
+  other: >-
+    -XX:+UnlockExperimentalVMOptions
+    -Dsun.zip.disableMemoryMapping=true
+    -XX:+UseParallelGC
+    -XX:MinHeapFreeRatio=5
+    -XX:MaxHeapFreeRatio=10
+    -XX:GCTimeRatio=4
+    -XX:AdaptiveSizePolicyWeight=90
+
+# probePath -- set default probe path for both liveness and readiness
+# @default empty, each service should provide its own value or template, i.e. '{{ tpl .Values.ingress.path . }}/actuator/health'
+probePath:
+livenessProbe:
+  # livenessProbe.path -- set liveness probe path, each service should provide its own value or default
+  # @default empty, each service should provide its own value or template or default probePath
+  path:
+  initialDelaySeconds: 60
+  periodSeconds: 15
+  successThreshold: 1
+  timeoutSeconds: 4
+  failureThreshold: 4
+readinessProbe:
+  # readinessProbe.path -- set readiness probe path, each service should provide its own value or default
+  # @default empty, each service should provide its own value or template or default probePath
+  path:
+  initialDelaySeconds: 20
+  periodSeconds: 15
+  successThreshold: 1
+  timeoutSeconds: 3
+  failureThreshold: 4
+terminationGracePeriodSeconds: 20
+
+service:
+  name:
+  # service.envType -- which type of env, currently supported ones are either backend which is the default or frontend
+  envType: backend
+  type: ClusterIP
+  externalPort: 80
+  internalPort: 8080
+  nodePort:
+  annotations: {}
+
+ingress:
+  # ingress.enabled -- set to false to disable ingress record generation
+  enabled: true
+  # ingress.tls -- set to true in order to enable TLS on the ingress record
   tls:
   # ingress.path -- set ingress path
   # @default empty, each ingress should provide its own value or template
   path:
   # ingress.subPaths -- set multiple ingress subpaths
-  subPaths:
-  # ingress.tlsSecret -- if TLS is set to true, you must declare what secret will store the key/certificate for TLS
+  subPaths: []
+  # ingress.tlsSecret -- if tls is set to true, you must declare what secret will store the key/certificate for TLS
   tlsSecret:
   # ingress.hostName -- if set, overrides .Values.global.gateway.host configuration
   hostName:
-  # ingress.annotations -- configure default ingress annotations
+  # ingress.annotations -- configure ingress annotations as key:value pairs
   annotations: {}
+
+# resources -- configure resources requests and limits for deployment
+resources: {}
+
+#  limits:
+#    cpu: 1
+#    memory: 1024Mi
+#  requests:
+#    cpu: 150m
+#    memory: 256Mi
+
+podAnnotations: {}
+
+podSecurityContext: {}
+# fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+# runAsUser: 1000
 
 # nodeSelector -- allows customising nodeSelector
 nodeSelector: {}
@@ -66,3 +198,9 @@ tolerations: []
 
 # affinity -- allows customising affinity
 affinity: {}
+
+# extraVolumes -- add additional volumes
+extraVolumes: |
+
+# extraVolumeMounts -- add additional volume mounts
+extraVolumeMounts: |

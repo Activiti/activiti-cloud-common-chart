@@ -1,10 +1,15 @@
 import:
-  - source: Activiti/activiti-scripts:.travis.helm_install.yml@master
+  - source: Alfresco/alfresco-build-tools:.travis.helm_install.yml@v1.0.0
+  - source: Alfresco/alfresco-build-tools:.travis.helm-docs_install.yml@v1.0.0
+  - source: Alfresco/alfresco-build-tools:.travis.kubepug_install.yml@v1.0.0
+  - source: Alfresco/alfresco-build-tools:.travis.pre-commit.yml@v1.0.0
 
 language: minimal
+
 branches:
-   only:
-     - master
+  only:
+    - master
+
 env:
   global:
     - GITHUB_CHARTS_REPO="https://github.com/Activiti/activiti-cloud-helm-charts.git"
@@ -37,9 +42,10 @@ cache:
     - ${HOME}/tmp/
 
 stages:
-- name: build
-- name: tag_updatebot
-  if: type != pull_request
+  - name: lint
+  - name: build
+  - name: tag_updatebot
+    if: type != pull_request
 
 install: true
 

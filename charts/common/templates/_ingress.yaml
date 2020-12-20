@@ -1,63 +1,68 @@
 {{- define "common.ingress.tpl" -}}
-{{- if semverCompare ">=1.14-0" .Capabilities.KubeVersion.GitVersion -}}
+{{- if .Capabilities.APIVersions.Has "networking.k8s.io/v1" -}}
+apiVersion: networking.k8s.io/v1
+{{- else if semverCompare ">=1.14-0" .Capabilities.KubeVersion.GitVersion -}}
 apiVersion: networking.k8s.io/v1beta1
 {{- else -}}
 apiVersion: extensions/v1beta1
 {{- end }}
 kind: Ingress
 metadata:
-  name: {{ template "fullname" . }}
+  name: {{ template "common.fullname" . }}
   labels:
     {{- include "common.labels" . | nindent 4 }}
-  {{- if (include "common.ingress-annotations" .) }}
+  {{- with (include "common.ingress-annotations" .) }}
   annotations:
-    {{- include "common.ingress-annotations" . | indent 4 }}
+    {{- . | nindent 4 }}
   {{- end }}
 spec:
   rules:
-    {{- if (include "common.ingress-host" .) }}
-    - host: {{ template "common.ingress-host" . }}
+    {{- with (include "common.ingress-host" .) }}
+    - host: {{ . }}
       http:
     {{- else }}
     - http:
     {{- end }}
         paths:
-          {{- if .Values.ingress.subPaths }}
-            {{- $serviceName := .Values.service.name -}}
-            {{- $externalPort := .Values.service.externalPort -}}
-            {{- $contextPath := include "common.ingress-path" . -}}
-            {{- $serviceNameTemplate := include "fullname" . -}}
+          {{- $serviceName := .Values.service.name -}}
+          {{- $externalPort := .Values.service.externalPort -}}
+          {{- $ingressPath := include "common.ingress-path" . -}}
+          {{- $serviceNameTemplate := include "common.fullname" . -}}
+          {{- $paths := list }}
+          {{- if .Values.ingress.subPaths -}}
             {{- range .Values.ingress.subPaths }}
-            - path: {{ $contextPath | default "" }}{{ . }}
+              {{- $path := list $ingressPath . | join "" }}
+              {{- $paths = append $paths $path }}
+            {{- end }}
+          {{- else -}}
+            {{- $paths = append $paths $ingressPath }}
+          {{- end -}}
+          {{- range $paths }}
+            - path: {{ . }}
+              {{- if $.Capabilities.APIVersions.Has "networking.k8s.io/v1" }}
+              pathType: Prefix
               backend:
-                {{- if $serviceName }}
-                serviceName: {{ $serviceName }}
-                {{- else }}
-                serviceName: {{ $serviceNameTemplate }}
-                {{- end}}
+                service:
+                  name: {{ coalesce $serviceName $serviceNameTemplate }}
+                  port:
+                    number: {{ $externalPort }}
+              {{- else }}
+              backend:
+                serviceName: {{ coalesce $serviceName $serviceNameTemplate }}
                 servicePort: {{ $externalPort }}
-            {{- end}}
-            {{- else}}
-            - path: {{ template "common.ingress-path" . }}
-              backend:
-                {{- if .Values.service.name }}
-                serviceName: {{ .Values.service.name }}
-                {{- else }}
-                serviceName: {{ template "fullname" . }}
-                {{- end }}
-                servicePort: {{ .Values.service.externalPort }}
-            {{- end}}
+              {{- end }}
+          {{- end }}
   {{- if include "common.ingress-tls" . }}
   tls:
     - secretName: {{ template "common.ingress-tlssecretname" . }}
-      {{- if (include "common.ingress-host" .) }}
+      {{- with (include "common.ingress-host" .) }}
       hosts:
-        - {{ template "common.ingress-host" . }}
+        - {{ . }}
       {{- end }}
   {{- end }}
-  {{- end }}
-  {{- define "common.ingress" -}}
+{{- end }}
+{{- define "common.ingress" -}}
   {{- if index (first .) "Values" "ingress" "enabled" -}}
-  {{- template "common.util.merge" (append . "common.ingress.tpl") -}}
+    {{- template "common.util.merge" (append . "common.ingress.tpl") -}}
   {{- end -}}
 {{- end -}}
