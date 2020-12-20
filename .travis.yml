@@ -5,9 +5,11 @@ import:
   - source: Alfresco/alfresco-build-tools:.travis.pre-commit.yml@v1.0.0
 
 language: minimal
+
 branches:
   only:
     - master
+
 env:
   global:
     - GITHUB_CHARTS_REPO="https://github.com/Activiti/activiti-cloud-helm-charts.git"
@@ -40,6 +42,7 @@ cache:
     - ${HOME}/tmp/
 
 stages:
+  - name: lint
   - name: build
   - name: tag_updatebot
     if: type != pull_request
