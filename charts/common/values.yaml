@@ -59,7 +59,7 @@ pgchecker:
     # pgchecker.image.repository -- Docker image used to check Postgresql readiness at startup
     repository: docker.io/busybox
     # pgchecker.image.tag -- Image tag for the pgchecker image
-    tag: 1.32
+    tag: 7.1.5
     # pgchecker.image.pullPolicy -- Image pull policy for the pgchecker image
     pullPolicy: IfNotPresent
   # pgchecker.securityContext -- SecurityContext for the pgchecker container
@@ -79,7 +79,7 @@ pgchecker:
 
 image:
   repository: activiti/replaceme
-  tag: latest
+  tag: 7.1.5
   pullPolicy: IfNotPresent
 
 # registryPullSecrets -- configures additional pull secrets for this deployment
