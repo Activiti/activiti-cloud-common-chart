@@ -73,7 +73,7 @@ spec:
               {{- range $key, $val := .Values.liquibase.env }}
               - name: {{ $key }}
                 value: {{ tpl $val $ | quote }}
-              {{- end }}                
+              {{- end }}
         {{- end }}
         {{- with .Values.extraInitContainers }}
         {{- tpl . $ | nindent 8 }}
