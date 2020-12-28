@@ -48,4 +48,8 @@
 - name: SPRING_JPA_HIBERNATE_DDL_AUTO
   value: {{ .Values.db.ddlAuto }}
   {{- end }}
+  {{- if .Values.liquibase.enabled }}
+- name: SPRING_LIQUIBASE_ENABLED
+  value: "false"
+  {{- end }}
 {{- end -}}
