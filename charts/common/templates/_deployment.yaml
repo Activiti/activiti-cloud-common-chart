@@ -18,7 +18,7 @@ spec:
       imagePullSecrets:
         {{- . | nindent 8 }}
       {{- end }}
-      {{- if or .Values.postgresql.enabled .Values.extraInitContainers }}
+      {{- if or .Values.postgresql.enabled .Values.liquibase.enabled .Values.extraInitContainers }}
       initContainers:
         {{- if .Values.postgresql.enabled }}
           - name: pgchecker
@@ -39,6 +39,41 @@ spec:
                 echo 'PostgreSQL OK ✓'
             resources:
               {{- toYaml .Values.pgchecker.resources | nindent 14 }}
+        {{- end }}
+        {{- if .Values.liquibase.enabled }}
+          - name: liquibase
+            image: {{ .Values.liquibase.image | default .Values.image.repository }}:{{ .Values.liquibase.tag | default .Values.image.tag }}
+            imagePullPolicy: {{ .Values.liquibase.imagePullPolicy }}
+            args:
+            {{- toYaml .Values.liquibase.args | nindent 14 }}
+            env:
+              - name: SPRING_DATASOURCE_URL
+                value: {{ .Values.db.uri | default (tpl "jdbc:postgresql://{{ include \"common.postgresql.fullname\" . }}:{{ .Values.postgresql.port }}/{{ .Values.db.username }}" .) }}
+              - name: SPRING_DATASOURCE_DRIVER_CLASS_NAME
+                value: {{ .Values.db.driver }}
+              - name: SPRING_DATASOURCE_USERNAME
+                value: {{ .Values.db.username }}
+              - name: SPRING_DATASOURCE_PASSWORD
+                {{- if .Values.db.password }}
+                value: {{ .Values.db.password | quote }}
+                {{- else if .Values.postgresql.enabled }}
+                valueFrom:
+                  secretKeyRef:
+                    name: {{ include "common.postgresql.fullname" . }}
+                    key: postgresql-password
+                {{- else }}
+                value: ""
+                {{- end }}
+              - name: SPRING_JPA_DATABASE_PLATFORM
+                value: {{ .Values.db.platform }}
+              - name: SPRING_JPA_GENERATE_DDL
+                value: {{ .Values.db.generateDdl | quote }}
+              - name: SPRING_JPA_HIBERNATE_DDL_AUTO
+                value: {{ .Values.db.ddlAuto }}
+              {{- range $key, $val := .Values.liquibase.env }}
+              - name: {{ $key }}
+                value: {{ tpl $val $ | quote }}
+              {{- end }}
         {{- end }}
         {{- with .Values.extraInitContainers }}
         {{- tpl . $ | nindent 8 }}
