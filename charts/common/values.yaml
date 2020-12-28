@@ -52,6 +52,16 @@ replicaCount: 1
 # extraInitContainers -- adds extraInitContainers to deployments
 extraInitContainers: ""
 
+liquibase:
+  enabled: false
+  image: # defaults to image.repository
+  args:
+    - -jar
+    - liquibase.jar
+  tag: # defaults to image.tag
+  imagePullPolicy: IfNotPresent
+  env: {}
+
 pgchecker:
   image:
     # pgchecker.image.repository -- Docker image used to check Postgresql readiness at startup
