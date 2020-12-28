@@ -45,7 +45,7 @@ spec:
             image: {{ .Values.liquibase.image | default .Values.image.repository }}:{{ .Values.liquibase.tag | default .Values.image.tag }}
             imagePullPolicy: {{ .Values.liquibase.imagePullPolicy }}
             args:
-            {{- toYaml .Values.liquibase.args | nindent 12 }}
+            {{- toYaml .Values.liquibase.args | nindent 14 }}
             env:
               - name: SPRING_DATASOURCE_URL
                 value: {{ .Values.db.uri | default (tpl "jdbc:postgresql://{{ include \"common.postgresql.fullname\" . }}:{{ .Values.postgresql.port }}/{{ .Values.db.username }}" .) }}
