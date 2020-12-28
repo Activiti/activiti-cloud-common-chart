@@ -56,6 +56,13 @@ A Helm chart for Activiti Cloud Common Templates
 | javaOpts.other | string | `"-XX:+UnlockExperimentalVMOptions -Dsun.zip.disableMemoryMapping=true -XX:+UseParallelGC -XX:MinHeapFreeRatio=5 -XX:MaxHeapFreeRatio=10 -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90"` |  |
 | javaOpts.xms | string | `"256m"` |  |
 | javaOpts.xmx | string | `"1024m"` |  |
+| liquibase.args[0] | string | `"-jar"` |  |
+| liquibase.args[1] | string | `"liquibase.jar"` |  |
+| liquibase.enabled | bool | `false` |  |
+| liquibase.env | object | `{}` |  |
+| liquibase.image | string | `nil` |  |
+| liquibase.imagePullPolicy | string | `"IfNotPresent"` |  |
+| liquibase.tag | string | `nil` |  |
 | livenessProbe.failureThreshold | int | `4` |  |
 | livenessProbe.initialDelaySeconds | int | `60` |  |
 | livenessProbe.path | string | `nil` | set liveness probe path, each service should provide its own value or default @default empty, each service should provide its own value or template or default probePath |
