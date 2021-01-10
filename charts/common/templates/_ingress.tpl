@@ -45,8 +45,7 @@ Create a default ingress path.
 	{{- $overrides := dict "Values" $noCommon -}}
 	{{- $noValues := omit . "Values" -}}
 	{{- with merge $noValues $overrides $common -}}
-		{{- $value := default "" .Values.ingress.path -}}
-		{{- tpl (printf "%s" $value) . -}}
+		{{- tpl (printf "%s" .Values.ingress.path) . -}}
 	{{- end -}}
 {{- end -}}
 

@@ -54,17 +54,25 @@ extraInitContainers: ""
 
 liquibase:
   enabled: false
-  image: # defaults to image.repository
+  image:
+    # liquibase.image.repository -- image used to run liquibase database migrations
+    # @default image.repository
+    repository:
+    # liquibase.image.tag -- Image tag for the liquibase image
+    # @default image.tag
+    tag:
+    # liquibase.image.pullPolicy -- Image pull policy for the liquibase image
+    pullPolicy: IfNotPresent
+  # liquibase.args -- arguments for liquibase container
   args:
     - -jar
     - liquibase.jar
-  tag: # defaults to image.tag
-  imagePullPolicy: IfNotPresent
+  # liquibase.env -- add env entries to liquibase init container as dict
   env: {}
 
 pgchecker:
   image:
-    # pgchecker.image.repository -- Docker image used to check Postgresql readiness at startup
+    # pgchecker.image.repository -- Image used to check Postgresql readiness at startup
     repository: docker.io/busybox
     # pgchecker.image.tag -- Image tag for the pgchecker image
     tag: 1.32
@@ -166,8 +174,7 @@ ingress:
   # ingress.tls -- set to true in order to enable TLS on the ingress record
   tls:
   # ingress.path -- set ingress path
-  # @default empty, each ingress should provide its own value or template
-  path:
+  path: /
   # ingress.subPaths -- set multiple ingress subpaths
   subPaths: []
   # ingress.tlsSecret -- if tls is set to true, you must declare what secret will store the key/certificate for TLS
