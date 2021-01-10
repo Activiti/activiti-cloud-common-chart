@@ -131,9 +131,18 @@ Create a default extra env templated values
 {{- end -}}
 
 {{/*
-Create a default fully qualified app name for the postgres requirement.
+Create a default fully qualified app name for the postgresql requirement.
 */}}
 {{- define "common.postgresql.fullname" -}}
 {{- $postgresContext := dict "Values" .Values.postgresql "Release" .Release "Chart" (dict "Name" "postgresql") -}}
-{{ include "postgresql.fullname" $postgresContext }}
+{{- if $postgresContext.Values.fullnameOverride -}}
+{{- $postgresContext.Values.fullnameOverride | trunc 63 | trimSuffix "-" -}}
+{{- else -}}
+{{- $name := default $postgresContext.Chart.Name $postgresContext.Values.nameOverride -}}
+{{- if contains $name $postgresContext.Release.Name -}}
+{{- $postgresContext.Release.Name | trunc 63 | trimSuffix "-" -}}
+{{- else -}}
+{{- printf "%s-%s" $postgresContext.Release.Name $name | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+{{- end -}}
 {{- end -}}

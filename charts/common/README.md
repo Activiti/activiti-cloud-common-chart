@@ -48,7 +48,7 @@ A Helm chart for Activiti Cloud Common Templates
 | ingress.annotations | object | `{}` | configure ingress annotations as key:value pairs |
 | ingress.enabled | bool | `true` | set to false to disable ingress record generation |
 | ingress.hostName | string | `nil` | if set, overrides .Values.global.gateway.host configuration |
-| ingress.path | string | `nil` | set ingress path @default empty, each ingress should provide its own value or template |
+| ingress.path | string | `"/"` | set ingress path |
 | ingress.servicePort | string | `nil` | the Service port targeted by the Ingress, defaults to service.externalPort |
 | ingress.subPaths | list | `[]` | set multiple ingress subpaths |
 | ingress.tls | string | `nil` | set to true in order to enable TLS on the ingress record |
@@ -56,13 +56,12 @@ A Helm chart for Activiti Cloud Common Templates
 | javaOpts.other | string | `"-XX:+UnlockExperimentalVMOptions -Dsun.zip.disableMemoryMapping=true -XX:+UseParallelGC -XX:MinHeapFreeRatio=5 -XX:MaxHeapFreeRatio=10 -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90"` |  |
 | javaOpts.xms | string | `"256m"` |  |
 | javaOpts.xmx | string | `"1024m"` |  |
-| liquibase.args[0] | string | `"-jar"` |  |
-| liquibase.args[1] | string | `"liquibase.jar"` |  |
+| liquibase.args | list | `["-jar","liquibase.jar"]` | arguments for liquibase container |
 | liquibase.enabled | bool | `false` |  |
-| liquibase.env | object | `{}` |  |
-| liquibase.image | string | `nil` |  |
-| liquibase.imagePullPolicy | string | `"IfNotPresent"` |  |
-| liquibase.tag | string | `nil` |  |
+| liquibase.env | object | `{}` | add env entries to liquibase init container as dict |
+| liquibase.image.pullPolicy | string | `"IfNotPresent"` | Image pull policy for the liquibase image |
+| liquibase.image.repository | string | `nil` | image used to run liquibase database migrations @default image.repository |
+| liquibase.image.tag | string | `nil` | Image tag for the liquibase image @default image.tag |
 | livenessProbe.failureThreshold | int | `4` |  |
 | livenessProbe.initialDelaySeconds | int | `60` |  |
 | livenessProbe.path | string | `nil` | set liveness probe path, each service should provide its own value or default @default empty, each service should provide its own value or template or default probePath |
@@ -71,7 +70,7 @@ A Helm chart for Activiti Cloud Common Templates
 | livenessProbe.timeoutSeconds | int | `4` |  |
 | nodeSelector | object | `{}` | allows customising nodeSelector |
 | pgchecker.image.pullPolicy | string | `"IfNotPresent"` | Image pull policy for the pgchecker image |
-| pgchecker.image.repository | string | `"docker.io/busybox"` | Docker image used to check Postgresql readiness at startup |
+| pgchecker.image.repository | string | `"docker.io/busybox"` | Image used to check Postgresql readiness at startup |
 | pgchecker.image.tag | float | `1.32` | Image tag for the pgchecker image |
 | pgchecker.resources | object | `{"limits":{"cpu":"10m","memory":"16Mi"},"requests":{"cpu":"10m","memory":"16Mi"}}` | Resource requests and limits for the pgchecker container |
 | pgchecker.securityContext | object | `{"allowPrivilegeEscalation":false,"runAsGroup":1000,"runAsNonRoot":true,"runAsUser":1000}` | SecurityContext for the pgchecker container |
