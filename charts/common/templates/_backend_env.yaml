@@ -3,7 +3,7 @@ Create SPRING_DATASOURCE_* env.
 */}}
 {{- define "common.spring-datasource-env" -}}
 - name: SPRING_DATASOURCE_URL
-  value: {{ .Values.db.uri | default (tpl "jdbc:postgresql://{{ include \"common.postgresql.fullname\" . }}:{{ .Values.postgresql.port }}/{{ .Values.db.username }}" .) }}
+  value: {{ with .Values.db.uri }}{{ tpl . $ }}{{ else }}{{ tpl "jdbc:postgresql://{{ include \"common.postgresql.fullname\" . }}:{{ .Values.postgresql.port }}/{{ .Values.db.username }}" . }}{{ end }}
 - name: SPRING_DATASOURCE_DRIVER_CLASS_NAME
   value: {{ .Values.db.driver }}
 - name: SPRING_DATASOURCE_USERNAME
