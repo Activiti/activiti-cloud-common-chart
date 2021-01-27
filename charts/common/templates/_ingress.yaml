@@ -24,8 +24,9 @@ spec:
           {{- $serviceNameTemplate := include "common.fullname" . -}}
           {{- $paths := list }}
           {{- if .Values.ingress.subPaths -}}
+            {{- $ingressPathNoSlash := ternary $ingressPath "" (ne $ingressPath "/") -}}
             {{- range .Values.ingress.subPaths }}
-              {{- $path := list $ingressPath . | join "" }}
+              {{- $path := list $ingressPathNoSlash . | join "" }}
               {{- $paths = append $paths $path }}
             {{- end }}
           {{- else -}}
