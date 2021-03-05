@@ -4,7 +4,7 @@ repos:
     hooks:
       - id: helm-docs
   - repo: https://github.com/Alfresco/alfresco-build-tools
-    rev: v1.0.0
+    rev: v1.1.0
     hooks:
       - id: travis-yml-lint
       - id: helm-deps
@@ -12,9 +12,6 @@ repos:
       - id: kubepug-minimum
       - id: kubepug-recommended
       - id: checkov-helm
-  - repo: https://github.com/Alfresco/alfresco-build-tools
-    rev: v1.0.0
-    hooks:
       - id: travis-yml-lint
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v3.4.0
