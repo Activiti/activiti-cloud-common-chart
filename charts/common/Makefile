@@ -44,7 +44,7 @@ github:
 	rm -rf $(GITHUB_CHARTS_DIR)
 
 version:
-	yq write --inplace Chart.yaml 'version' $(VERSION)
+	yq -i e '.version = "$(VERSION)"' Chart.yaml
 
 tag:
 	git add -u
