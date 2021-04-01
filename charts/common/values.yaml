@@ -33,6 +33,8 @@ global:
   extraEnv: ""
 
   rabbitmq:
+    enabled: false
+    deploy: false
     host: ""
     username: guest
     password: guest
