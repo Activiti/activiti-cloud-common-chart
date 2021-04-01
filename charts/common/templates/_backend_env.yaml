@@ -59,7 +59,7 @@ Create backend service.envType env.
   value: {{ .Values.service.name | default (include "common.fullname" .) }}
 {{- if .Values.rabbitmq.enabled }}
 - name: SPRING_RABBITMQ_HOST
-  value: {{ coalesce .Values.rabbitmq.host .Values.global.rabbitmq.host (tpl "{{ .Release.Name }}-rabbitmq" .) }}
+  value: {{ coalesce .Values.rabbitmq.host .Values.global.rabbitmq.host (include "common.rabbitmq.fullname" $) }}
 - name: SPRING_RABBITMQ_USERNAME
   value: {{ coalesce .Values.rabbitmq.username .Values.global.rabbitmq.username }}
 - name: SPRING_RABBITMQ_PASSWORD
