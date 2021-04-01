@@ -57,7 +57,7 @@ Create backend service.envType env.
   value: "-Xmx{{ .Values.javaOpts.xmx }} -Xms{{ .Values.javaOpts.xms }} {{ .Values.javaOpts.other}}"
 - name: SPRING_APPLICATION_NAME
   value: {{ .Values.service.name | default (include "common.fullname" .) }}
-{{- if .Values.rabbitmq.enabled }}
+{{- if or .Values.rabbitmq.enabled .Values.global.rabbitmq.enabled }}
 - name: SPRING_RABBITMQ_HOST
   value: {{ coalesce .Values.rabbitmq.host .Values.global.rabbitmq.host (include "common.rabbitmq.fullname" $) }}
 - name: SPRING_RABBITMQ_USERNAME
