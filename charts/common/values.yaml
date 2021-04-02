@@ -130,6 +130,10 @@ rabbitmq:
   host: ""
   username: ""
   password: ""
+  # rabbitmq.args -- arguments for application rabbitmq binder
+  args:
+    - -jar
+    - app-rabbitmq.jar
 
 kafka:
   enabled: false
@@ -138,6 +142,10 @@ kafka:
   zkNodes: ""
   zkPort: 2181
   trxIdPrefix: ""
+  # kafka.args -- arguments for application kafka binder
+  args:
+    - -jar
+    - app-kafka.jar
 
 javaOpts:
   xmx: 1024m

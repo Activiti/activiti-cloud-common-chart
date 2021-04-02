@@ -63,6 +63,15 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- if eq .Values.service.envType "backend" }}
+          args:
+            {{- if .Values.global.rabbitmq.enabled }}
+            {{- toYaml .Values.rabbitmq.args | nindent 14 }}
+            {{- end }}
+            {{- if .Values.global.kafka.enabled }}
+            {{- toYaml .Values.kafka.args | nindent 14 }}
+            {{- end }}
+          {{- end }}
           env:
             {{ $envTemplate := tpl "common.{{ .Values.service.envType }}-env" . }}
             {{ include $envTemplate . | nindent 12 }}
