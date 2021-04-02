@@ -59,12 +59,24 @@ Create backend service.envType env.
   value: {{ .Values.service.name | default (include "common.fullname" .) }}
 {{- if or .Values.rabbitmq.enabled .Values.global.rabbitmq.enabled }}
 - name: SPRING_RABBITMQ_HOST
-  value: {{ coalesce .Values.rabbitmq.host .Values.global.rabbitmq.host (include "common.rabbitmq.fullname" $) }}
+  value: {{ tpl (coalesce .Values.rabbitmq.host .Values.global.rabbitmq.host) $ | required "rabbitmq.host is required" }}
 - name: SPRING_RABBITMQ_USERNAME
   value: {{ coalesce .Values.rabbitmq.username .Values.global.rabbitmq.username }}
 - name: SPRING_RABBITMQ_PASSWORD
   value: {{ coalesce .Values.rabbitmq.password .Values.global.rabbitmq.password }}
-{{ end }}
+{{- end }}
+{{- if or .Values.kafka.enabled .Values.global.kafka.enabled }}
+- name:  SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS
+  value: {{ tpl (coalesce .Values.kafka.brokers .Values.global.kafka.brokers) $ | required "kafka.brokers is required" }}
+- name:  SPRING_CLOUD_STREAM_KAFKA_BINDER_DEFAULTBROKERPORT
+  value: {{ coalesce .Values.kafka.port .Values.global.kafka.port "9092" | quote }}
+- name: SPRING_CLOUD_STREAM_KAFKA_BINDER_ZK_NODES
+  value: {{ tpl (coalesce .Values.kafka.zkNodes .Values.global.kafka.zkNodes) $ | required "kafka.zkNodes is required" }}
+- name: SPRING_CLOUD_STREAM_KAFKA_BINDER_DEFAULTZKPORT
+  value: {{ coalesce .Values.kafka.zkPort .Values.global.kafka.zkPort "2181" | quote }}
+- name: ACT_AUDIT_PRODUCER_TRANSACTION_ID_PREFIX
+  value: {{ coalesce .Values.kafka.trxIdPrefix .Values.global.kafka.trxIdPrefix | default "" | quote }}
+{{- end }}
 {{- if include "common.keycloak-enabled" . }}
 {{ include "common.keycloak-env" . }}
 {{- end }}

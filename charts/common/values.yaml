@@ -39,6 +39,14 @@ global:
     username: guest
     password: guest
 
+  kafka:
+    enabled: false
+    brokers: ""
+    port: 9092
+    zkNodes: ""
+    zkPort: 2181
+    trxIdPrefix: ""
+
 # extraEnv -- add env entries to deployments as string
 extraEnv: ""
 
@@ -119,9 +127,17 @@ db:
 
 rabbitmq:
   enabled: false
-  host:
-  username:
-  password:
+  host: ""
+  username: ""
+  password: ""
+
+kafka:
+  enabled: false
+  brokers: ""
+  port: 9092
+  zkNodes: ""
+  zkPort: 2181
+  trxIdPrefix: ""
 
 javaOpts:
   xmx: 1024m
