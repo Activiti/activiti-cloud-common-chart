@@ -133,7 +133,7 @@ rabbitmq:
   # rabbitmq.args -- arguments for application rabbitmq binder
   args:
     - -jar
-    - app-rabbitmq.jar
+    - rabbitmq.jar
 
 kafka:
   enabled: false
@@ -145,7 +145,7 @@ kafka:
   # kafka.args -- arguments for application kafka binder
   args:
     - -jar
-    - app-kafka.jar
+    - kafka.jar
 
 javaOpts:
   xmx: 1024m
