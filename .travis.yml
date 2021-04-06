@@ -4,7 +4,7 @@ import:
   - source: Alfresco/alfresco-build-tools:.travis.helm-docs_install.yml@v1.1.0
   - source: Alfresco/alfresco-build-tools:.travis.checkov_install.yml@v1.1.0
   - source: Alfresco/alfresco-build-tools:.travis.kubepug_install.yml@v1.1.0
-  - source: Alfresco/alfresco-build-tools:.travis.pre-commit.yml@v1.1.0
+  - source: Alfresco/alfresco-build-tools:.travis.pre-commit.yml@elias-show-diff-on-precommit-failure
 
 language: minimal
 
