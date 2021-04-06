@@ -32,20 +32,22 @@ global:
   # global.extraEnv -- adds global extraEnv to deployments
   extraEnv: ""
 
+  messaging:
+    # global.messaging.broker -- configure message broker type for all deployments with messaging.enabled set to 'true'
+    broker: ""
+
   rabbitmq:
-    # global.rabbitmq.enabled -- configure deployments for RabbitMq message broker
-    enabled: false
     host: ""
     username: guest
     password: guest
+    extraEnv: |
 
   kafka:
-    enabled: false
     brokers: ""
     port: 9092
     zkNodes: ""
     zkPort: 2181
-    trxIdPrefix: ""
+    extraEnv: |
 
 # extraEnv -- add env entries to deployments as string
 extraEnv: ""
@@ -125,27 +127,29 @@ db:
   generateDdl: false
   ddlAuto: validate
 
-rabbitmq:
+messaging:
   enabled: false
-  host: ""
-  username: ""
-  password: ""
+
+rabbitmq:
+  host: "{{ tpl .Values.global.rabbitmq.host $ }}"
+  username: "{{ .Values.global.rabbitmq.username }}"
+  password: "{{ .Values.global.rabbitmq.password }}"
   # rabbitmq.args -- arguments for application rabbitmq binder
   args:
     - -jar
-    - rabbitmq.jar
+    - app-rabbitmq.jar
+  extraEnv: "{{ tpl .Values.global.rabbitmq.extraEnv $ }}"
 
 kafka:
-  enabled: false
-  brokers: ""
-  port: 9092
-  zkNodes: ""
-  zkPort: 2181
-  trxIdPrefix: ""
+  brokers: "{{ tpl .Values.global.kafka.brokers $ }}"
+  port: "{{ .Values.global.kafka.port }}"
+  zkNodes: "{{ tpl .Values.global.kafka.zkNodes $ }}"
+  zkPort: "{{ .Values.global.kafka.zkPort }}"
   # kafka.args -- arguments for application kafka binder
   args:
     - -jar
-    - kafka.jar
+    - app-kafka.jar
+  extraEnv: "{{ tpl .Values.global.kafka.extraEnv $ }}"
 
 javaOpts:
   xmx: 1024m
