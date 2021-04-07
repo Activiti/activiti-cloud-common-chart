@@ -57,6 +57,9 @@ Create backend service.envType env.
   value: "-Xmx{{ .Values.javaOpts.xmx }} -Xms{{ .Values.javaOpts.xms }} {{ .Values.javaOpts.other}}"
 - name: SPRING_APPLICATION_NAME
   value: {{ .Values.service.name | default (include "common.fullname" .) }}
+{{- if and .Values.rabbitmq.enabled (not .Values.messaging.enabled) }}
+{{ include "common.messaging.rabbitmq-env" $ }}
+{{- end }}
 {{- if .Values.messaging.enabled }}
 {{- include "common.messaging.validateValues" $ }}
 {{- $messagingEnvTemplate := tpl "common.messaging.{{ .Values.global.messaging.broker }}-env" . }}

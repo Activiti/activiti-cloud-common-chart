@@ -131,7 +131,9 @@ messaging:
   enabled: false
 
 rabbitmq:
-  host: "{{ tpl .Values.global.rabbitmq.host $ }}"
+  # rabbbitmq.enabled -- enables rabbitmq backend configuration. Deprecated in favor of messaging.enabled in combination with global.messaging.broker values
+  enabled: false
+  host: '{{ tpl .Values.global.rabbitmq.host $ | default (include "common.rabbitmq.fullname" $) }}'
   username: "{{ .Values.global.rabbitmq.username }}"
   password: "{{ .Values.global.rabbitmq.password }}"
   # rabbitmq.args -- arguments for application rabbitmq binder
