@@ -1,6 +1,6 @@
 # common
 
-![Version: 7.1.7](https://img.shields.io/badge/Version-7.1.7-informational?style=flat-square)
+![Version: 7.1.0-SNAPSHOT](https://img.shields.io/badge/Version-7.1.0--SNAPSHOT-informational?style=flat-square)
 
 A Helm chart for Activiti Cloud Common Templates
 
@@ -31,6 +31,11 @@ A Helm chart for Activiti Cloud Common Templates
 | global.gateway.host | string | `""` | configure default gateway host Helm template, i.e. "gateway.{{ .Values.global.gateway.domain }}" |
 | global.gateway.http | bool | `true` | toggle creating http or https ingress rules, supports literal or boolean values |
 | global.gateway.tlsacme | bool | `false` | used to enable automatic TLS for ingress if http is false |
+| global.kafka.brokers | string | `""` |  |
+| global.kafka.extraEnv | string | `""` |  |
+| global.kafka.port | int | `9092` |  |
+| global.kafka.zkNodes | string | `""` |  |
+| global.kafka.zkPort | int | `2181` |  |
 | global.keycloak.enabled | bool | `true` |  |
 | global.keycloak.extraEnv | string | `""` | adds Keycloak extraEnv to deployments |
 | global.keycloak.host | string | `""` | configure default keycloak host template, i.e "identity.{{ .Values.global.gateway.domain }}" |
@@ -38,6 +43,8 @@ A Helm chart for Activiti Cloud Common Templates
 | global.keycloak.realm | string | `"activiti"` | configure default Keycloak realm |
 | global.keycloak.resource | string | `"activiti"` | configure default Keycloak resource |
 | global.keycloak.url | string | `""` | overrides gateway host configuration |
+| global.messaging.broker | string | `""` | configure message broker type for all deployments with messaging.enabled set to 'true' |
+| global.rabbitmq.extraEnv | string | `""` |  |
 | global.rabbitmq.host | string | `""` |  |
 | global.rabbitmq.password | string | `"guest"` |  |
 | global.rabbitmq.username | string | `"guest"` |  |
@@ -48,7 +55,7 @@ A Helm chart for Activiti Cloud Common Templates
 | ingress.annotations | object | `{}` | configure ingress annotations as key:value pairs |
 | ingress.enabled | bool | `true` | set to false to disable ingress record generation |
 | ingress.hostName | string | `nil` | if set, overrides .Values.global.gateway.host configuration |
-| ingress.path | string | `nil` | set ingress path |
+| ingress.path | string | `"/"` | set ingress path |
 | ingress.servicePort | string | `nil` | the Service port targeted by the Ingress, defaults to service.externalPort |
 | ingress.subPaths | list | `[]` | set multiple ingress subpaths |
 | ingress.tls | string | `nil` | set to true in order to enable TLS on the ingress record |
@@ -56,6 +63,12 @@ A Helm chart for Activiti Cloud Common Templates
 | javaOpts.other | string | `"-XX:+UnlockExperimentalVMOptions -Dsun.zip.disableMemoryMapping=true -XX:+UseParallelGC -XX:MinHeapFreeRatio=5 -XX:MaxHeapFreeRatio=10 -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90"` |  |
 | javaOpts.xms | string | `"256m"` |  |
 | javaOpts.xmx | string | `"1024m"` |  |
+| kafka.args | list | `["-jar","app-kafka.jar"]` | arguments for application kafka binder |
+| kafka.brokers | string | `"{{ tpl .Values.global.kafka.brokers $ }}"` |  |
+| kafka.extraEnv | string | `"{{ tpl .Values.global.kafka.extraEnv $ }}"` |  |
+| kafka.port | string | `"{{ .Values.global.kafka.port }}"` |  |
+| kafka.zkNodes | string | `"{{ tpl .Values.global.kafka.zkNodes $ }}"` |  |
+| kafka.zkPort | string | `"{{ .Values.global.kafka.zkPort }}"` |  |
 | liquibase.args | list | `["-jar","liquibase.jar"]` | arguments for liquibase container |
 | liquibase.enabled | bool | `false` |  |
 | liquibase.env | object | `{}` | add env entries to liquibase init container as dict |
@@ -68,6 +81,7 @@ A Helm chart for Activiti Cloud Common Templates
 | livenessProbe.periodSeconds | int | `15` |  |
 | livenessProbe.successThreshold | int | `1` |  |
 | livenessProbe.timeoutSeconds | int | `4` |  |
+| messaging.enabled | bool | `false` |  |
 | nodeSelector | object | `{}` | allows customising nodeSelector |
 | pgchecker.image.pullPolicy | string | `"IfNotPresent"` | Image pull policy for the pgchecker image |
 | pgchecker.image.repository | string | `"docker.io/busybox"` | Image used to check Postgresql readiness at startup |
@@ -80,10 +94,12 @@ A Helm chart for Activiti Cloud Common Templates
 | postgresql.name | string | `"postgresql"` |  |
 | postgresql.port | int | `5432` |  |
 | probePath | string | `nil` | set default probe path for both liveness and readiness @default empty, each service should provide its own value or template, i.e. '{{ tpl .Values.ingress.path . }}/actuator/health' |
+| rabbitmq.args | list | `["-jar","app-rabbitmq.jar"]` | arguments for application rabbitmq binder |
 | rabbitmq.enabled | bool | `false` |  |
-| rabbitmq.host | string | `nil` |  |
-| rabbitmq.password | string | `nil` |  |
-| rabbitmq.username | string | `nil` |  |
+| rabbitmq.extraEnv | string | `"{{ tpl .Values.global.rabbitmq.extraEnv $ }}"` |  |
+| rabbitmq.host | string | `"{{ tpl .Values.global.rabbitmq.host $ | default (include \"common.rabbitmq.fullname\" $) }}"` |  |
+| rabbitmq.password | string | `"{{ .Values.global.rabbitmq.password }}"` |  |
+| rabbitmq.username | string | `"{{ .Values.global.rabbitmq.username }}"` |  |
 | readinessProbe.failureThreshold | int | `4` |  |
 | readinessProbe.initialDelaySeconds | int | `20` |  |
 | readinessProbe.path | string | `nil` | set readiness probe path, each service should provide its own value or default @default empty, each service should provide its own value or template or default probePath |

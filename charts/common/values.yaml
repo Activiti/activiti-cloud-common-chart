@@ -32,10 +32,22 @@ global:
   # global.extraEnv -- adds global extraEnv to deployments
   extraEnv: ""
 
+  messaging:
+    # global.messaging.broker -- configure message broker type for all deployments with messaging.enabled set to 'true'
+    broker: ""
+
   rabbitmq:
     host: ""
     username: guest
     password: guest
+    extraEnv: |
+
+  kafka:
+    brokers: ""
+    port: 9092
+    zkNodes: ""
+    zkPort: 2181
+    extraEnv: |
 
 # extraEnv -- add env entries to deployments as string
 extraEnv: ""
@@ -115,11 +127,31 @@ db:
   generateDdl: false
   ddlAuto: validate
 
-rabbitmq:
+messaging:
   enabled: false
-  host:
-  username:
-  password:
+
+rabbitmq:
+  # rabbbitmq.enabled -- enables rabbitmq backend configuration. Deprecated in favor of messaging.enabled in combination with global.messaging.broker values
+  enabled: false
+  host: '{{ tpl .Values.global.rabbitmq.host $ | default (include "common.rabbitmq.fullname" $) }}'
+  username: "{{ .Values.global.rabbitmq.username }}"
+  password: "{{ .Values.global.rabbitmq.password }}"
+  # rabbitmq.args -- arguments for application rabbitmq binder
+  args:
+    - -jar
+    - app-rabbitmq.jar
+  extraEnv: "{{ tpl .Values.global.rabbitmq.extraEnv $ }}"
+
+kafka:
+  brokers: "{{ tpl .Values.global.kafka.brokers $ }}"
+  port: "{{ .Values.global.kafka.port }}"
+  zkNodes: "{{ tpl .Values.global.kafka.zkNodes $ }}"
+  zkPort: "{{ .Values.global.kafka.zkPort }}"
+  # kafka.args -- arguments for application kafka binder
+  args:
+    - -jar
+    - app-kafka.jar
+  extraEnv: "{{ tpl .Values.global.kafka.extraEnv $ }}"
 
 javaOpts:
   xmx: 1024m
@@ -174,7 +206,7 @@ ingress:
   # ingress.tls -- set to true in order to enable TLS on the ingress record
   tls:
   # ingress.path -- set ingress path
-  path:
+  path: /
   # ingress.subPaths -- set multiple ingress subpaths
   subPaths: []
   # ingress.tlsSecret -- if tls is set to true, you must declare what secret will store the key/certificate for TLS

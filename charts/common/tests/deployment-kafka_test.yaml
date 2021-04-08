@@ -1,0 +1,68 @@
+suite: test deployment with kafka
+templates:
+  - deployment.yaml
+tests:
+  - it: should render kafka env if given values
+    values:
+      - ./values/kafka.yaml
+    set:
+      enabled: true
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS
+            value: RELEASE-NAME-kafka
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: SPRING_CLOUD_STREAM_KAFKA_BINDER_DEFAULTBROKERPORT
+            value: "9092"
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: SPRING_CLOUD_STREAM_KAFKA_BINDER_ZK_NODES
+            value: RELEASE-NAME-zookeeper
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: SPRING_CLOUD_STREAM_KAFKA_BINDER_DEFAULTZKPORT
+            value: "2181"
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: ACT_AUDIT_PRODUCER_TRANSACTION_ID_PREFIX
+            value: ""
+
+  - it: should not render kafka env if given values with messaging.enabled=false
+    values:
+      - ./values/kafka.yaml
+    set:
+      enabled: true
+      messaging.enabled: false
+    asserts:
+      - notContains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS
+            value: RELEASE-NAME-kafka
+      - notContains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: SPRING_CLOUD_STREAM_KAFKA_BINDER_DEFAULTBROKERPORT
+            value: "9092"
+      - notContains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: SPRING_CLOUD_STREAM_KAFKA_BINDER_ZK_NODES
+            value: RELEASE-NAME-zookeeper
+      - notContains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: SPRING_CLOUD_STREAM_KAFKA_BINDER_DEFAULTZKPORT
+            value: "2181"
+      - notContains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: ACT_AUDIT_PRODUCER_TRANSACTION_ID_PREFIX
+            value: ""

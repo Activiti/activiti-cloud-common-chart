@@ -1,0 +1,17 @@
+suite: test deployment
+templates:
+  - deployment.yaml
+tests:
+  - it: should render nothing if not enabled
+    set:
+      enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should render deployment if enabled
+    set:
+      enabled: true
+    asserts:
+      - isKind:
+          of: Deployment

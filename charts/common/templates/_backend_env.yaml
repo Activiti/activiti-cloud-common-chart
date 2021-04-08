@@ -57,14 +57,14 @@ Create backend service.envType env.
   value: "-Xmx{{ .Values.javaOpts.xmx }} -Xms{{ .Values.javaOpts.xms }} {{ .Values.javaOpts.other}}"
 - name: SPRING_APPLICATION_NAME
   value: {{ .Values.service.name | default (include "common.fullname" .) }}
-{{- if .Values.rabbitmq.enabled }}
-- name: SPRING_RABBITMQ_HOST
-  value: {{ coalesce .Values.rabbitmq.host .Values.global.rabbitmq.host (tpl "{{ .Release.Name }}-rabbitmq" .) }}
-- name: SPRING_RABBITMQ_USERNAME
-  value: {{ coalesce .Values.rabbitmq.username .Values.global.rabbitmq.username }}
-- name: SPRING_RABBITMQ_PASSWORD
-  value: {{ coalesce .Values.rabbitmq.password .Values.global.rabbitmq.password }}
-{{ end }}
+{{- if and .Values.rabbitmq.enabled (not .Values.messaging.enabled) }}
+{{ include "common.messaging.rabbitmq-env" $ }}
+{{- end }}
+{{- if .Values.messaging.enabled }}
+{{- include "common.messaging.validateValues" $ }}
+{{- $messagingEnvTemplate := tpl "common.messaging.{{ .Values.global.messaging.broker }}-env" . }}
+{{ include $messagingEnvTemplate $ }}
+{{- end }}
 {{- if include "common.keycloak-enabled" . }}
 {{ include "common.keycloak-env" . }}
 {{- end }}
