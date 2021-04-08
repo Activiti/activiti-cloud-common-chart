@@ -55,14 +55,15 @@ jobs:
   include:
     - name: build helm
       stage: build
+      before_script: cd ./charts/common
       script:
-        - cd ./charts/common
-        - make build|| travis_terminate 1;
+        - make build || travis_terminate 1;
+        - make plugin test || travis_terminate 1;
 
     - name: tag_updatebot
       stage: tag_updatebot
+      before_script: cd ./charts/common
       script:
-        - cd ./charts/common
         - make version || travis_terminate 1;
         - make tag || travis_terminate 1;
         - make release || travis_terminate 1;
