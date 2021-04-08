@@ -1,0 +1,17 @@
+suite: test service
+templates:
+  - service.yaml
+tests:
+  - it: should render nothing if not enabled
+    set:
+      enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should render servce if enabled
+    set:
+      enabled: true
+    asserts:
+      - isKind:
+          of: Service

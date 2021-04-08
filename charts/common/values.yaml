@@ -206,7 +206,7 @@ ingress:
   # ingress.tls -- set to true in order to enable TLS on the ingress record
   tls:
   # ingress.path -- set ingress path
-  path:
+  path: /
   # ingress.subPaths -- set multiple ingress subpaths
   subPaths: []
   # ingress.tlsSecret -- if tls is set to true, you must declare what secret will store the key/certificate for TLS
