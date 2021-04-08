@@ -58,7 +58,7 @@ jobs:
       before_script: cd ./charts/common
       script:
         - make build || travis_terminate 1;
-        - make plugin test || travis_terminate 1;
+        - make test || travis_terminate 1;
 
     - name: tag_updatebot
       stage: tag_updatebot
