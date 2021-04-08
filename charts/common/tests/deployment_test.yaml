@@ -8,6 +8,7 @@ tests:
     asserts:
       - hasDocuments:
           count: 0
+
   - it: should render deployment if enabled
     set:
       enabled: true

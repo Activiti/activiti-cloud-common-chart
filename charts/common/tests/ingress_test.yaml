@@ -10,7 +10,7 @@ tests:
       - hasDocuments:
           count: 0
 
-  - it: should render Ingress right if enabled
+  - it: should render Ingress if enabled
     set:
       enabled: true
       ingress.enabled: true
