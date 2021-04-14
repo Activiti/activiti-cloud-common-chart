@@ -21,37 +21,37 @@ spec:
       {{- if or .Values.postgresql.enabled .Values.liquibase.enabled .Values.extraInitContainers }}
       initContainers:
         {{- if .Values.postgresql.enabled }}
-          - name: pgchecker
-            image: "{{ .Values.pgchecker.image.repository }}:{{ .Values.pgchecker.image.tag }}"
-            imagePullPolicy: {{ .Values.pgchecker.image.pullPolicy }}
-            securityContext:
-              {{- toYaml .Values.pgchecker.securityContext | nindent 14 }}
-            command:
-              - sh
-              - -c
-              - |
-                echo 'Waiting for PostgreSQL to become ready...'
+        - name: pgchecker
+          image: "{{ .Values.pgchecker.image.repository }}:{{ .Values.pgchecker.image.tag }}"
+          imagePullPolicy: {{ .Values.pgchecker.image.pullPolicy }}
+          securityContext:
+            {{- toYaml .Values.pgchecker.securityContext | nindent 14 }}
+          command:
+            - sh
+            - -c
+            - |
+              echo 'Waiting for PostgreSQL to become ready...'
 
-                until printf "." && nc -z -w 2 {{ include "common.postgresql.fullname" . }} {{ .Values.postgresql.port }}; do
-                    sleep 2;
-                done;
+              until printf "." && nc -z -w 2 {{ include "common.postgresql.fullname" . }} {{ .Values.postgresql.port }}; do
+                  sleep 2;
+              done;
 
-                echo 'PostgreSQL OK ✓'
-            resources:
-              {{- toYaml .Values.pgchecker.resources | nindent 14 }}
+              echo 'PostgreSQL OK ✓'
+          resources:
+            {{- toYaml .Values.pgchecker.resources | nindent 14 }}
         {{- end }}
         {{- if .Values.liquibase.enabled }}
-          - name: liquibase
-            image: {{ .Values.liquibase.image.repository | default .Values.image.repository }}:{{ .Values.liquibase.image.tag | default .Values.image.tag }}
-            imagePullPolicy: {{ .Values.liquibase.image.pullPolicy }}
-            args:
-              {{- toYaml .Values.liquibase.args | nindent 14 }}
-            env:
-              {{- include "common.spring-datasource-env" . | nindent 14 }}
-              {{- range $key, $val := .Values.liquibase.env }}
-              - name: {{ $key }}
-                value: {{ tpl $val $ | quote }}
-              {{- end }}
+        - name: liquibase
+          image: {{ .Values.liquibase.image.repository | default .Values.image.repository }}:{{ .Values.liquibase.image.tag | default .Values.image.tag }}
+          imagePullPolicy: {{ .Values.liquibase.image.pullPolicy }}
+          args:
+            {{- toYaml .Values.liquibase.args | nindent 14 }}
+          env:
+            {{- include "common.spring-datasource-env" . | nindent 14 }}
+            {{- range $key, $val := .Values.liquibase.env }}
+            - name: {{ $key }}
+              value: {{ tpl $val $ | quote }}
+            {{- end }}
         {{- end }}
         {{- with .Values.extraInitContainers }}
         {{- tpl . $ | nindent 8 }}
