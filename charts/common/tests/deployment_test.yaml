@@ -22,7 +22,8 @@ tests:
       liquibase.enabled: false
       postgresql.enabled: false
       extraInitContainers: |
-        - image: busybox
+        - name: busybox
+          image: busybox
           command: ["/bin/sh"]
           args: |
             - -c
@@ -43,6 +44,7 @@ tests:
             command:
             - /bin/sh
             image: busybox
+            name: busybox
       - notContains:
           path: spec.template.spec.initContainers
           content:
@@ -60,7 +62,8 @@ tests:
       postgresql.enabled: true
       liquibase.enabled: true
       extraInitContainers: |
-        - image: busybox
+        - name: busybox
+          image: busybox
           command: ["/bin/sh"]
           args: |
             - -c
@@ -74,13 +77,8 @@ tests:
       - contains:
           path: spec.template.spec.initContainers
           content:
-            args: |
-              - -c
-              - |
-                echo "test"
-            command:
-              - /bin/sh
-            image: busybox
+            name: busybox
+          any: true
       - contains:
           path: spec.template.spec.initContainers
           content:
