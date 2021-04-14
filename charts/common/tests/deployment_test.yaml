@@ -15,3 +15,144 @@ tests:
     asserts:
       - isKind:
           of: Deployment
+
+  - it: should render deployment with extraInitContainers only
+    set:
+      enabled: true
+      liquibase.enabled: false
+      postgresql.enabled: false
+      extraInitContainers: |
+        - name: busybox
+          image: busybox
+          command: ["/bin/sh"]
+          args: |
+            - -c
+            - |
+              echo "test"
+    asserts:
+      - isKind:
+          of: Deployment
+      - hasDocuments:
+          count: 1
+      - contains:
+          path: spec.template.spec.initContainers
+          content:
+            args: |
+              - -c
+              - |
+                echo "test"
+            command:
+            - /bin/sh
+            image: busybox
+            name: busybox
+      - notContains:
+          path: spec.template.spec.initContainers
+          content:
+            name: pgchecker
+          any: true
+      - notContains:
+          path: spec.template.spec.initContainers
+          content:
+            name: liquibase
+          any: true
+
+  - it: should render deployment with pgchecker, liquibase and extraInitContainers
+    set:
+      enabled: true
+      postgresql.enabled: true
+      liquibase.enabled: true
+      extraInitContainers: |
+        - name: busybox
+          image: busybox
+          command: ["/bin/sh"]
+          args: |
+            - -c
+            - |
+              echo "test"
+    asserts:
+      - isKind:
+          of: Deployment
+      - hasDocuments:
+          count: 1
+      - contains:
+          path: spec.template.spec.initContainers
+          content:
+            name: busybox
+          any: true
+      - contains:
+          path: spec.template.spec.initContainers
+          content:
+            name: pgchecker
+          any: true
+      - contains:
+          path: spec.template.spec.initContainers
+          content:
+            name: liquibase
+          any: true
+
+  - it: should render deployment with postgresql initContainer
+    set:
+      enabled: true
+      postgresql.enabled: true
+    asserts:
+      - isKind:
+          of: Deployment
+      - hasDocuments:
+          count: 1
+      - contains:
+          path: spec.template.spec.initContainers
+          content:
+            command:
+              - sh
+              - -c
+              - |
+                echo 'Waiting for PostgreSQL to become ready...'
+
+                until printf "." && nc -z -w 2 RELEASE-NAME-postgresql 5432; do
+                    sleep 2;
+                done;
+
+                echo 'PostgreSQL OK ✓'
+            image: docker.io/busybox:1.32
+            imagePullPolicy: IfNotPresent
+            name: pgchecker
+            resources:
+              limits:
+                cpu: 10m
+                memory: 16Mi
+              requests:
+                cpu: 10m
+                memory: 16Mi
+            securityContext:
+              allowPrivilegeEscalation: false
+              runAsGroup: 1000
+              runAsNonRoot: true
+              runAsUser: 1000
+
+  - it: should render deployment with liquibase initContainer
+    set:
+      enabled: true
+      liquibase.enabled: true
+    asserts:
+      - isKind:
+          of: Deployment
+      - hasDocuments:
+          count: 1
+      - contains:
+          path: spec.template.spec.initContainers
+          content:
+            args:
+              - -jar
+              - liquibase.jar
+            env:
+              - name: SPRING_DATASOURCE_URL
+                value: jdbc:postgresql://RELEASE-NAME-postgresql:5432/postgres
+              - name: SPRING_DATASOURCE_DRIVER_CLASS_NAME
+                value: org.postgresql.Driver
+              - name: SPRING_DATASOURCE_USERNAME
+                value: postgres
+              - name: SPRING_DATASOURCE_PASSWORD
+                value: ""
+            image: activiti/replaceme:latest
+            imagePullPolicy: IfNotPresent
+            name: liquibase
