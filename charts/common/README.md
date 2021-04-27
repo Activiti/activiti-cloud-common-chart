@@ -13,9 +13,7 @@ A Helm chart for Activiti Cloud Common Templates
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | affinity | object | `{}` | allows customising affinity |
-| config.command[0] | string | `"sh"` |  |
-| config.command[1] | string | `"-c"` |  |
-| config.command[2] | string | `"echo activiti.cloud.messaging.broker={{ .Values.global.messaging.broker }} >> {{ .Values.config.mountPath | trimSuffix \"/\" }}/application.properties\necho activiti.cloud.messaging.partitioned={{ .Values.global.messaging.partitioned }} >> {{ .Values.config.mountPath | trimSuffix \"/\" }}/application.properties\necho activiti.cloud.messaging.partition-count={{ .Values.global.messaging.partitionCount }} >> {{ .Values.config.mountPath | trimSuffix \"/\" }}/application.properties\necho activiti.cloud.messaging.instance-index=${HOSTNAME##*-} >> {{ .Values.config.mountPath | trimSuffix \"/\" }}/application.properties\n"` |  |
+| config.command | list | `[]` |  |
 | config.enabled | bool | `false` |  |
 | config.image.pullPolicy | string | `"IfNotPresent"` | Image pull policy for the config image |
 | config.image.repository | string | `"docker.io/busybox"` | Image used to run config init container at startup |
