@@ -35,6 +35,8 @@ global:
   messaging:
     # global.messaging.broker -- configure message broker type for all deployments with messaging.enabled set to 'true'
     broker: ""
+    partitioned: false
+    partitionCount: 1
 
   rabbitmq:
     host: ""
@@ -115,6 +117,33 @@ registryPullSecrets: []
 
 statefulset:
   enabled: false
+
+config:
+  enabled: false
+  volumeName: config
+  mountPath: /opt/config/
+  command: []
+  image:
+    # config.image.repository -- Image used to run config init container at startup
+    repository: docker.io/busybox
+    # config.image.tag -- Image tag for the config image
+    tag: 1.32
+    # config.image.pullPolicy -- Image pull policy for the config image
+    pullPolicy: IfNotPresent
+  # config.securityContext -- SecurityContext for the config container
+  securityContext:
+    allowPrivilegeEscalation: false
+    runAsUser: 1000
+    runAsGroup: 1000
+    runAsNonRoot: true
+  # config.resources -- Resource requests and limits for the config container
+  resources:
+    requests:
+      cpu: "10m"
+      memory: "16Mi"
+    limits:
+      cpu: "10m"
+      memory: "16Mi"
 
 postgresql:
   enabled: false

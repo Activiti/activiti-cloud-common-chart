@@ -1,0 +1,68 @@
+suite: test deployment config init container
+templates:
+  - deployment.yaml
+tests:
+  - it: should render deployment with config initContainer
+    set:
+      enabled: true
+      config.enabled: true
+      messaging.enabled: true
+      statefulset.enabled: true
+      global.messaging.broker: rabbitmq
+      global.messaging.partitioned: true
+      global.messaging.partitionCount: 2
+      config.command:
+        - sh
+        - -c
+        - |
+          echo activiti.cloud.messaging.broker={{ .Values.global.messaging.broker }} >> {{ .Values.config.mountPath | trimSuffix "/" }}/application.properties
+          echo activiti.cloud.messaging.partitioned={{ .Values.global.messaging.partitioned }} >> {{ .Values.config.mountPath | trimSuffix "/" }}/application.properties
+          echo activiti.cloud.messaging.partition-count={{ .Values.global.messaging.partitionCount }} >> {{ .Values.config.mountPath | trimSuffix "/" }}/application.properties
+          echo activiti.cloud.messaging.instance-index=${HOSTNAME##*-} >> {{ .Values.config.mountPath | trimSuffix "/" }}/application.properties
+    asserts:
+      - isKind:
+          of: StatefulSet
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.replicas
+          value: 2
+      - contains:
+          path: spec.template.spec.initContainers
+          content:
+            command:
+              - sh
+              - -c
+              - |
+                echo activiti.cloud.messaging.broker=rabbitmq >> /opt/config/application.properties
+                echo activiti.cloud.messaging.partitioned=true >> /opt/config/application.properties
+                echo activiti.cloud.messaging.partition-count=2 >> /opt/config/application.properties
+                echo activiti.cloud.messaging.instance-index=${HOSTNAME##*-} >> /opt/config/application.properties
+            image: docker.io/busybox:1.32
+            imagePullPolicy: IfNotPresent
+            name: config
+            resources:
+              limits:
+                cpu: 10m
+                memory: 16Mi
+              requests:
+                cpu: 10m
+                memory: 16Mi
+            securityContext:
+              allowPrivilegeEscalation: false
+              runAsGroup: 1000
+              runAsNonRoot: true
+              runAsUser: 1000
+            volumeMounts:
+              - mountPath: /opt/config/
+                name: config
+      - contains:
+          path: spec.template.spec.volumes
+          content:
+            name: config
+            emptyDir: {}
+      - contains:
+          path: spec.template.spec.containers[0].volumeMounts
+          content:
+            mountPath: /opt/config/
+            name: config

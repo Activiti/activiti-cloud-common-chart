@@ -1,7 +1,14 @@
 {{- define "common.deployment.tpl" -}}
 {{ include "common.deployment.head" . }}
 spec:
+  {{- if and .Values.messaging.enabled .Values.global.messaging.partitioned .Values.statefulset.enabled }}
+  replicas: {{ .Values.global.messaging.partitionCount }}
+  {{- else }}
   replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  {{- if .Values.statefulset.enabled }}
+  serviceName: {{ template "common.service.name" . }}
+  {{- end }}
   selector:
     matchLabels:
       {{- include "common.selectorLabels" . | nindent 6 }}
@@ -18,8 +25,22 @@ spec:
       imagePullSecrets:
         {{- . | nindent 8 }}
       {{- end }}
-      {{- if or .Values.postgresql.enabled .Values.liquibase.enabled .Values.extraInitContainers }}
+      {{- if or .Values.postgresql.enabled .Values.liquibase.enabled .Values.extraInitContainers .Values.config.enabled }}
       initContainers:
+        {{- if .Values.config.enabled }}
+        - name: config
+          image: "{{ .Values.config.image.repository }}:{{ .Values.config.image.tag }}"
+          imagePullPolicy: {{ .Values.config.image.pullPolicy }}
+          securityContext:
+            {{- toYaml .Values.config.securityContext | nindent 14 }}
+          command:
+            {{- tpl (toYaml .Values.config.command) . | nindent 14 }}
+          resources:
+            {{- toYaml .Values.config.resources | nindent 14 }}
+          volumeMounts:
+            - name: {{ .Values.config.volumeName }}
+              mountPath: {{ .Values.config.mountPath }}
+        {{- end }}
         {{- if .Values.postgresql.enabled }}
         - name: pgchecker
           image: "{{ .Values.pgchecker.image.repository }}:{{ .Values.pgchecker.image.tag }}"
@@ -79,16 +100,24 @@ spec:
           resources:
             {{ toYaml . | nindent 12 }}
           {{- end }}
-          {{- with .Values.extraVolumeMounts }}
           volumeMounts:
+          {{- if .Values.config.enabled }}
+            - name: {{ .Values.config.volumeName }}
+              mountPath: {{ .Values.config.mountPath }}
+          {{- end }}
+          {{- with .Values.extraVolumeMounts }}
             {{ tpl . $ | nindent 12 }}
           {{- end }}
       {{- with .Values.podSecurityContext }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       {{- end }}
-      {{- with .Values.extraVolumes }}
       volumes:
+      {{- if .Values.config.enabled }}
+        - name: {{ .Values.config.volumeName }}
+          emptyDir: {}
+      {{- end }}
+      {{- with .Values.extraVolumes }}
         {{ tpl . $ | nindent 8 }}
       {{- end }}
       {{- with .Values.terminationGracePeriodSeconds }}
