@@ -1,6 +1,6 @@
 {{- define "common.deployment.head" -}}
 apiVersion: apps/v1
-kind: Deployment
+kind: {{ if .Values.statefulset.enabled }}StatefulSet{{ else }}Deployment{{ end }}
 metadata:
   name: {{ template "common.fullname" . }}
   labels:

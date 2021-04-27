@@ -113,6 +113,9 @@ image:
 # registryPullSecrets -- configures additional pull secrets for this deployment
 registryPullSecrets: []
 
+statefulset:
+  enabled: false
+
 postgresql:
   enabled: false
   name: postgresql

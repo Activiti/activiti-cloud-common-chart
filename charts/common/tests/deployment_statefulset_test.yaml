@@ -1,0 +1,16 @@
+suite: test statefulset
+templates:
+  - deployment.yaml
+tests:
+  - it: should render statefulset if enabled
+    set:
+      enabled: true
+      statefulset.enabled: true
+    asserts:
+      - isKind:
+          of: StatefulSet
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.serviceName
+          value: RELEASE-NAME-common
