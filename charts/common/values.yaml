@@ -197,6 +197,8 @@ service:
   internalPort: 8080
   nodePort:
   annotations: {}
+  portName: http
+  portProtocol: TCP
 
 ingress:
   # ingress.enabled -- set to false to disable ingress record generation
