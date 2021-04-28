@@ -2,7 +2,7 @@ suite: test deployment config init container
 templates:
   - deployment.yaml
 tests:
-  - it: should render deployment with config initContainer
+  - it: should render deployment with config for query consumer
     set:
       enabled: true
       config.enabled: true
@@ -15,10 +15,12 @@ tests:
         - sh
         - -c
         - |
-          echo activiti.cloud.messaging.broker={{ .Values.global.messaging.broker }} >> {{ .Values.config.mountPath | trimSuffix "/" }}/application.properties
-          echo activiti.cloud.messaging.partitioned={{ .Values.global.messaging.partitioned }} >> {{ .Values.config.mountPath | trimSuffix "/" }}/application.properties
-          echo activiti.cloud.messaging.partition-count={{ .Values.global.messaging.partitionCount }} >> {{ .Values.config.mountPath | trimSuffix "/" }}/application.properties
-          echo activiti.cloud.messaging.instance-index=${HOSTNAME##*-} >> {{ .Values.config.mountPath | trimSuffix "/" }}/application.properties
+          APPLICATION_PROPERTIES={{ .Values.config.mountPath | trimSuffix "/" }}/application.properties
+
+          echo activiti.cloud.messaging.broker={{ .Values.global.messaging.broker }} >> $APPLICATION_PROPERTIES
+          echo activiti.cloud.messaging.partitioned={{ .Values.global.messaging.partitioned }} >> $APPLICATION_PROPERTIES
+          echo activiti.cloud.messaging.partition-count={{ .Values.global.messaging.partitionCount }} >> $APPLICATION_PROPERTIES
+          echo activiti.cloud.messaging.instance-index=${HOSTNAME##*-} >> $APPLICATION_PROPERTIES
     asserts:
       - isKind:
           of: StatefulSet
@@ -34,10 +36,79 @@ tests:
               - sh
               - -c
               - |
-                echo activiti.cloud.messaging.broker=rabbitmq >> /opt/config/application.properties
-                echo activiti.cloud.messaging.partitioned=true >> /opt/config/application.properties
-                echo activiti.cloud.messaging.partition-count=2 >> /opt/config/application.properties
-                echo activiti.cloud.messaging.instance-index=${HOSTNAME##*-} >> /opt/config/application.properties
+                APPLICATION_PROPERTIES=/opt/config/application.properties
+
+                echo activiti.cloud.messaging.broker=rabbitmq >> $APPLICATION_PROPERTIES
+                echo activiti.cloud.messaging.partitioned=true >> $APPLICATION_PROPERTIES
+                echo activiti.cloud.messaging.partition-count=2 >> $APPLICATION_PROPERTIES
+                echo activiti.cloud.messaging.instance-index=${HOSTNAME##*-} >> $APPLICATION_PROPERTIES
+            image: docker.io/busybox:1.32
+            imagePullPolicy: IfNotPresent
+            name: config
+            resources:
+              limits:
+                cpu: 10m
+                memory: 16Mi
+              requests:
+                cpu: 10m
+                memory: 16Mi
+            securityContext:
+              allowPrivilegeEscalation: false
+              runAsGroup: 1000
+              runAsNonRoot: true
+              runAsUser: 1000
+            volumeMounts:
+              - mountPath: /opt/config/
+                name: config
+      - contains:
+          path: spec.template.spec.volumes
+          content:
+            name: config
+            emptyDir: {}
+      - contains:
+          path: spec.template.spec.containers[0].volumeMounts
+          content:
+            mountPath: /opt/config/
+            name: config
+
+  - it: should render deployment with config for producer
+    set:
+      enabled: true
+      config.enabled: true
+      messaging.enabled: true
+      statefulset.enabled: false
+      global.messaging.broker: rabbitmq
+      global.messaging.partitioned: true
+      global.messaging.partitionCount: 2
+      config.command:
+        - sh
+        - -c
+        - |
+          APPLICATION_PROPERTIES={{ .Values.config.mountPath | trimSuffix "/" }}/application.properties
+
+          echo activiti.cloud.messaging.broker={{ .Values.global.messaging.broker }} >> $APPLICATION_PROPERTIES
+          echo activiti.cloud.messaging.partitioned={{ .Values.global.messaging.partitioned }} >> $APPLICATION_PROPERTIES
+          echo activiti.cloud.messaging.partition-count={{ .Values.global.messaging.partitionCount }} >> $APPLICATION_PROPERTIES
+    asserts:
+      - isKind:
+          of: Deployment
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.replicas
+          value: 1
+      - contains:
+          path: spec.template.spec.initContainers
+          content:
+            command:
+              - sh
+              - -c
+              - |
+                APPLICATION_PROPERTIES=/opt/config/application.properties
+
+                echo activiti.cloud.messaging.broker=rabbitmq >> $APPLICATION_PROPERTIES
+                echo activiti.cloud.messaging.partitioned=true >> $APPLICATION_PROPERTIES
+                echo activiti.cloud.messaging.partition-count=2 >> $APPLICATION_PROPERTIES
             image: docker.io/busybox:1.32
             imagePullPolicy: IfNotPresent
             name: config
