@@ -13,8 +13,9 @@ A Helm chart for Activiti Cloud Common Templates
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | affinity | object | `{}` | allows customising affinity |
-| config.command | list | `[]` |  |
-| config.enabled | bool | `false` |  |
+| config.args | string | `"-c"` |  |
+| config.command | string | `"sh"` |  |
+| config.env.APPLICATION_PROPERTIES | string | `"{{ .Values.config.mountPath | trimSuffix \"/\" }}/application.properties"` |  |
 | config.image.pullPolicy | string | `"IfNotPresent"` | Image pull policy for the config image |
 | config.image.repository | string | `"docker.io/busybox"` | Image used to run config init container at startup |
 | config.image.tag | float | `1.32` | Image tag for the config image |
@@ -92,7 +93,10 @@ A Helm chart for Activiti Cloud Common Templates
 | livenessProbe.periodSeconds | int | `15` |  |
 | livenessProbe.successThreshold | int | `1` |  |
 | livenessProbe.timeoutSeconds | int | `4` |  |
+| messaging.consumer.config.script | string | `"echo activiti.cloud.messaging.broker={{ .Values.global.messaging.broker }} >> $APPLICATION_PROPERTIES\necho activiti.cloud.messaging.partitioned={{ .Values.global.messaging.partitioned }} >> $APPLICATION_PROPERTIES\necho activiti.cloud.messaging.partition-count={{ .Values.global.messaging.partitionCount }} >> $APPLICATION_PROPERTIES\necho activiti.cloud.messaging.instance-index=${HOSTNAME##*-} >> $APPLICATION_PROPERTIES\n"` |  |
 | messaging.enabled | bool | `false` |  |
+| messaging.producer.config.script | string | `"echo activiti.cloud.messaging.broker={{ .Values.global.messaging.broker }} >> $APPLICATION_PROPERTIES\necho activiti.cloud.messaging.partitioned={{ .Values.global.messaging.partitioned }} >> $APPLICATION_PROPERTIES\necho activiti.cloud.messaging.partition-count={{ .Values.global.messaging.partitionCount }} >> $APPLICATION_PROPERTIES\n"` |  |
+| messaging.role | string | `""` | required configuration of the messaging role, i.e. producer or consumer |
 | nodeSelector | object | `{}` | allows customising nodeSelector |
 | pgchecker.image.pullPolicy | string | `"IfNotPresent"` | Image pull policy for the pgchecker image |
 | pgchecker.image.repository | string | `"docker.io/busybox"` | Image used to check Postgresql readiness at startup |
@@ -130,7 +134,8 @@ A Helm chart for Activiti Cloud Common Templates
 | service.portName | string | `"http"` |  |
 | service.portProtocol | string | `"TCP"` |  |
 | service.type | string | `"ClusterIP"` |  |
-| statefulset.enabled | bool | `false` |  |
+| statefulset.podManagementPolicy | string | `"Parallel"` |  |
+| statefulset.updateStrategyType | string | `"RollingUpdate"` |  |
 | terminationGracePeriodSeconds | int | `20` |  |
 | tolerations | list | `[]` | allows customising tolerations |
 
