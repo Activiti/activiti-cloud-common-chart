@@ -3,14 +3,12 @@
 spec:
   {{- if and .Values.messaging.enabled .Values.global.messaging.partitioned (eq .Values.messaging.role "consumer" ) }}
   replicas: {{ .Values.global.messaging.partitionCount }}
-  {{- else }}
-  replicas: {{ .Values.replicaCount }}
-  {{- end }}
-  {{- if and .Values.messaging.enabled .Values.global.messaging.partitioned (eq .Values.messaging.role "consumer" ) }}
   serviceName: {{ template "common.service.name" . }}
   podManagementPolicy: {{ .Values.statefulset.podManagementPolicy }}
   updateStrategy:
     type: {{ .Values.statefulset.updateStrategyType }}
+  {{- else }}
+  replicas: {{ .Values.replicaCount }}
   {{- end }}
   selector:
     matchLabels:
