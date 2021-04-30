@@ -1,13 +1,16 @@
 {{- define "common.deployment.tpl" -}}
 {{ include "common.deployment.head" . }}
 spec:
-  {{- if and .Values.messaging.enabled .Values.global.messaging.partitioned .Values.statefulset.enabled }}
+  {{- if and .Values.messaging.enabled .Values.global.messaging.partitioned (eq .Values.messaging.role "consumer" ) }}
   replicas: {{ .Values.global.messaging.partitionCount }}
   {{- else }}
   replicas: {{ .Values.replicaCount }}
   {{- end }}
-  {{- if .Values.statefulset.enabled }}
+  {{- if and .Values.messaging.enabled .Values.global.messaging.partitioned (eq .Values.messaging.role "consumer" ) }}
   serviceName: {{ template "common.service.name" . }}
+  podManagementPolicy: {{ .Values.statefulset.podManagementPolicy }}
+  updateStrategy:
+    type: {{ .Values.statefulset.updateStrategyType }}
   {{- end }}
   selector:
     matchLabels:
@@ -25,21 +28,31 @@ spec:
       imagePullSecrets:
         {{- . | nindent 8 }}
       {{- end }}
-      {{- if or .Values.postgresql.enabled .Values.liquibase.enabled .Values.extraInitContainers .Values.config.enabled }}
+      {{- if or .Values.postgresql.enabled .Values.liquibase.enabled .Values.extraInitContainers .Values.messaging.enabled }}
       initContainers:
-        {{- if .Values.config.enabled }}
-        - name: config
+        {{- if and .Values.messaging.enabled .Values.global.messaging.partitioned .Values.messaging.role }}
+        - name: config-{{ .Values.messaging.role }}
           image: "{{ .Values.config.image.repository }}:{{ .Values.config.image.tag }}"
           imagePullPolicy: {{ .Values.config.image.pullPolicy }}
           securityContext:
             {{- toYaml .Values.config.securityContext | nindent 14 }}
           command:
-            {{- tpl (toYaml .Values.config.command) . | nindent 14 }}
+            - {{ .Values.config.command }}
+          args:
+            {{- $role := get .Values.messaging .Values.messaging.role }}
+            - {{ .Values.config.args }}
+            - | {{ tpl $role.config.script . | nindent 14 }}
           resources:
             {{- toYaml .Values.config.resources | nindent 14 }}
           volumeMounts:
             - name: {{ .Values.config.volumeName }}
               mountPath: {{ .Values.config.mountPath }}
+          env:
+            {{- range $key, $val := .Values.config.env }}
+            - name: {{ $key }}
+              value: {{ tpl $val $ | quote }}
+            {{- end }}
+
         {{- end }}
         {{- if .Values.postgresql.enabled }}
         - name: pgchecker
@@ -101,7 +114,7 @@ spec:
             {{ toYaml . | nindent 12 }}
           {{- end }}
           volumeMounts:
-          {{- if .Values.config.enabled }}
+          {{- if .Values.messaging.enabled }}
             - name: {{ .Values.config.volumeName }}
               mountPath: {{ .Values.config.mountPath }}
           {{- end }}
@@ -113,7 +126,7 @@ spec:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       {{- end }}
       volumes:
-      {{- if .Values.config.enabled }}
+      {{- if .Values.messaging.enabled }}
         - name: {{ .Values.config.volumeName }}
           emptyDir: {}
       {{- end }}

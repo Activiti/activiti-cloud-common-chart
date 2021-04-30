@@ -116,13 +116,14 @@ image:
 registryPullSecrets: []
 
 statefulset:
-  enabled: false
+  podManagementPolicy: Parallel
+  updateStrategyType: RollingUpdate
 
 config:
-  enabled: false
   volumeName: config
   mountPath: /opt/config/
-  command: []
+  command: "sh"
+  args: "-c"
   image:
     # config.image.repository -- Image used to run config init container at startup
     repository: docker.io/busybox
@@ -136,6 +137,9 @@ config:
     runAsUser: 1000
     runAsGroup: 1000
     runAsNonRoot: true
+  env:
+    APPLICATION_PROPERTIES: '{{ .Values.config.mountPath | trimSuffix "/" }}/application.properties'
+
   # config.resources -- Resource requests and limits for the config container
   resources:
     requests:
@@ -161,6 +165,21 @@ db:
 
 messaging:
   enabled: false
+  # messaging.role -- required configuration of the messaging role, i.e. producer or consumer
+  role: ""
+  producer:
+    config:
+      script: |
+        echo activiti.cloud.messaging.broker={{ .Values.global.messaging.broker }} >> $APPLICATION_PROPERTIES
+        echo activiti.cloud.messaging.partitioned={{ .Values.global.messaging.partitioned }} >> $APPLICATION_PROPERTIES
+        echo activiti.cloud.messaging.partition-count={{ .Values.global.messaging.partitionCount }} >> $APPLICATION_PROPERTIES
+  consumer:
+    config:
+      script: |
+        echo activiti.cloud.messaging.broker={{ .Values.global.messaging.broker }} >> $APPLICATION_PROPERTIES
+        echo activiti.cloud.messaging.partitioned={{ .Values.global.messaging.partitioned }} >> $APPLICATION_PROPERTIES
+        echo activiti.cloud.messaging.partition-count={{ .Values.global.messaging.partitionCount }} >> $APPLICATION_PROPERTIES
+        echo activiti.cloud.messaging.instance-index=${HOSTNAME##*-} >> $APPLICATION_PROPERTIES
 
 rabbitmq:
   # rabbbitmq.enabled -- enables rabbitmq backend configuration. Deprecated in favor of messaging.enabled in combination with global.messaging.broker values

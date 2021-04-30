@@ -42,7 +42,7 @@
 */}}
 {{- define "common.messaging.container-args" -}}
 {{- if .Values.messaging.enabled -}}
-{{- $broker := get .Values .Values.global.messaging.broker | required "message broker values" -}}
+{{- $broker := get .Values .Values.global.messaging.broker | required "global.messaging.broker is required" -}}
 {{- $args := $broker.args -}}
 args:
   {{- toYaml $args | nindent 2 }}

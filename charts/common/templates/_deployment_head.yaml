@@ -1,6 +1,6 @@
 {{- define "common.deployment.head" -}}
 apiVersion: apps/v1
-kind: {{ if .Values.statefulset.enabled }}StatefulSet{{ else }}Deployment{{ end }}
+kind: {{ if and .Values.messaging.enabled .Values.global.messaging.partitioned (eq .Values.messaging.role "consumer") }}StatefulSet{{ else }}Deployment{{ end }}
 metadata:
   name: {{ template "common.fullname" . }}
   labels:
