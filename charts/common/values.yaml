@@ -36,7 +36,7 @@ global:
     # global.messaging.broker -- configure message broker type for all deployments with messaging.enabled set to 'true'
     broker: ""
     partitioned: false
-    partitionCount: 1
+    partitionCount: 2
 
   rabbitmq:
     host: ""
