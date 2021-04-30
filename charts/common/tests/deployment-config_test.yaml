@@ -148,15 +148,7 @@ tests:
           value: 1
       - isNull:
           path: spec.template.spec.initContainers
-      - notContains:
+      - isNull:
           path: spec.template.spec.volumes
-          content:
-            name: config
-            emptyDir: {}
-          any: true
-      - notContains:
+      - isNull:
           path: spec.template.spec.containers[0].volumeMounts
-          content:
-            mountPath: /opt/config/
-            name: config
-          any: true
