@@ -165,7 +165,7 @@ db:
 
 messaging:
   enabled: false
-  # messaging.role -- required configuration of the messaging role, i.e. producer or consumer
+  # messaging.role -- required configuration of the messaging role, i.e. producer, consumer, or connector
   role: ""
   producer:
     config:
