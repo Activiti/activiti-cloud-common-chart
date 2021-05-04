@@ -96,7 +96,7 @@ A Helm chart for Activiti Cloud Common Templates
 | messaging.consumer.config.script | string | `"echo activiti.cloud.messaging.broker={{ .Values.global.messaging.broker }} >> $APPLICATION_PROPERTIES\necho activiti.cloud.messaging.partitioned={{ .Values.global.messaging.partitioned }} >> $APPLICATION_PROPERTIES\necho activiti.cloud.messaging.partition-count={{ .Values.global.messaging.partitionCount }} >> $APPLICATION_PROPERTIES\necho activiti.cloud.messaging.instance-index=${HOSTNAME##*-} >> $APPLICATION_PROPERTIES\n"` |  |
 | messaging.enabled | bool | `false` |  |
 | messaging.producer.config.script | string | `"echo activiti.cloud.messaging.broker={{ .Values.global.messaging.broker }} >> $APPLICATION_PROPERTIES\necho activiti.cloud.messaging.partitioned={{ .Values.global.messaging.partitioned }} >> $APPLICATION_PROPERTIES\necho activiti.cloud.messaging.partition-count={{ .Values.global.messaging.partitionCount }} >> $APPLICATION_PROPERTIES\n"` |  |
-| messaging.role | string | `""` | required configuration of the messaging role, i.e. producer or consumer |
+| messaging.role | string | `""` | required configuration of the messaging role, i.e. producer, consumer, or connector |
 | nodeSelector | object | `{}` | allows customising nodeSelector |
 | pgchecker.image.pullPolicy | string | `"IfNotPresent"` | Image pull policy for the pgchecker image |
 | pgchecker.image.repository | string | `"docker.io/busybox"` | Image used to check Postgresql readiness at startup |
