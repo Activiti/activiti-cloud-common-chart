@@ -13,6 +13,16 @@ A Helm chart for Activiti Cloud Common Templates
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | affinity | object | `{}` | allows customising affinity |
+| config.args | string | `"-c"` |  |
+| config.command | string | `"sh"` |  |
+| config.env.APPLICATION_PROPERTIES | string | `"{{ .Values.config.mountPath | trimSuffix \"/\" }}/application.properties"` |  |
+| config.image.pullPolicy | string | `"IfNotPresent"` | Image pull policy for the config image |
+| config.image.repository | string | `"docker.io/busybox"` | Image used to run config init container at startup |
+| config.image.tag | float | `1.32` | Image tag for the config image |
+| config.mountPath | string | `"/opt/config/"` |  |
+| config.resources | object | `{"limits":{"cpu":"10m","memory":"16Mi"},"requests":{"cpu":"10m","memory":"16Mi"}}` | Resource requests and limits for the config container |
+| config.securityContext | object | `{"allowPrivilegeEscalation":false,"runAsGroup":1000,"runAsNonRoot":true,"runAsUser":1000}` | SecurityContext for the config container |
+| config.volumeName | string | `"config"` |  |
 | db.ddlAuto | string | `"validate"` |  |
 | db.driver | string | `"org.postgresql.Driver"` |  |
 | db.generateDdl | bool | `false` |  |
@@ -44,6 +54,8 @@ A Helm chart for Activiti Cloud Common Templates
 | global.keycloak.resource | string | `"activiti"` | configure default Keycloak resource |
 | global.keycloak.url | string | `""` | overrides gateway host configuration |
 | global.messaging.broker | string | `""` | configure message broker type for all deployments with messaging.enabled set to 'true' |
+| global.messaging.partitionCount | int | `2` |  |
+| global.messaging.partitioned | bool | `false` |  |
 | global.rabbitmq.extraEnv | string | `""` |  |
 | global.rabbitmq.host | string | `""` |  |
 | global.rabbitmq.password | string | `"guest"` |  |
@@ -81,7 +93,10 @@ A Helm chart for Activiti Cloud Common Templates
 | livenessProbe.periodSeconds | int | `15` |  |
 | livenessProbe.successThreshold | int | `1` |  |
 | livenessProbe.timeoutSeconds | int | `4` |  |
+| messaging.consumer.config.script | string | `"echo activiti.cloud.messaging.broker={{ .Values.global.messaging.broker }} >> $APPLICATION_PROPERTIES\necho activiti.cloud.messaging.partitioned={{ .Values.global.messaging.partitioned }} >> $APPLICATION_PROPERTIES\necho activiti.cloud.messaging.partition-count={{ .Values.global.messaging.partitionCount }} >> $APPLICATION_PROPERTIES\necho activiti.cloud.messaging.instance-index=${HOSTNAME##*-} >> $APPLICATION_PROPERTIES\n"` |  |
 | messaging.enabled | bool | `false` |  |
+| messaging.producer.config.script | string | `"echo activiti.cloud.messaging.broker={{ .Values.global.messaging.broker }} >> $APPLICATION_PROPERTIES\necho activiti.cloud.messaging.partitioned={{ .Values.global.messaging.partitioned }} >> $APPLICATION_PROPERTIES\necho activiti.cloud.messaging.partition-count={{ .Values.global.messaging.partitionCount }} >> $APPLICATION_PROPERTIES\n"` |  |
+| messaging.role | string | `""` | required configuration of the messaging role, i.e. producer, consumer, or connector |
 | nodeSelector | object | `{}` | allows customising nodeSelector |
 | pgchecker.image.pullPolicy | string | `"IfNotPresent"` | Image pull policy for the pgchecker image |
 | pgchecker.image.repository | string | `"docker.io/busybox"` | Image used to check Postgresql readiness at startup |
@@ -116,7 +131,11 @@ A Helm chart for Activiti Cloud Common Templates
 | service.internalPort | int | `8080` |  |
 | service.name | string | `nil` |  |
 | service.nodePort | string | `nil` |  |
+| service.portName | string | `"http"` |  |
+| service.portProtocol | string | `"TCP"` |  |
 | service.type | string | `"ClusterIP"` |  |
+| statefulset.podManagementPolicy | string | `"Parallel"` |  |
+| statefulset.updateStrategyType | string | `"RollingUpdate"` |  |
 | terminationGracePeriodSeconds | int | `20` |  |
 | tolerations | list | `[]` | allows customising tolerations |
 

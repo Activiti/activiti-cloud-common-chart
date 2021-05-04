@@ -35,6 +35,8 @@ global:
   messaging:
     # global.messaging.broker -- configure message broker type for all deployments with messaging.enabled set to 'true'
     broker: ""
+    partitioned: false
+    partitionCount: 2
 
   rabbitmq:
     host: ""
@@ -113,6 +115,40 @@ image:
 # registryPullSecrets -- configures additional pull secrets for this deployment
 registryPullSecrets: []
 
+statefulset:
+  podManagementPolicy: Parallel
+  updateStrategyType: RollingUpdate
+
+config:
+  volumeName: config
+  mountPath: /opt/config/
+  command: "sh"
+  args: "-c"
+  image:
+    # config.image.repository -- Image used to run config init container at startup
+    repository: docker.io/busybox
+    # config.image.tag -- Image tag for the config image
+    tag: 1.32
+    # config.image.pullPolicy -- Image pull policy for the config image
+    pullPolicy: IfNotPresent
+  # config.securityContext -- SecurityContext for the config container
+  securityContext:
+    allowPrivilegeEscalation: false
+    runAsUser: 1000
+    runAsGroup: 1000
+    runAsNonRoot: true
+  env:
+    APPLICATION_PROPERTIES: '{{ .Values.config.mountPath | trimSuffix "/" }}/application.properties'
+
+  # config.resources -- Resource requests and limits for the config container
+  resources:
+    requests:
+      cpu: "10m"
+      memory: "16Mi"
+    limits:
+      cpu: "10m"
+      memory: "16Mi"
+
 postgresql:
   enabled: false
   name: postgresql
@@ -129,6 +165,21 @@ db:
 
 messaging:
   enabled: false
+  # messaging.role -- required configuration of the messaging role, i.e. producer, consumer, or connector
+  role: ""
+  producer:
+    config:
+      script: |
+        echo activiti.cloud.messaging.broker={{ .Values.global.messaging.broker }} >> $APPLICATION_PROPERTIES
+        echo activiti.cloud.messaging.partitioned={{ .Values.global.messaging.partitioned }} >> $APPLICATION_PROPERTIES
+        echo activiti.cloud.messaging.partition-count={{ .Values.global.messaging.partitionCount }} >> $APPLICATION_PROPERTIES
+  consumer:
+    config:
+      script: |
+        echo activiti.cloud.messaging.broker={{ .Values.global.messaging.broker }} >> $APPLICATION_PROPERTIES
+        echo activiti.cloud.messaging.partitioned={{ .Values.global.messaging.partitioned }} >> $APPLICATION_PROPERTIES
+        echo activiti.cloud.messaging.partition-count={{ .Values.global.messaging.partitionCount }} >> $APPLICATION_PROPERTIES
+        echo activiti.cloud.messaging.instance-index=${HOSTNAME##*-} >> $APPLICATION_PROPERTIES
 
 rabbitmq:
   # rabbbitmq.enabled -- enables rabbitmq backend configuration. Deprecated in favor of messaging.enabled in combination with global.messaging.broker values
@@ -197,6 +248,8 @@ service:
   internalPort: 8080
   nodePort:
   annotations: {}
+  portName: http
+  portProtocol: TCP
 
 ingress:
   # ingress.enabled -- set to false to disable ingress record generation
