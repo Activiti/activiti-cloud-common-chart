@@ -38,15 +38,3 @@
   value: {{ tpl .Values.kafka.zkPort $ | default "2181" | quote }}
 {{ tpl .Values.kafka.extraEnv $ }}
 {{- end -}}
-
-{{/*
-  Create container args for using global.messaging.broker value.
-*/}}
-{{- define "common.messaging.container-args" -}}
-{{- if .Values.messaging.enabled -}}
-{{- $broker := get .Values .Values.global.messaging.broker | required "global.messaging.broker is required" -}}
-{{- $args := $broker.args -}}
-args:
-  {{- toYaml $args | nindent 2 }}
-{{- end -}}
-{{- end -}}
