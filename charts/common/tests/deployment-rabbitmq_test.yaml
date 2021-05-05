@@ -11,6 +11,11 @@ tests:
       - contains:
           path: spec.template.spec.containers[0].env
           content:
+            name: ACTIVITI_CLOUD_MESSAGING_BROKER
+            value: rabbitmq
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
             name: SPRING_RABBITMQ_HOST
             value: RELEASE-NAME-rabbitmq
       - contains:
@@ -30,6 +35,11 @@ tests:
       messaging.enabled: false
       global.messaging.broker: rabbitmq
     asserts:
+      - notContains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: ACTIVITI_CLOUD_MESSAGING_BROKER
+            value: rabbitmq
       - notContains:
           path: spec.template.spec.containers[0].env
           content:
@@ -54,6 +64,11 @@ tests:
     release:
       name: pr-123-rabbitmq
     asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: ACTIVITI_CLOUD_MESSAGING_BROKER
+            value: rabbitmq
       - contains:
           path: spec.template.spec.containers[0].env
           content:
@@ -83,6 +98,11 @@ tests:
       - contains:
           path: spec.template.spec.containers[0].env
           content:
+            name: ACTIVITI_CLOUD_MESSAGING_BROKER
+            value: rabbitmq
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
             name: SPRING_RABBITMQ_HOST
             value: RELEASE-NAME-rabbitmq
       - contains:
@@ -101,6 +121,11 @@ tests:
       enabled: true
       rabbitmq.enabled: false
     asserts:
+      - notContains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: ACTIVITI_CLOUD_MESSAGING_BROKER
+            value: rabbitmq
       - notContains:
           path: spec.template.spec.containers[0].env
           content:

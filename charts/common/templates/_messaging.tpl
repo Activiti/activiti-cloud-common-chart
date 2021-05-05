@@ -9,6 +9,8 @@
   Create SPRING_RABBITMQ_* env.
 */}}
 {{- define "common.messaging.rabbitmq-env" -}}
+- name: ACTIVITI_CLOUD_MESSAGING_BROKER
+  value: rabbitmq
 - name: SPRING_RABBITMQ_HOST
   value: {{ tpl .Values.rabbitmq.host $ | required "rabbitmq.host is required" }}
 {{- if tpl .Values.rabbitmq.username $ }}
