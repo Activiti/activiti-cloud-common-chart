@@ -9,6 +9,8 @@
   Create SPRING_RABBITMQ_* env.
 */}}
 {{- define "common.messaging.rabbitmq-env" -}}
+- name: ACTIVITI_CLOUD_MESSAGING_BROKER
+  value: rabbitmq
 - name: SPRING_RABBITMQ_HOST
   value: {{ tpl .Values.rabbitmq.host $ | required "rabbitmq.host is required" }}
 {{- if tpl .Values.rabbitmq.username $ }}
@@ -35,16 +37,4 @@
 - name: SPRING_CLOUD_STREAM_KAFKA_BINDER_DEFAULTZKPORT
   value: {{ tpl .Values.kafka.zkPort $ | default "2181" | quote }}
 {{ tpl .Values.kafka.extraEnv $ }}
-{{- end -}}
-
-{{/*
-  Create container args for using global.messaging.broker value.
-*/}}
-{{- define "common.messaging.container-args" -}}
-{{- if .Values.messaging.enabled -}}
-{{- $broker := get .Values .Values.global.messaging.broker | required "global.messaging.broker is required" -}}
-{{- $args := $broker.args -}}
-args:
-  {{- toYaml $args | nindent 2 }}
-{{- end -}}
 {{- end -}}

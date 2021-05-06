@@ -62,6 +62,8 @@ Create backend service.envType env.
 {{- end }}
 {{- if .Values.messaging.enabled }}
 {{- include "common.messaging.validateValues" $ }}
+- name: ACTIVITI_CLOUD_MESSAGING_BROKER
+  value: {{ .Values.global.messaging.broker }}
 {{- $messagingEnvTemplate := tpl "common.messaging.{{ .Values.global.messaging.broker }}-env" . }}
 {{ include $messagingEnvTemplate $ }}
 {{- end }}

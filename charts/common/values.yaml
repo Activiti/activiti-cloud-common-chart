@@ -187,10 +187,6 @@ rabbitmq:
   host: '{{ tpl .Values.global.rabbitmq.host $ | default (include "common.rabbitmq.fullname" $) }}'
   username: "{{ .Values.global.rabbitmq.username }}"
   password: "{{ .Values.global.rabbitmq.password }}"
-  # rabbitmq.args -- arguments for application rabbitmq binder
-  args:
-    - -jar
-    - app-rabbitmq.jar
   extraEnv: "{{ tpl .Values.global.rabbitmq.extraEnv $ }}"
 
 kafka:
@@ -198,10 +194,6 @@ kafka:
   port: "{{ .Values.global.kafka.port }}"
   zkNodes: "{{ tpl .Values.global.kafka.zkNodes $ }}"
   zkPort: "{{ .Values.global.kafka.zkPort }}"
-  # kafka.args -- arguments for application kafka binder
-  args:
-    - -jar
-    - app-kafka.jar
   extraEnv: "{{ tpl .Values.global.kafka.extraEnv $ }}"
 
 javaOpts:

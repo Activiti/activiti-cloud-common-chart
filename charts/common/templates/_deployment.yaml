@@ -95,7 +95,6 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
-          {{ include "common.messaging.container-args" $ | nindent 10 }}
           env:
             {{ $envTemplate := tpl "common.{{ .Values.service.envType }}-env" . }}
             {{ include $envTemplate . | nindent 12 }}

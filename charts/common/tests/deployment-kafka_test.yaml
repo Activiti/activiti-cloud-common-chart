@@ -11,6 +11,11 @@ tests:
       - contains:
           path: spec.template.spec.containers[0].env
           content:
+            name: ACTIVITI_CLOUD_MESSAGING_BROKER
+            value: kafka
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
             name: SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS
             value: RELEASE-NAME-kafka
       - contains:
@@ -41,6 +46,11 @@ tests:
       enabled: true
       messaging.enabled: false
     asserts:
+      - notContains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: ACTIVITI_CLOUD_MESSAGING_BROKER
+            value: kafka
       - notContains:
           path: spec.template.spec.containers[0].env
           content:

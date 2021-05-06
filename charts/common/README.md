@@ -75,7 +75,6 @@ A Helm chart for Activiti Cloud Common Templates
 | javaOpts.other | string | `"-XX:+UnlockExperimentalVMOptions -Dsun.zip.disableMemoryMapping=true -XX:+UseParallelGC -XX:MinHeapFreeRatio=5 -XX:MaxHeapFreeRatio=10 -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90"` |  |
 | javaOpts.xms | string | `"256m"` |  |
 | javaOpts.xmx | string | `"1024m"` |  |
-| kafka.args | list | `["-jar","app-kafka.jar"]` | arguments for application kafka binder |
 | kafka.brokers | string | `"{{ tpl .Values.global.kafka.brokers $ }}"` |  |
 | kafka.extraEnv | string | `"{{ tpl .Values.global.kafka.extraEnv $ }}"` |  |
 | kafka.port | string | `"{{ .Values.global.kafka.port }}"` |  |
@@ -109,7 +108,6 @@ A Helm chart for Activiti Cloud Common Templates
 | postgresql.name | string | `"postgresql"` |  |
 | postgresql.port | int | `5432` |  |
 | probePath | string | `nil` | set default probe path for both liveness and readiness @default empty, each service should provide its own value or template, i.e. '{{ tpl .Values.ingress.path . }}/actuator/health' |
-| rabbitmq.args | list | `["-jar","app-rabbitmq.jar"]` | arguments for application rabbitmq binder |
 | rabbitmq.enabled | bool | `false` |  |
 | rabbitmq.extraEnv | string | `"{{ tpl .Values.global.rabbitmq.extraEnv $ }}"` |  |
 | rabbitmq.host | string | `"{{ tpl .Values.global.rabbitmq.host $ | default (include \"common.rabbitmq.fullname\" $) }}"` |  |
