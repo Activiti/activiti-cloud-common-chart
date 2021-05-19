@@ -271,7 +271,11 @@ resources: {}
 #    cpu: 150m
 #    memory: 256Mi
 
+# podAnnotations -- configure deployment pod podAnnotations as dict
 podAnnotations: {}
+
+# podLabels -- configure deployment pod podLabels as dict
+podLabels: {}
 
 podSecurityContext: {}
 # fsGroup: 2000
@@ -293,8 +297,20 @@ tolerations: []
 # affinity -- allows customising affinity
 affinity: {}
 
-# extraVolumes -- add additional volumes
+# extraVolumes -- add additional volumes as yaml string
 extraVolumes: |
 
-# extraVolumeMounts -- add additional volume mounts
+# extraVolumeMounts -- add additional volume mounts as yaml string
 extraVolumeMounts: |
+
+# volumes -- add additional volumes as list
+volumes: []
+
+# volumeMounts -- add additional volume mounts as list
+volumeMounts: []
+
+# initContainers -- add additional initContainers as list
+initContainers: []
+
+# sidecars -- add additional sidecar containers as list
+sidecars: []
