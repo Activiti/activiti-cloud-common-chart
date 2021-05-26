@@ -54,7 +54,7 @@ Create backend service.envType env.
 */}}
 {{- define "common.backend-env" -}}
 - name: JAVA_OPTS
-  value: "-Xmx{{ .Values.javaOpts.xmx }} -Xms{{ .Values.javaOpts.xms }} {{ .Values.javaOpts.other}}"
+  value: "-Xmx{{ .Values.javaOpts.xmx }} -Xms{{ .Values.javaOpts.xms }} {{ .Values.javaOpts.other }} {{ .Values.javaOpts.extra }}"
 - name: SPRING_APPLICATION_NAME
   value: {{ .Values.service.name | default (include "common.fullname" .) }}
 {{- if and .Values.rabbitmq.enabled (not .Values.messaging.enabled) }}

@@ -207,6 +207,8 @@ javaOpts:
     -XX:MaxHeapFreeRatio=10
     -XX:GCTimeRatio=4
     -XX:AdaptiveSizePolicyWeight=90
+  # javaOpts.extra -- provide extra options for Java runtime, i.e. -Djavax.net.ssl.truststore=/mnt/secrets/cacerts  
+  extra: ""
 
 # probePath -- set default probe path for both liveness and readiness
 # @default empty, each service should provide its own value or template, i.e. '{{ tpl .Values.ingress.path . }}/actuator/health'
