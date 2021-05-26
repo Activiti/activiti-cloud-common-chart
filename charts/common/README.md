@@ -73,7 +73,7 @@ A Helm chart for Activiti Cloud Common Templates
 | ingress.tls | string | `nil` | set to true in order to enable TLS on the ingress record |
 | ingress.tlsSecret | string | `nil` | if tls is set to true, you must declare what secret will store the key/certificate for TLS |
 | initContainers | list | `[]` | add additional initContainers as list |
-| javaOpts.extra | string | `""` | provide extra options for Java runtime, i.e. -Djavax.net.ssl.truststore=/mnt/secrets/cacerts   |
+| javaOpts.extra | string | `""` | provide extra options for Java runtime, i.e. -Djavax.net.ssl.truststore=/mnt/secrets/cacerts |
 | javaOpts.other | string | `"-XX:+UnlockExperimentalVMOptions -Dsun.zip.disableMemoryMapping=true -XX:+UseParallelGC -XX:MinHeapFreeRatio=5 -XX:MaxHeapFreeRatio=10 -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90"` |  |
 | javaOpts.xms | string | `"256m"` |  |
 | javaOpts.xmx | string | `"1024m"` |  |
