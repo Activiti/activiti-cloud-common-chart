@@ -65,7 +65,7 @@ jobs:
       before_script: cd ./charts/common
       script:
         - make version || travis_terminate 1;
-        - make tag || travis_terminate 1;
+        - TAG_PREFIX=v make tag || travis_terminate 1;
         - make release || travis_terminate 1;
         - make github || travis_terminate 1;
         - make updatebot/push-version|| travis_terminate 1;

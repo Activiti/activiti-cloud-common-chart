@@ -55,7 +55,7 @@ version:
 tag:
 	git add -u
 	git commit -m "release $(VERSION)" --allow-empty # if first release then no version update is performed
-	git tag -fa v$(VERSION) -m "Release version $(VERSION)"
+	git tag -fa $(TAG_PREFIX)$(VERSION) -m "Release version $(VERSION)"
 	git push -f -q https://${GITHUB_TOKEN}@github.com/Activiti/activiti-cloud-common-chart.git v$(VERSION)
 
 updatebot/push-version:
