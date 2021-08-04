@@ -141,3 +141,15 @@ tests:
           content:
             name: SPRING_RABBITMQ_PASSWORD
             value: guest
+
+  - it: should use global.messaging.partitionCount to set replicas for Rabbitmq fixed consumer partitions configuration
+    values:
+      - ./values/rabbitmq.yaml
+      - ./values/consumer-partitioned.yaml
+    set:
+      enabled: true
+      replicaCount: 3 # will be ignored
+    asserts:
+      - equal:
+          path: spec.replicas
+          value: 9 # global.messaging.partitionCount

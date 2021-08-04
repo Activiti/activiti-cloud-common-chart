@@ -2,7 +2,11 @@
 {{ include "common.deployment.head" . }}
 spec:
   {{- if and .Values.messaging.enabled .Values.global.messaging.partitioned (eq .Values.messaging.role "consumer" ) }}
+    {{- if eq .Values.global.messaging.broker "kafka"}}
+  replicas: {{ .Values.replicaCount }}
+    {{- else }}
   replicas: {{ .Values.global.messaging.partitionCount }}
+    {{- end }}
   serviceName: {{ template "common.service.name" . }}
   podManagementPolicy: {{ .Values.statefulset.podManagementPolicy }}
   updateStrategy:
