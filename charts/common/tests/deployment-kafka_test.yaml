@@ -80,7 +80,7 @@ tests:
             name: ACT_AUDIT_PRODUCER_TRANSACTION_ID_PREFIX
             value: ""
 
-  - it: should use replicaCount to set replicas to dynamic Kafka consumer auto rebalancing 
+  - it: should use replicaCount to set replicas to dynamic Kafka consumer auto rebalancing
     values:
       - ./values/kafka.yaml
       - ./values/consumer-partitioned.yaml
