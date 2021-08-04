@@ -10,3 +10,5 @@ global:
 
 messaging:
   enabled: true
+
+replicaCount: 3

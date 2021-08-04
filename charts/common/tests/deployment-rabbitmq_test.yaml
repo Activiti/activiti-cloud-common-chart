@@ -141,3 +141,14 @@ tests:
           content:
             name: SPRING_RABBITMQ_PASSWORD
             value: guest
+
+  - it: should use partitionCount to set replicas (differently from rabbitmq)
+    values:
+      - ./values/rabbitmq.yaml
+      - ./values/consumer.yaml
+    set:
+      enabled: true
+    asserts:
+      - equal:
+          path: spec.replicas
+          value: 21 # replicaCount

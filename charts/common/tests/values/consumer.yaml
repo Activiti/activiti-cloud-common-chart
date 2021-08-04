@@ -1,0 +1,10 @@
+global:
+  messaging:
+    partitioned: true
+    partitionCount: 21
+
+messaging:
+  enabled: true
+  role: "consumer"
+
+replicaCount: 11
