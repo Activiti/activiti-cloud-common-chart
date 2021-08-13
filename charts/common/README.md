@@ -44,8 +44,6 @@ A Helm chart for Activiti Cloud Common Templates
 | global.kafka.brokers | string | `""` |  |
 | global.kafka.extraEnv | string | `""` |  |
 | global.kafka.port | int | `9092` |  |
-| global.kafka.zkNodes | string | `""` |  |
-| global.kafka.zkPort | int | `2181` |  |
 | global.keycloak.enabled | bool | `true` |  |
 | global.keycloak.extraEnv | string | `""` | adds Keycloak extraEnv to deployments |
 | global.keycloak.host | string | `""` | configure default keycloak host template, i.e "identity.{{ .Values.global.gateway.domain }}" |
@@ -80,8 +78,6 @@ A Helm chart for Activiti Cloud Common Templates
 | kafka.brokers | string | `"{{ tpl .Values.global.kafka.brokers $ }}"` |  |
 | kafka.extraEnv | string | `"{{ tpl .Values.global.kafka.extraEnv $ }}"` |  |
 | kafka.port | string | `"{{ .Values.global.kafka.port }}"` |  |
-| kafka.zkNodes | string | `"{{ tpl .Values.global.kafka.zkNodes $ }}"` |  |
-| kafka.zkPort | string | `"{{ .Values.global.kafka.zkPort }}"` |  |
 | liquibase.args | list | `["-jar","liquibase.jar"]` | arguments for liquibase container |
 | liquibase.enabled | bool | `false` |  |
 | liquibase.env | object | `{}` | add env entries to liquibase init container as dict |

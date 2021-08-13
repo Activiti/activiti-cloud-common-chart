@@ -32,9 +32,5 @@
   value: {{ tpl .Values.kafka.brokers $ | required "kafka.brokers is required" }}
 - name:  SPRING_CLOUD_STREAM_KAFKA_BINDER_DEFAULTBROKERPORT
   value: {{ tpl .Values.kafka.port $ | default "9092" | quote }}
-- name: SPRING_CLOUD_STREAM_KAFKA_BINDER_ZK_NODES
-  value: {{ tpl .Values.kafka.zkNodes $ | required "kafka.zkNodes is required" }}
-- name: SPRING_CLOUD_STREAM_KAFKA_BINDER_DEFAULTZKPORT
-  value: {{ tpl .Values.kafka.zkPort $ | default "2181" | quote }}
 {{ tpl .Values.kafka.extraEnv $ }}
 {{- end -}}

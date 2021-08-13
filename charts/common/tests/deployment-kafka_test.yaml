@@ -26,16 +26,6 @@ tests:
       - contains:
           path: spec.template.spec.containers[0].env
           content:
-            name: SPRING_CLOUD_STREAM_KAFKA_BINDER_ZK_NODES
-            value: RELEASE-NAME-zookeeper
-      - contains:
-          path: spec.template.spec.containers[0].env
-          content:
-            name: SPRING_CLOUD_STREAM_KAFKA_BINDER_DEFAULTZKPORT
-            value: "2181"
-      - contains:
-          path: spec.template.spec.containers[0].env
-          content:
             name: ACT_AUDIT_PRODUCER_TRANSACTION_ID_PREFIX
             value: ""
       - equal:
@@ -64,16 +54,6 @@ tests:
           content:
             name: SPRING_CLOUD_STREAM_KAFKA_BINDER_DEFAULTBROKERPORT
             value: "9092"
-      - notContains:
-          path: spec.template.spec.containers[0].env
-          content:
-            name: SPRING_CLOUD_STREAM_KAFKA_BINDER_ZK_NODES
-            value: RELEASE-NAME-zookeeper
-      - notContains:
-          path: spec.template.spec.containers[0].env
-          content:
-            name: SPRING_CLOUD_STREAM_KAFKA_BINDER_DEFAULTZKPORT
-            value: "2181"
       - notContains:
           path: spec.template.spec.containers[0].env
           content:
