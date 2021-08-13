@@ -47,8 +47,6 @@ global:
   kafka:
     brokers: ""
     port: 9092
-    zkNodes: ""
-    zkPort: 2181
     extraEnv: |
 
 # extraEnv -- add env entries to deployments as string
@@ -192,8 +190,6 @@ rabbitmq:
 kafka:
   brokers: "{{ tpl .Values.global.kafka.brokers $ }}"
   port: "{{ .Values.global.kafka.port }}"
-  zkNodes: "{{ tpl .Values.global.kafka.zkNodes $ }}"
-  zkPort: "{{ .Values.global.kafka.zkPort }}"
   extraEnv: "{{ tpl .Values.global.kafka.extraEnv $ }}"
 
 javaOpts:
