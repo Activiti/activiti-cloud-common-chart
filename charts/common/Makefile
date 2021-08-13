@@ -59,4 +59,10 @@ tag:
 	git push -f -q https://${GITHUB_TOKEN}@github.com/Activiti/activiti-cloud-common-chart.git $(TAG_PREFIX)$(VERSION)
 
 updatebot/push-version:
-	cd ../../ && updatebot push-version --kind helm $(NAME) $(VERSION) ACTIVITI_CLOUD_COMMON_HELM_CHART $(VERSION)
+	cd ../../ && \
+	updatebot push-version --kind helm $(NAME) $(VERSION) ACTIVITI_CLOUD_COMMON_HELM_CHART $(VERSION) && \
+	cd .updatebot-repos/github/activiti/activiti-cloud-full-chart && \
+	helm-docs && \
+	git add charts/activiti-cloud-full-example/README.md && \
+	git commit -m "update helm-docs for common chart v$(VERSION)" --allow-empty && \
+	git push
