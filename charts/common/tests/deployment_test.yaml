@@ -161,7 +161,7 @@ tests:
       name: activiti-app
     set:
       enabled: true
-      global.extraEnv: |-
+      global.extraEnv: |
         - name: ACTIVITI_CLOUD_APPLICATION_NAME
           value: "{{ .Release.Name }}"
     asserts:
