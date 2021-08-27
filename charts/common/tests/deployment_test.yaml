@@ -156,3 +156,17 @@ tests:
             image: activiti/replaceme:latest
             imagePullPolicy: IfNotPresent
             name: liquibase
+  - it: should render global extraEnv
+    release:
+      name: activiti-app
+    set:
+      enabled: true
+      global.extraEnv: |
+        - name: ACTIVITI_CLOUD_APPLICATION_NAME
+          value: "{{ .Release.Name }}"
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: ACTIVITI_CLOUD_APPLICATION_NAME
+            value: activiti-app
