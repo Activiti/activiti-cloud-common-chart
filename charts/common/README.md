@@ -52,6 +52,12 @@ A Helm chart for Activiti Cloud Common Templates
 | global.keycloak.resource | string | `"activiti"` | configure default Keycloak resource |
 | global.keycloak.url | string | `""` | overrides gateway host configuration |
 | global.messaging.broker | string | `""` | configure message broker type for all deployments with messaging.enabled set to 'true' |
+| global.messaging.destinationIllegalCharsRegex | string | `""` |  |
+| global.messaging.destinationIllegalCharsReplacement | string | `""` |  |
+| global.messaging.destinationOverrideEnabled | bool | `false` |  |
+| global.messaging.destinationPrefix | string | `""` |  |
+| global.messaging.destinationSeparator | string | `""` |  |
+| global.messaging.destinations | object | `{}` |  |
 | global.messaging.partitionCount | int | `2` |  |
 | global.messaging.partitioned | bool | `false` |  |
 | global.rabbitmq.extraEnv | string | `""` |  |

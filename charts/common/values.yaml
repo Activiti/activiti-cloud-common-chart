@@ -37,6 +37,12 @@ global:
     broker: ""
     partitioned: false
     partitionCount: 2
+    destinationPrefix: ""
+    destinationSeparator: ""
+    destinationOverrideEnabled: false
+    destinationIllegalCharsRegex: ""
+    destinationIllegalCharsReplacement: ""
+    destinations: {}
 
   rabbitmq:
     host: ""
