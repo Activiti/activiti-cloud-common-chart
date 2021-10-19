@@ -52,14 +52,14 @@ A Helm chart for Activiti Cloud Common Templates
 | global.keycloak.resource | string | `"activiti"` | configure default Keycloak resource |
 | global.keycloak.url | string | `""` | overrides gateway host configuration |
 | global.messaging.broker | string | `""` | configure message broker type for all deployments with messaging.enabled set to 'true' |
-| global.messaging.destinationIllegalCharsRegex | string | `""` |  |
-| global.messaging.destinationIllegalCharsReplacement | string | `""` |  |
-| global.messaging.destinationOverrideEnabled | bool | `false` |  |
-| global.messaging.destinationPrefix | string | `""` |  |
-| global.messaging.destinationSeparator | string | `""` |  |
-| global.messaging.destinations | object | `{}` |  |
-| global.messaging.partitionCount | int | `2` |  |
-| global.messaging.partitioned | bool | `false` |  |
+| global.messaging.destinationIllegalCharsRegex | string | `"[\\t\\s*#:]"` | Configure regex expression to use for replacement of illegal characters in the destination names. |
+| global.messaging.destinationIllegalCharsReplacement | string | `"-"` | Configure replacement character for illegal characters in the destination names. |
+| global.messaging.destinationOverrideEnabled | bool | `false` | Enable destination name override to apply conversion to all destination name for producers, consumers and connectors |
+| global.messaging.destinationPrefix | string | `""` | Set destination separator to use to build full destinations, i.e. <prefix>_destination. |
+| global.messaging.destinationSeparator | string | `"_"` | Set destination separator to use to build full destinations, i.e. prefix<_>destination. |
+| global.messaging.destinations | object | `{}` | Configure destination properties to apply customization to producers and consumer channel bindings with matching destination key. |
+| global.messaging.partitionCount | int | `2` | Set partition count for partitioned mode. |
+| global.messaging.partitioned | bool | `false` | Enable partitioned messaging configuration for engine events producer and consumers |
 | global.rabbitmq.extraEnv | string | `""` |  |
 | global.rabbitmq.host | string | `""` |  |
 | global.rabbitmq.password | string | `"guest"` |  |
