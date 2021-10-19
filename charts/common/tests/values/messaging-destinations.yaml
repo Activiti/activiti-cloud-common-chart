@@ -1,0 +1,18 @@
+global:
+  messaging:
+    broker: rabbitmq
+    destinationPrefix: quiz
+    destinationSeparator: .
+    destinationOverrideEnabled: false
+    destinationIllegalCharsRegex: "[\\t\\s*#:]"
+    destinationIllegalCharsReplacement: "-"
+    destinations:
+      engineEvents:
+        name: engine-events
+        scope: "foo"
+        prefix: "bar"
+        separator: "_"
+
+enabled: true
+messaging:
+  enabled: true
