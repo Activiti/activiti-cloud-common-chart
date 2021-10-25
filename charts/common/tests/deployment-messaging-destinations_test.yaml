@@ -24,8 +24,13 @@ tests:
       - contains:
           path: spec.template.spec.containers[0].env
           content:
-            name: ACTIVITI_CLOUD_MESSAGING_DESTINATION_OVERRIDE_ENABLED
+            name: ACTIVITI_CLOUD_MESSAGING_DESTINATION_TRANSFORMERS_ENABLED
             value: "false"
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: ACTIVITI_CLOUD_MESSAGING_DESTINATION_TRANSFORMERS
+            value: "toLowerCase,replaceIllegalChars"
       - contains:
           path: spec.template.spec.containers[0].env
           content:
