@@ -43,8 +43,10 @@ global:
     destinationPrefix: ""
     # global.messaging.destinationSeparator -- Set destination separator to use to build full destinations, i.e. prefix<_>destination.
     destinationSeparator: "_"
-    # global.messaging.destinationOverrideEnabled -- Enable destination name override to apply conversion to all destination name for producers, consumers and connectors
-    destinationOverrideEnabled: false
+    # global.messaging.destinationTransformersEnabled -- Enable destination name transformers to apply conversion to all destination name for producers, consumers and connectors
+    destinationTransformersEnabled: false
+    # global.messaging.destinationTransformers -- Comma separated list of transformer functions to apply conversion to all destination name for producers, consumers and connectors
+    destinationTransformers: toLowerCase,replaceIllegalChars
     # global.messaging.destinationIllegalCharsRegex -- Configure regex expression to use for replacement of illegal characters in the destination names.
     destinationIllegalCharsRegex: "[\\t\\s*#:]"
     # global.messaging.destinationIllegalCharsReplacement -- Configure replacement character for illegal characters in the destination names.
