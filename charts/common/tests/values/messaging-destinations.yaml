@@ -3,7 +3,7 @@ global:
     broker: rabbitmq
     destinationPrefix: quiz
     destinationSeparator: .
-    destinationTransformers: toLowerCase,replaceIllegalChars
+    destinationTransformers: toLowerCase,escapeIllegalChars
     destinationTransformersEnabled: false
     destinationIllegalCharsRegex: "[\\t\\s*#:]"
     destinationIllegalCharsReplacement: "-"
