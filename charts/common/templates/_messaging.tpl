@@ -28,6 +28,8 @@
   Create SPRING_CLOUD_STREAM_KAFKA_* env.
 */}}
 {{- define "common.messaging.kafka-env" -}}
+- name: ACTIVITI_CLOUD_MESSAGING_BROKER
+  value: kafka
 - name:  SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS
   value: {{ tpl .Values.kafka.brokers $ | required "kafka.brokers is required" }}
 - name:  SPRING_CLOUD_STREAM_KAFKA_BINDER_DEFAULTBROKERPORT
