@@ -206,11 +206,11 @@ tests:
       enabled: true
       ingress.path: /rb
       probePath: "{{ tpl .Values.ingress.path . }}/actuator/health"
-      readinessProbe.path: "{{ tpl .Values.ingress.path . }}/actuator/health/liveness"
+      readinessProbe.path: "{{ tpl .Values.ingress.path . }}/actuator/health/readiness"
     asserts:
       - equal:
           path: spec.template.spec.containers[0].readinessProbe.httpGet.path
-          value: /rb/actuator/health/liveness
+          value: /rb/actuator/health/readiness
       - equal:
           path: spec.template.spec.containers[0].livenessProbe.httpGet.path
           value: /rb/actuator/health
