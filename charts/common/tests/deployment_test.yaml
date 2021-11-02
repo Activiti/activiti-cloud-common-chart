@@ -170,3 +170,47 @@ tests:
           content:
             name: ACTIVITI_CLOUD_APPLICATION_NAME
             value: activiti-app
+  - it: should render probePath
+    release:
+      name: activiti-app
+    set:
+      enabled: true
+      ingress.path: /rb
+      probePath: "{{ tpl .Values.ingress.path . }}/actuator/health"
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].livenessProbe.httpGet.path
+          value: /rb/actuator/health
+      - equal:
+          path: spec.template.spec.containers[0].readinessProbe.httpGet.path
+          value: /rb/actuator/health
+  - it: should render livenessProbe.path
+    release:
+      name: activiti-app
+    set:
+      enabled: true
+      ingress.path: /rb
+      probePath: "{{ tpl .Values.ingress.path . }}/actuator/health"
+      livenessProbe.path: "{{ tpl .Values.ingress.path . }}/actuator/health/liveness"
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].livenessProbe.httpGet.path
+          value: /rb/actuator/health/liveness
+      - equal:
+          path: spec.template.spec.containers[0].readinessProbe.httpGet.path
+          value: /rb/actuator/health
+  - it: should render readinessProbe.path
+    release:
+      name: activiti-app
+    set:
+      enabled: true
+      ingress.path: /rb
+      probePath: "{{ tpl .Values.ingress.path . }}/actuator/health"
+      readinessProbe.path: "{{ tpl .Values.ingress.path . }}/actuator/health/readiness"
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].readinessProbe.httpGet.path
+          value: /rb/actuator/health/readiness
+      - equal:
+          path: spec.template.spec.containers[0].livenessProbe.httpGet.path
+          value: /rb/actuator/health
