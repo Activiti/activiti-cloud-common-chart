@@ -45,7 +45,7 @@ github:
 	   git add . && \
 	   git status && \
 	   git commit -m "fix:(version) release $(NAME)-$(VERSION).tgz" && \
-	   git pull && \
+	   git pull --rebase && \
 	   git push --force origin "$(GITHUB_CHARTS_BRANCH)"
 	rm -rf $(GITHUB_CHARTS_DIR)
 
