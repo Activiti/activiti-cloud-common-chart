@@ -66,6 +66,7 @@ A Helm chart for Activiti Cloud Common Templates
 | global.rabbitmq.password | string | `"guest"` |  |
 | global.rabbitmq.username | string | `"guest"` |  |
 | global.registryPullSecrets | list | `[]` | configure pull secrets for all deployments |
+| hpa.enabled | bool | `false` |  |
 | image.pullPolicy | string | `"IfNotPresent"` |  |
 | image.repository | string | `"activiti/replaceme"` |  |
 | image.tag | string | `"latest"` |  |
