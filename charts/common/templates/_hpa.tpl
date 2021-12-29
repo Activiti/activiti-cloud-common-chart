@@ -28,6 +28,16 @@ spec:
           type: AverageValue
           averageValue: {{ .Values.hpa.memory | quote }}
   {{- end }}
+  behavior:
+    scaleDown:
+      policies:
+      - type: Pods
+        value: 1
+        periodSeconds: 60
+      - type: Percent
+        value: 15
+        periodSeconds: 60
+      selectPolicy: Max
 {{- end -}}
 
 {{- define "common.hpa" -}}

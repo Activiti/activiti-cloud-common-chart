@@ -95,3 +95,21 @@ tests:
             target:
               type: AverageValue
               averageValue: 1500k
+  - it: should render the scaling policies
+    set:
+      enabled: true
+      hpa:
+        enabled: true
+    asserts:
+     - equal:
+        path: spec.behavior
+        value:
+          scaleDown:
+            policies:
+            - type: Pods
+              value: 1
+              periodSeconds: 60
+            - type: Percent
+              value: 15
+              periodSeconds: 60
+            selectPolicy: Max
