@@ -28,6 +28,7 @@ spec:
           type: AverageValue
           averageValue: {{ .Values.hpa.memory | quote }}
   {{- end }}
+  {{- if or (not (hasKey .Values.hpa "scalingPolicesEnabled")) .Values.hpa.scalingPolicesEnabled }}
   behavior:
     scaleDown:
       policies:
@@ -38,6 +39,7 @@ spec:
         value: 15
         periodSeconds: 60
       selectPolicy: Max
+  {{- end }}
 {{- end -}}
 
 {{- define "common.hpa" -}}

@@ -113,3 +113,12 @@ tests:
               value: 15
               periodSeconds: 60
             selectPolicy: Max
+  - it: should not render the scaling policies when disabled
+    set:
+      enabled: true
+      hpa:
+        enabled: true
+        scalingPolicesEnabled: false
+    asserts:
+     - isNull:
+        path: spec.behavior
