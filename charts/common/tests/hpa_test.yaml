@@ -49,7 +49,27 @@ tests:
           value:
             name: rb-common
             namespace: NAMESPACE
-  - it: should render the releaseName in the metadata.name
+  - it: should render Kind StatefulSet when role is consumer
+    release:
+      name: rb
+    set:
+      enabled: true
+      global:
+        messaging:
+          partitioned: true
+      messaging:
+        enabled: true
+        role: consumer
+      hpa:
+        enabled: true
+    asserts:
+      - equal:
+          path: spec.scaleTargetRef
+          value:
+            apiVersion: apps/v1
+            kind: StatefulSet
+            name: rb-common
+  - it: should render Kind Deployment when role is not consumer
     release:
       name: rb
     set:

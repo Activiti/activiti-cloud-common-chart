@@ -7,7 +7,7 @@ metadata:
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
-    kind: Deployment
+    kind: {{ if and .Values.messaging.enabled .Values.global.messaging.partitioned (eq .Values.messaging.role "consumer") }}StatefulSet{{ else }}Deployment{{ end }}
     name: {{ template "common.fullname" . }}
   minReplicas: {{ .Values.hpa.minReplicas }}
   maxReplicas: {{ .Values.hpa.maxReplicas }}
