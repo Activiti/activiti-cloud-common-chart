@@ -16,7 +16,7 @@ tests:
     asserts:
       - hasDocuments:
           count: 0
-  - it: should render minReplicas
+  - it: should render minReplicas and maxReplicas
     set:
       enabled: true
       hpa:
