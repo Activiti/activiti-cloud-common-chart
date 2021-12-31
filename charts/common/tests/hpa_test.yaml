@@ -2,15 +2,13 @@ suite: test runtime bundle hpa
 templates:
   - hpa.yaml
 tests:
-  - it: should render nothing if not enabled
+  - it: should render nothing when not enabled
     set:
-      enabled: true
-      hpa:
-        enabled: false
+      enabled: false
     asserts:
       - hasDocuments:
           count: 0
-  - it: should render nothing if hpa.enabled=false
+  - it: should render nothing when hpa.enabled=false
     set:
       enabled: true
       hpa:
