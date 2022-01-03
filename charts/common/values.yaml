@@ -328,3 +328,6 @@ initContainers: []
 
 # sidecars -- add additional sidecar containers as list
 sidecars: []
+
+hpa:
+  enabled: false
