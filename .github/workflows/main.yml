@@ -16,9 +16,9 @@ jobs:
   pre-commit:
     runs-on: ubuntu-20.04
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-      - name: Set up python
-        uses: actions/setup-python@v2
-      - name: Run pre-commit
-        uses: pre-commit/action@v2.0.0
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+      - uses: Alfresco/alfresco-build-tools/.github/actions/setup-helm-docs@v1.3.0
+      - uses: Alfresco/alfresco-build-tools/.github/actions/setup-kubepug@master
+      - uses: Alfresco/alfresco-build-tools/.github/actions/setup-checkov@master
+      - uses: pre-commit/action@v2.0.3
