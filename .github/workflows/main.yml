@@ -33,3 +33,20 @@ jobs:
           cd ./charts/common
           make build
           make test
+
+  publish:
+    runs-on: ubuntu-20.04
+    needs: build
+    if: ${{ github.event_name == 'push' }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v2
+      - uses: Alfresco/alfresco-build-tools/.github/actions/setup-pysemver@v1.3.0
+      - id: next-release
+        name: Calculate next internal release
+        uses: Alfresco/alfresco-build-tools/.github/actions/calculate-next-internal-version@v1.3.0
+        with:
+          next-version: 7.3.0
+
+      - name: Update VERSION file
+        run: echo ${{steps.next-release.outputs.next-prerelease}} > VERSION
