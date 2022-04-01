@@ -55,11 +55,24 @@ jobs:
       - name: Update VERSION file
         run: echo ${{steps.next-release.outputs.next-prerelease}} > VERSION
 
+      - name: Configure git user
+        if: ${{ github.event_name == 'push' }}
+        run: |
+          git config --global user.name $GITHUB_USERNAME
+          git config --global user.email $GITHUB_USERNAME@users.noreply.github.com
+        env:
+          GITHUB_USERNAME: ${{ secrets.BOT_GITHUB_USERNAME }}
+
       - name: publish
         run: |
+          git config --global user.email "${GITHUB_USER_EMAIL}"
+          echo -e "https://$GITHUB_USERNAME:$GITHUB_TOKEN@github.com" >>  ~/.git-credentials
           cd ./charts/common
           make version
           make tag
           make release
           make github
           make updatebot/push-version
+        env:
+          GITHUB_USERNAME: ${{ secrets.BOT_GITHUB_USERNAME }}
+          GITHUB_TOKEN: ${{ secrets.BOT_GITHUB_TOKEN }}
