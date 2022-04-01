@@ -28,7 +28,8 @@ jobs:
     needs: pre-commit
     steps:
       - uses: actions/checkout@v3
-      - run: |
+      - name: build
+        run: |
           yq e '.version' charts/common/Chart.yaml > VERSION
           cd ./charts/common
           make build
@@ -39,6 +40,9 @@ jobs:
     needs: build
     if: ${{ github.event_name == 'push' }}
     steps:
+      - name: Install updatebot
+        uses: Alfresco/alfresco-build-tools/.github/actions/setup-updatebot@v1.3.0
+
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v2
       - uses: Alfresco/alfresco-build-tools/.github/actions/setup-pysemver@v1.3.0
@@ -50,3 +54,12 @@ jobs:
 
       - name: Update VERSION file
         run: echo ${{steps.next-release.outputs.next-prerelease}} > VERSION
+
+      - name: publish
+        run: |
+          cd ./charts/common
+          make version
+          make tag
+          make release
+          make github
+          make updatebot/push-version
