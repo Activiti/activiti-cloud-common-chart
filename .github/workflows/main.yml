@@ -22,3 +22,13 @@ jobs:
       - uses: Alfresco/alfresco-build-tools/.github/actions/setup-kubepug@master
       - uses: Alfresco/alfresco-build-tools/.github/actions/setup-checkov@master
       - uses: pre-commit/action@v2.0.3
+
+  build:
+    runs-on: ubuntu-20.04
+    needs: pre-commit
+    steps:
+      - uses: actions/checkout@v3
+      - run: |
+          cd ./charts/common
+          make build
+          make test
