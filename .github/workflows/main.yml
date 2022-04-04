@@ -53,6 +53,7 @@ jobs:
 
       - name: publish
         run: |
+          echo -e "https://$GITHUB_USERNAME:$GITHUB_TOKEN@github.com" >>  ~/.git-credentials
           cd ./charts/common
           make version
           make tag
