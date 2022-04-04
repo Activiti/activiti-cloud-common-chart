@@ -40,9 +40,7 @@ jobs:
     needs: build
     if: ${{ github.event_name == 'push' }}
     steps:
-      - name: Install updatebot
-        uses: Alfresco/alfresco-build-tools/.github/actions/setup-updatebot@v1.3.0
-
+      - uses: Alfresco/alfresco-build-tools/.github/actions/setup-updatebot@v1.3.0
       - uses: Alfresco/alfresco-build-tools/.github/actions/setup-helm-docs@v1.3.0
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v2
@@ -56,18 +54,14 @@ jobs:
       - name: Update VERSION file
         run: echo ${{steps.next-release.outputs.next-prerelease}} > VERSION
 
-      - name: Configure git user
-        if: ${{ github.event_name == 'push' }}
-        run: |
-          git config --global user.name $GITHUB_USERNAME
-          git config --global user.email $GITHUB_USERNAME@users.noreply.github.com
-        env:
-          GITHUB_USERNAME: ${{ secrets.BOT_GITHUB_USERNAME }}
+      - name: Configure git user for commit
+        uses: Alfresco/alfresco-build-tools/.github/actions/configure-git-for-commit@dev-elias-3898-gh-actions
+        with:
+          username: ${{ secrets.BOT_GITHUB_USERNAME }}
+          githubToken: ${{ secrets.BOT_GITHUB_TOKEN }}
 
       - name: publish
         run: |
-          git config --global user.email "${GITHUB_USER_EMAIL}"
-          echo -e "https://$GITHUB_USERNAME:$GITHUB_TOKEN@github.com" >>  ~/.git-credentials
           cd ./charts/common
           make version
           make tag
