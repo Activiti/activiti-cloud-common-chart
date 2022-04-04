@@ -12,16 +12,10 @@ on:
   workflow_dispatch:
 
 jobs:
-
   pre-commit:
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v2
-      - uses: Alfresco/alfresco-build-tools/.github/actions/setup-helm-docs@v1.3.0
-      - uses: Alfresco/alfresco-build-tools/.github/actions/setup-kubepug@master
-      - uses: Alfresco/alfresco-build-tools/.github/actions/setup-checkov@master
-      - uses: pre-commit/action@v2.0.3
+      - uses: Alfresco/alfresco-build-tools/.github/actions/run-pre-commit-for-helm@dev-elias-3898-gh-actions
 
   build:
     runs-on: ubuntu-20.04
