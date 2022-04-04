@@ -37,11 +37,9 @@ jobs:
       - uses: Alfresco/alfresco-build-tools/.github/actions/setup-updatebot@v1.3.0
       - uses: Alfresco/alfresco-build-tools/.github/actions/setup-helm-docs@v1.3.0
       - uses: actions/checkout@v3
-      - uses: actions/setup-python@v2
-      - uses: Alfresco/alfresco-build-tools/.github/actions/setup-pysemver@v1.3.0
       - id: next-release
         name: Calculate next internal release
-        uses: Alfresco/alfresco-build-tools/.github/actions/calculate-next-internal-version@v1.3.0
+        uses: Alfresco/alfresco-build-tools/.github/actions/calculate-next-internal-version@dev-elias-3898-gh-actions
         with:
           next-version: 7.3.0
 
