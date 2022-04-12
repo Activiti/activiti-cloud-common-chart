@@ -15,7 +15,10 @@ jobs:
   pre-commit:
     runs-on: ubuntu-20.04
     steps:
-      - uses: Alfresco/alfresco-build-tools/.github/actions/run-pre-commit-for-helm@dev-elias-3898-gh-actions
+      - uses: Alfresco/alfresco-build-tools/.github/actions/setup-helm-docs@v1.3.0
+      - uses: Alfresco/alfresco-build-tools/.github/actions/setup-kubepug@master
+      - uses: Alfresco/alfresco-build-tools/.github/actions/setup-checkov@master
+      - uses: Alfresco/alfresco-build-tools/.github/actions/pre-commit@master
 
   build:
     runs-on: ubuntu-20.04
@@ -46,13 +49,10 @@ jobs:
       - name: Update VERSION file
         run: echo ${{steps.next-release.outputs.next-prerelease}} > VERSION
 
-      - name: Configure git user
-        uses: Alfresco/alfresco-build-tools/.github/actions/configure-git-user@dev-elias-3898-gh-actions
-        with:
-          username: ${{ secrets.BOT_GITHUB_USERNAME }}
-
       - name: publish
         run: |
+          git config --global user.name $GITHUB_USERNAME
+          git config --global user.email $GITHUB_USERNAME@users.noreply.github.com
           echo -e "https://$GITHUB_USERNAME:$GITHUB_TOKEN@github.com" >>  ~/.git-credentials
           cd ./charts/common
           make version
