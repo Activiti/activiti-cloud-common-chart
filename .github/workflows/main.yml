@@ -53,6 +53,7 @@ jobs:
 
       - name: publish
         run: |
+          echo -e "https://$GITHUB_USERNAME:$GITHUB_TOKEN@github.com" >>  ~/.git-credentials
           cd ./charts/common
           make version
           make tag
@@ -60,4 +61,5 @@ jobs:
           make github
           make updatebot/push-version
         env:
+          GITHUB_USERNAME: ${{ secrets.BOT_GITHUB_USERNAME }}
           GITHUB_TOKEN: ${{ secrets.BOT_GITHUB_TOKEN }}
