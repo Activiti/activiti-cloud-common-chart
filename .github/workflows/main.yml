@@ -46,14 +46,13 @@ jobs:
       - name: Update VERSION file
         run: echo ${{steps.next-release.outputs.next-prerelease}} > VERSION
 
-      - name: Configure git user for commit
-        uses: Alfresco/alfresco-build-tools/.github/actions/configure-git-for-commit@dev-elias-3898-gh-actions
+      - name: Configure git user
+        uses: Alfresco/alfresco-build-tools/.github/actions/configure-git-user@dev-elias-3898-gh-actions
         with:
           username: ${{ secrets.BOT_GITHUB_USERNAME }}
 
       - name: publish
         run: |
-          echo -e "https://$GITHUB_USERNAME:$GITHUB_TOKEN@github.com" >>  ~/.git-credentials
           cd ./charts/common
           make version
           make tag
@@ -61,5 +60,4 @@ jobs:
           make github
           make updatebot/push-version
         env:
-          GITHUB_USERNAME: ${{ secrets.BOT_GITHUB_USERNAME }}
           GITHUB_TOKEN: ${{ secrets.BOT_GITHUB_TOKEN }}
