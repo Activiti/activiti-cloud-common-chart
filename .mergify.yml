@@ -1,7 +1,8 @@
 queue_rules:
   - name: default
     conditions:
-      - status-success=Travis CI - Pull Request
+      - status-success=pre-commit
+      - status-success=build
       - label!=do-not-merge
 
 pull_request_rules:
