@@ -65,4 +65,4 @@ updatebot/push-version:
 	helm-docs && \
 	git add charts/activiti-cloud-full-example/README.md && \
 	git commit -m "update helm-docs for common chart v$(VERSION)" --allow-empty && \
-	git push --set-upstream origin $(shell git rev-parse --abbrev-ref HEAD)
+	git push --set-upstream origin $(shell cd .updatebot-repos/github/activiti/activiti-cloud-full-chart && git rev-parse --abbrev-ref HEAD)
