@@ -32,7 +32,7 @@ jobs:
       - name: Build
         uses: ./.github/actions/build-helm-chart
         with:
-          - chart-path: ${{ env.CHARTS_PATH }}
+          chart-path: ${{ env.CHARTS_PATH }}
 
       - name: Setup Helm test plugin
         run: helm plugin install https://github.com/quintush/helm-unittest
