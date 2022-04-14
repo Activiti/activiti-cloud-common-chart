@@ -1,0 +1,15 @@
+name: "Build helm chart"
+description: "Build helm chart by running `helm up` and `helm lint`"
+inputs:
+  chart-path:
+    description: "Path to the Helm chart to build"
+    required: false
+
+runs:
+  using: composite
+  steps:
+    - name: Build and lint
+      shell: bash
+      run: |
+        helm dep up ${{ inputs.chart-path }}
+        helm lint ${{ inputs.chart-path }}
