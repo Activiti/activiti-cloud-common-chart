@@ -18,5 +18,5 @@ runs:
       run: |
         helm dep up ${{ inputs.chart-dir }}
         helm package ${{ inputs.chart-dir }}
-        PACKAGE_FILE=$(ls | grep "*\.tgz")
+        PACKAGE_FILE=$(ls | grep *\.tgz)
         echo "::set-output name=package-file::$PACKAGE_FILE"
