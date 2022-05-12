@@ -72,6 +72,9 @@ jobs:
           git add -u
           git commit -m "release ${{ env.VERSION }}"
           git tag -a ${{ env.VERSION }} -m "Release version ${{ env.VERSION }}"
+        env:
+          GITHUB_USERNAME: ${{ secrets.BOT_GITHUB_USERNAME }}
+
 
       - name: Package Helm Chart
         id: package-helm-chart
@@ -123,3 +126,4 @@ jobs:
           title: $COMMIT_MESSAGE
         env:
           COMMIT_MESSAGE: Bump activiti-cloud-common charts to version ${{ env.VERSION }}
+          GITHUB_USERNAME: ${{ secrets.BOT_GITHUB_USERNAME }}
