@@ -81,9 +81,11 @@ jobs:
       - name: Package Helm Chart
         id: package-helm-chart
         uses: ./.github/actions/package-helm-chart
+        with:
+          chart-dir: ${{ env.CHART_DIR }}
 
       - name: Push tag
-        run: git push origin ${{ env.VERSION }}
+        run: git push origin $VERSION
 
       - name: Publish Helm chart
         uses: ./.github/actions-publish-helm-chart
