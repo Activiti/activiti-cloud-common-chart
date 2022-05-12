@@ -16,7 +16,7 @@ runs:
       id: package
       shell: bash
       run: |
-        helm dep up ${{ inputs.char-dir }}
-        helmp package ${{ inputs.char-dir }}
+        helm dep up ${{ inputs.chart-dir }}
+        helmp package ${{ inputs.chart-dir }}
         PACKAGE_FILE=$(ls | grep "*\.tgz")
         echo "::set-output name=package-file::$PACKAGE_FILE"
