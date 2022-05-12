@@ -70,6 +70,8 @@ jobs:
           git config --global user.name $GITHUB_USERNAME
           git config --global user.email $GITHUB_USERNAME@users.noreply.github.com
           git add -u
+          git status
+          git --no-pager diff --cached
           git commit -m "release ${{ env.VERSION }}"
           git tag -a ${{ env.VERSION }} -m "Release version ${{ env.VERSION }}"
         env:
@@ -113,6 +115,8 @@ jobs:
           cd ${{ env.FULL_CHART_DIR }}
           yq e '(.dependencies.[] | select(.name == "common").version) = env(VERSION)' -i charts/activiti-cloud-full-example/requirements.yaml
           helm-docs
+          git status
+          git --no-pager diff
 
       - name: Create Propagation Pull Request
         uses: peter-evans/create-pull-request@v4
