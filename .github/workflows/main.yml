@@ -12,7 +12,7 @@ on:
   workflow_dispatch:
 
 env:
-  CHARTS_PATH: "charts/common"
+  CHART_DIR: "charts/common"
 
 jobs:
   pre-commit:
@@ -32,42 +32,94 @@ jobs:
       - name: Build
         uses: ./.github/actions/build-helm-chart
         with:
-          chart-path: ${{ env.CHARTS_PATH }}
+          chart-dir: ${{ env.CHART_DIR }}
 
       - name: Setup Helm test plugin
         run: helm plugin install https://github.com/quintush/helm-unittest
 
       - name: Test
-        run: helm unittest ${{ env.CHARTS_PATH }} --helm3
+        run: helm unittest ${{ env.CHART_DIR }} --helm3
 
   publish:
     runs-on: ubuntu-20.04
     needs: build
     if: ${{ github.event_name == 'push' }}
+    outputs:
+      version: ${{ steps.next-release.outputs.next-prerelease }}
     steps:
-      - uses: Alfresco/alfresco-build-tools/.github/actions/setup-updatebot@v1.4.0
-      - uses: Alfresco/alfresco-build-tools/.github/actions/setup-helm-docs@v1.4.0
       - uses: actions/checkout@v3
+
       - id: next-release
         name: Calculate next internal release
         uses: Alfresco/alfresco-build-tools/.github/actions/calculate-next-internal-version@v1.4.0
         with:
           next-version: 7.4.0
 
-      - name: Update VERSION file
-        run: echo ${{steps.next-release.outputs.next-prerelease}} > VERSION
+      - name: Set version env variable
+        run: |
+          echo "VERSION=${{ steps.next-release.outputs.next-prerelease }}" >> $GITHUB_ENV
 
-      - name: publish
+      - name: Update chart version
+        uses: ./.github/actions/update-chart-version
+        with:
+          new-version: ${{env.VERSION}}
+          chart-dir: ${{ env.CHART_DIR }}
+
+      - name: Create local tag
         run: |
           git config --global user.name $GITHUB_USERNAME
           git config --global user.email $GITHUB_USERNAME@users.noreply.github.com
-          echo -e "https://$GITHUB_USERNAME:$GITHUB_TOKEN@github.com" >>  ~/.git-credentials
-          cd ./charts/common
-          make version
-          make tag
-          make release
-          make github
-          make updatebot/push-version
+          git add -u
+          git commit -m "release ${{ env.VERSION }}"
+          git tag -a ${{ env.VERSION }} -m "Release version ${{ env.VERSION }}"
+
+      - name: Package Helm Chart
+        id: package-helm-chart
+        uses: ./.github/actions/package-helm-chart
+
+      - name: Push tag
+        run: git push origin ${{ env.VERSION }}
+
+      - name: Publish Helm chart
+        uses: ./.github/actions-publish-helm-chart
+        with:
+            helm-chart-repository: Activiti/activiti-cloud-helm-charts
+            chart-package: ${{ steps.package-helm-chart.outputs.package-file }}
+            token: ${{ secrets.BOT_GITHUB_TOKEN}}
+
+  propagate:
+    runs-on: ubuntu-20.04
+    needs: publish
+    if: ${{ github.event_name == 'push' }}
+    env:
+      FULL_CHART_DIR: full-chart
+      FULL_CHART_BRANCH: develop
+      VERSION: ${{ needs.publish.outputs.version }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          path: $FULL_CHART_DIR
+          repository: Activiti/activiti-cloud-full-chart
+          ref: $FULL_CHART_BRANCH
+          token: ${{ secrets.BOT_GITHUB_TOKEN }}
+
+      - uses: Alfresco/alfresco-build-tools/.github/actions/setup-helm-docs@v1.4.0
+
+      - name: Update full chart to use new version of common
+        run: |
+          cd ${{ env.FULL_CHART_DIR }}
+          yq e '(.dependencies.[] | select(.name == "common").version) = env(VERSION)' -i charts/activiti-cloud-full-example/requirements.yaml
+          helm-docs
+
+      - name: Create Propagation Pull Request
+        uses: peter-evans/create-pull-request@v4
+        with:
+          token: ${{ secrets.BOT_GITHUB_TOKEN }}
+          path: ${{ env.FULL_CHART_DIR }}
+          commit-message: $COMMIT_MESSAGE
+          committer: $GITHUB_USERNAME
+          branch: ${FULL_CHART_BRANCH}-update-common
+          delete-branch: true
+          title: $COMMIT_MESSAGE
         env:
-          GITHUB_USERNAME: ${{ secrets.BOT_GITHUB_USERNAME }}
-          GITHUB_TOKEN: ${{ secrets.BOT_GITHUB_TOKEN }}
+          COMMIT_MESSAGE: Bump activiti-cloud-common charts to version ${{ env.VERSION }}
