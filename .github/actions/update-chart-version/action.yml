@@ -14,5 +14,5 @@ runs:
     - name: Update version
       shell: bash
       run: |
-        yq -i e '.version = ${{ inputs.new-version }}"' ${{ inputs.chart-dir }}/Chart.yaml
+        yq -i e '.version = "${{ inputs.new-version }}"' ${{ inputs.chart-dir }}/Chart.yaml
         helm-docs
