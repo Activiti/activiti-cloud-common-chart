@@ -67,18 +67,14 @@ jobs:
           new-version: ${{env.VERSION}}
           chart-dir: ${{ env.CHART_DIR }}
 
-      - name: Create local tag
-        env:
-          GITHUB_USERNAME: ${{ secrets.BOT_GITHUB_USERNAME }}
-        run: |
-          git config --global user.name $GITHUB_USERNAME
-          git config --global user.email $GITHUB_USERNAME@users.noreply.github.com
-          git add -u
-          git status
-          git --no-pager diff --cached
-          git commit -m "release $VERSION"
-          git tag -a $VERSION -m "Release version $VERSION"
+      - uses: ./.github/actions/git-commit-changes
+        with:
+          username: ${{ secrets.BOT_GITHUB_USERNAME }}
+          add-options: -u
+          commit-message: "release $VERSION"
 
+      - name: Create local tag
+        run: git tag -a $VERSION -m "Release version $VERSION"
 
       - name: Package Helm Chart
         id: package-helm-chart
@@ -101,37 +97,16 @@ jobs:
     needs: publish
     if: ${{ github.event_name == 'push' }}
     env:
-      FULL_CHART_DIR: full-chart
-      FULL_CHART_BRANCH: develop
       VERSION: ${{ needs.publish.outputs.version }}
     steps:
-      - uses: actions/checkout@v3
-        with:
-          path: $FULL_CHART_DIR
-          repository: Activiti/activiti-cloud-full-chart
-          ref: $FULL_CHART_BRANCH
-          token: ${{ secrets.BOT_GITHUB_TOKEN }}
-
+      - uses: Alfresco/alfresco-build-tools/.github/actions/setup-updatebot@v1.4.0
       - uses: Alfresco/alfresco-build-tools/.github/actions/setup-helm-docs@v1.4.0
 
-      - name: Update full chart to use new version of common
-        run: |
-          cd $FULL_CHART_DIR
-          yq e '(.dependencies.[] | select(.name == "common").version) = env(VERSION)' -i charts/activiti-cloud-full-example/requirements.yaml
-          helm-docs
-          git status
-          git --no-pager diff
-
       - name: Create Propagation Pull Request
-        uses: peter-evans/create-pull-request@v4
-        with:
-          token: ${{ secrets.BOT_GITHUB_TOKEN }}
-          path: ${{ env.FULL_CHART_DIR }}
-          commit-message: $COMMIT_MESSAGE
-          committer: $GITHUB_USERNAME
-          branch: ${FULL_CHART_BRANCH}-update-common
-          delete-branch: true
-          title: $COMMIT_MESSAGE
-        env:
-          COMMIT_MESSAGE: Bump activiti-cloud-common charts to version ${{ env.VERSION }}
-          GITHUB_USERNAME: ${{ secrets.BOT_GITHUB_USERNAME }}
+        run:
+          updatebot push-version --kind helm common $VERSION
+          cd .updatebot-repos/github/activiti/activiti-cloud-full-chart
+          helm-docs
+          git add charts/activiti-cloud-full-example/README.md
+          git commit -m "update helm-docs for common chart $VERSION"
+          git push --set-upstream origin $(git rev-parse --abbrev-ref HEAD)
