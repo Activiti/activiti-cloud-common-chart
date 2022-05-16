@@ -38,7 +38,7 @@ jobs:
         run: helm plugin install https://github.com/quintush/helm-unittest
 
       - name: Test
-        run: helm unittest ${{ env.CHART_DIR }} --helm3
+        run: helm unittest $CHART_DIR --helm3
 
   publish:
     runs-on: ubuntu-20.04
@@ -56,8 +56,10 @@ jobs:
           next-version: 7.4.0
 
       - name: Set version env variable
+        env:
+          VERSION: ${{ steps.next-release.outputs.next-prerelease }}
         run: |
-          echo "VERSION=${{ steps.next-release.outputs.next-prerelease }}" >> $GITHUB_ENV
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
 
       - name: Update chart version
         uses: ./.github/actions/update-chart-version
@@ -66,16 +68,16 @@ jobs:
           chart-dir: ${{ env.CHART_DIR }}
 
       - name: Create local tag
+        env:
+          GITHUB_USERNAME: ${{ secrets.BOT_GITHUB_USERNAME }}
         run: |
           git config --global user.name $GITHUB_USERNAME
           git config --global user.email $GITHUB_USERNAME@users.noreply.github.com
           git add -u
           git status
           git --no-pager diff --cached
-          git commit -m "release ${{ env.VERSION }}"
-          git tag -a ${{ env.VERSION }} -m "Release version ${{ env.VERSION }}"
-        env:
-          GITHUB_USERNAME: ${{ secrets.BOT_GITHUB_USERNAME }}
+          git commit -m "release $VERSION"
+          git tag -a $VERSION -m "Release version $VERSION"
 
 
       - name: Package Helm Chart
@@ -114,7 +116,7 @@ jobs:
 
       - name: Update full chart to use new version of common
         run: |
-          cd ${{ env.FULL_CHART_DIR }}
+          cd $FULL_CHART_DIR
           yq e '(.dependencies.[] | select(.name == "common").version) = env(VERSION)' -i charts/activiti-cloud-full-example/requirements.yaml
           helm-docs
           git status

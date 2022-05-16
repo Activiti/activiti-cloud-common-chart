@@ -29,10 +29,10 @@ runs:
     - name: Add package to Helm repository
       shell: bash
       run: |
-          mkdir ${{ env.HELM_REPO_CHECKOUT_DIR }}/new-charts
+          mkdir ${HELM_REPO_CHECKOUT_DIR}/new-charts
           RELEASE_PACKAGE_NAME=${{ inputs.chart-package }}
-          cp "$RELEASE_PACKAGE_NAME" ${{ HELM_REPO_CHECKOUT_DIR }}/new-charts
-          cd ${{ HELM_REPO_CHECKOUT_DIR }}
+          cp "$RELEASE_PACKAGE_NAME" ${HELM_REPO_CHECKOUT_DIR}/new-charts
+          cd $HELM_REPO_CHECKOUT_DIR
           helm repo index new-charts --merge index.yaml
           cp new-charts/* .
           rm -fr new-charts
