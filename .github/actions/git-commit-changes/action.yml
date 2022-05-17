@@ -10,6 +10,10 @@ inputs:
   commit-message:
     description: "The commit message to be used while committing"
     required: true
+  repository-directory:
+    description: "Path to the the directory holding the git repository"
+    required: false
+
 
 runs:
   using: composite
@@ -17,6 +21,11 @@ runs:
     - name: Commit stagged changes
       shell: bash
       run: |
+        REPO_DIR="${{inputs.repository-directory}}"
+        if [ -n "$REPO_DIR" ]
+        then
+          cd $REPO_DIR
+        fi
         git config --global user.name ${{ inputs.username }}
         git config --global user.email ${{ inputs.username }}@users.noreply.github.com
         git add "${{ inputs.add-options }}"

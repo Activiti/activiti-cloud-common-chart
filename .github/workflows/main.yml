@@ -98,6 +98,7 @@ jobs:
     if: ${{ github.event_name == 'push' }}
     env:
       VERSION: ${{ needs.publish.outputs.version }}
+      UPDATEBOT_FULL_CHART_REPO_PATH: .updatebot-repos/github/activiti/activiti-cloud-full-chart
     steps:
       - uses: actions/checkout@v3
       - uses: Alfresco/alfresco-build-tools/.github/actions/setup-updatebot@v1.4.0
@@ -112,15 +113,16 @@ jobs:
           updatebot push-version --kind helm common $VERSION
 
       - name: Update helm docs
-        run: |
-          cd .updatebot-repos/github/activiti/activiti-cloud-full-chart
-          helm-docs
+        working-directory: $UPDATEBOT_FULL_CHART_REPO_PATH
+        run: helm-docs
 
       - uses: ./.github/actions/git-commit-changes
         with:
           username: ${{ secrets.BOT_GITHUB_USERNAME }}
           add-options: charts/activiti-cloud-full-example/README.md
+          repository-directory: $UPDATEBOT_FULL_CHART_REPO_PATH
           commit-message: "update helm-docs for common chart $VERSION"
 
       - name: Push helm docs update
+        working-directory: $UPDATEBOT_FULL_CHART_REPO_PATH
         run: git push --set-upstream origin $(git rev-parse --abbrev-ref HEAD)
