@@ -46,6 +46,8 @@ jobs:
     with:
       next-version: 7.4.0
       chart-dir: charts/common
+      helm-charts-repo: Activiti/activiti-cloud-helm-charts
+      helm-charts-repo-branch: gh-pages
     secrets: inherit
 
   propagate:
