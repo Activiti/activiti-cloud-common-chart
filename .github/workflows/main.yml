@@ -11,55 +11,77 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
+env:
+  CHART_DIR: "charts/common"
+
 jobs:
   pre-commit:
     runs-on: ubuntu-20.04
     steps:
-      - uses: Alfresco/alfresco-build-tools/.github/actions/setup-helm-docs@v1.4.0
-      - uses: Alfresco/alfresco-build-tools/.github/actions/setup-kubepug@v1.4.0
-      - uses: Alfresco/alfresco-build-tools/.github/actions/setup-checkov@v1.4.0
-      - uses: Alfresco/alfresco-build-tools/.github/actions/pre-commit@v1.4.0
+      - uses: Alfresco/alfresco-build-tools/.github/actions/setup-helm-docs@v1.5.0
+      - uses: Alfresco/alfresco-build-tools/.github/actions/setup-kubepug@v1.5.0
+      - uses: Alfresco/alfresco-build-tools/.github/actions/setup-checkov@v1.5.0
+      - uses: Alfresco/alfresco-build-tools/.github/actions/pre-commit@v1.5.0
 
   build:
     runs-on: ubuntu-20.04
     needs: pre-commit
     steps:
       - uses: actions/checkout@v3
-      - name: build
-        run: |
-          yq e '.version' charts/common/Chart.yaml > VERSION
-          cd ./charts/common
-          make build
-          make test
+
+      - name: Build
+        uses: Alfresco/alfresco-build-tools/.github/actions/build-helm-chart@v1.5.0
+        with:
+          chart-dir: ${{ env.CHART_DIR }}
+
+      - name: Setup Helm test plugin
+        run: helm plugin install https://github.com/quintush/helm-unittest
+
+      - name: Test
+        run: helm unittest $CHART_DIR --helm3
 
   publish:
-    runs-on: ubuntu-20.04
-    needs: build
     if: ${{ github.event_name == 'push' }}
+    uses: Alfresco/alfresco-build-tools/.github/workflows/helm-publish-new-package-version.yml@v1.5.0
+    needs: build
+    with:
+      next-version: 7.4.0
+      chart-dir: charts/common
+      helm-charts-repo: Activiti/activiti-cloud-helm-charts
+      helm-charts-repo-branch: gh-pages
+    secrets: inherit
+
+  propagate:
+    runs-on: ubuntu-20.04
+    needs: publish
+    if: ${{ github.event_name == 'push' }}
+    env:
+      VERSION: ${{ needs.publish.outputs.version }}
+      UPDATEBOT_FULL_CHART_REPO_PATH: .updatebot-repos/github/activiti/activiti-cloud-full-chart
     steps:
-      - uses: Alfresco/alfresco-build-tools/.github/actions/setup-updatebot@v1.4.0
-      - uses: Alfresco/alfresco-build-tools/.github/actions/setup-helm-docs@v1.4.0
       - uses: actions/checkout@v3
-      - id: next-release
-        name: Calculate next internal release
-        uses: Alfresco/alfresco-build-tools/.github/actions/calculate-next-internal-version@v1.4.0
-        with:
-          next-version: 7.4.0
+      - uses: Alfresco/alfresco-build-tools/.github/actions/setup-updatebot@v1.5.0
+      - uses: Alfresco/alfresco-build-tools/.github/actions/setup-helm-docs@v1.5.0
 
-      - name: Update VERSION file
-        run: echo ${{steps.next-release.outputs.next-prerelease}} > VERSION
-
-      - name: publish
-        run: |
-          git config --global user.name $GITHUB_USERNAME
-          git config --global user.email $GITHUB_USERNAME@users.noreply.github.com
-          echo -e "https://$GITHUB_USERNAME:$GITHUB_TOKEN@github.com" >>  ~/.git-credentials
-          cd ./charts/common
-          make version
-          make tag
-          make release
-          make github
-          make updatebot/push-version
+      - name: Run updatebot
         env:
           GITHUB_USERNAME: ${{ secrets.BOT_GITHUB_USERNAME }}
           GITHUB_TOKEN: ${{ secrets.BOT_GITHUB_TOKEN }}
+        run: |
+          echo -e "https://$GITHUB_USERNAME:$GITHUB_TOKEN@github.com" >>  ~/.git-credentials
+          updatebot push-version --kind helm common $VERSION
+
+      - name: Update helm docs
+        working-directory: ${{ env.UPDATEBOT_FULL_CHART_REPO_PATH}}
+        run: helm-docs
+
+      - uses: Alfresco/alfresco-build-tools/.github/actions/git-commit-changes@v1.5.0
+        with:
+          username: ${{ secrets.BOT_GITHUB_USERNAME }}
+          add-options: charts/activiti-cloud-full-example/README.md
+          repository-directory: ${{ env.UPDATEBOT_FULL_CHART_REPO_PATH}}
+          commit-message: "update helm-docs for common chart $VERSION"
+
+      - name: Push helm docs update
+        working-directory: ${{ env.UPDATEBOT_FULL_CHART_REPO_PATH}}
+        run: git push --set-upstream origin $(git rev-parse --abbrev-ref HEAD)
