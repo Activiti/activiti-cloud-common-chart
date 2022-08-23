@@ -54,7 +54,7 @@ jobs:
         id: parse-next-release
         uses: Alfresco/alfresco-build-tools/.github/actions/parse-next-release-from-chart@aae-8254-actions-for-activiti-script
         with:
-          chart-dir: charts/common
+          chart-dir: ${{ env.CHART_DIR }}
 
 
   publish:
