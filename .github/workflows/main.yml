@@ -44,7 +44,7 @@ jobs:
 
   parse-next-release:
     runs-on: ubuntu-latest
-    if: ${{ github.event_name == 'push' }}
+    if: github.event_name == 'push'
     needs: build
     outputs:
       next-release: ${{ steps.parse-next-release.outputs.next-release }}
@@ -57,7 +57,7 @@ jobs:
           chart-dir: ${{ env.CHART_DIR }}
 
   publish:
-    if: ${{ github.event_name == 'push' }}
+    if: github.event_name == 'push'
     uses: Alfresco/alfresco-build-tools/.github/workflows/helm-publish-new-package-version.yml@v1.20.0
     needs: parse-next-release
     with:
@@ -70,7 +70,7 @@ jobs:
   propagate:
     runs-on: ubuntu-latest
     needs: publish
-    if: ${{ github.event_name == 'push' }}
+    if: github.event_name == 'push'
     env:
       VERSION: ${{ needs.publish.outputs.version }}
       UPDATEBOT_FULL_CHART_REPO_PATH: .updatebot-repos/github/activiti/activiti-cloud-full-chart
