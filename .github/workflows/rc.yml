@@ -9,6 +9,7 @@ env:
   CHART_DIR: "charts/common"
   HELM_REPO_BASE_URL: https://activiti.github.io/activiti-cloud-helm-charts
   HELM_REPO: Activiti/activiti-cloud-helm-charts
+  HELM_REPO_NAME: activiti-cloud-helm-charts
   HELM_REPO_BRANCH: gh-pages
   HELM_REPO_SUBFOLDER: .
 
@@ -20,19 +21,30 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - id: helm-release-and-publish
-        name: Release and publish helm chart
-        uses: Alfresco/alfresco-build-tools/.github/actions/helm-release-and-publish@v1.23.0
+      - id: helm-package-chart
+        name: Package Helm chart
+        uses: Alfresco/alfresco-build-tools/.github/actions/helm-package-chart@v1.23.0
         with:
-          version: ${{ env.VERSION }}
           chart-dir: ${{ env.CHART_DIR }}
-          helm-repository: ${{ env.HELM_REPO }}
-          helm-repository-branch: ${{ env.HELM_REPO_BRANCH }}
-          helm-repository-subfolder: ${{ env.HELM_REPO_SUBFOLDER }}
-          helm-repository-base-url: ${{ env.HELM_REPO_BASE_URL }}
-          helm-repository-token: ${{ secrets.BOT_GITHUB_TOKEN }}
+
+      - id: helm-publish-chart
+        name: Publish Helm chart
+        uses: Alfresco/alfresco-build-tools/.github/actions/helm-publish-chart@v1.23.0
+        with:
+          chart-package: ${{ steps.helm-package-chart.outputs.package-file-path }}
+          helm-charts-repo: ${{ env.HELM_REPO }}
+          helm-charts-repo-branch: ${{ env.HELM_REPO_BRANCH }}
+          helm-charts-repo-subfolder: ${{ env.HELM_REPO_SUBFOLDER }}
+          helm-charts-repo-base-url: ${{ env.HELM_REPO_BASE_URL }}
+          token: ${{ secrets.BOT_GITHUB_TOKEN }}
           git-username: ${{ secrets.BOT_GITHUB_USERNAME }}
-          do-push: ${{ github.event_name == 'push' }}
+
+      - uses: Activiti/activiti-scripts/.github/actions/wait-for-chart@master
+        with:
+          chart: ${{ env.CHART_NAME }}
+          version: ${{ env.VERSION }}
+          helm-repo-name:  ${{ env.HELM_REPO_NAME }}
+          helm-repo-url: ${{ env.HELM_REPO_BASE_URL }}
 
       - name: Create prerelease
         env:
