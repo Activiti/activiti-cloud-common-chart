@@ -9,6 +9,7 @@ env:
   CHART_DIR: "charts/common"
   HELM_REPO_BASE_URL: https://activiti.github.io/activiti-cloud-helm-charts
   HELM_REPO: Activiti/activiti-cloud-helm-charts
+  HELM_REPO_NAME: activiti-cloud-helm-charts
   HELM_REPO_BRANCH: gh-pages
   HELM_REPO_SUBFOLDER: .
 
@@ -32,7 +33,13 @@ jobs:
           helm-repository-base-url: ${{ env.HELM_REPO_BASE_URL }}
           helm-repository-token: ${{ secrets.BOT_GITHUB_TOKEN }}
           git-username: ${{ secrets.BOT_GITHUB_USERNAME }}
-          do-push: ${{ github.event_name == 'push' }}
+
+      - uses: Activiti/activiti-scripts/.github/actions/wait-for-chart@master
+        with:
+          chart: ${{ env.CHART_NAME }}
+          version: ${{ env.VERSION }}
+          helm-repo-name:  ${{ env.HELM_REPO_NAME }}
+          helm-repo-url: ${{ env.HELM_REPO_BASE_URL }}
 
       - name: Create prerelease
         env:
