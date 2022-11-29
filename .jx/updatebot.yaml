@@ -1,0 +1,40 @@
+apiVersion: updatebot.jenkins-x.io/v1alpha1
+kind: UpdateConfig
+spec:
+  rules:
+    - urls:
+        - https://github.com/Activiti/activiti-cloud-full-chart
+      reusePullRequest: true
+      changes:
+        - command:
+            name: sh
+            args:
+              - -c
+              - |
+                cd charts/activiti-cloud-full-example
+                yq -i e '.dependencies[] |= select(.name == "common").version=env(VERSION)' requirements.yaml
+                helm-docs
+    - urls:
+        - https://github.com/Alfresco/alfresco-process-infrastructure-deployment
+      reusePullRequest: true
+      changes:
+        - command:
+            name: sh
+            args:
+              - -c
+              - |
+                cd helm/alfresco-process-infrastructure
+                yq -i e '.dependencies[] |= select(.name == "common").version=env(VERSION)' Chart.yaml
+                helm-docs
+    - urls:
+        - https://github.com/Alfresco/alfresco-process-application-deployment
+      reusePullRequest: true
+      changes:
+        - command:
+            name: sh
+            args:
+              - -c
+              - |
+                cd helm/alfresco-process-application
+                yq -i e '.dependencies[] |= select(.name == "common").version=env(VERSION)' Chart.yaml
+                helm-docs

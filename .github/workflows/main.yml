@@ -68,39 +68,25 @@ jobs:
     secrets: inherit
 
   propagate:
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
     needs: publish
-    if: github.event_name == 'push'
     env:
       VERSION: ${{ needs.publish.outputs.version }}
-      UPDATEBOT_FULL_CHART_REPO_PATH: .updatebot-repos/github/activiti/activiti-cloud-full-chart
+      DEVELOPMENT_BRANCH: ${{ github.ref_name }}
     steps:
       - uses: actions/checkout@v3
-      - uses: Alfresco/alfresco-build-tools/.github/actions/setup-updatebot@v1.22.0
       - uses: Alfresco/alfresco-build-tools/.github/actions/setup-helm-docs@v1.22.0
-
-      - name: Run updatebot
+      - uses: Alfresco/alfresco-build-tools/.github/actions/jx-updatebot-pr@v1.22.0
         env:
-          GITHUB_USERNAME: ${{ secrets.BOT_GITHUB_USERNAME }}
-          GITHUB_TOKEN: ${{ secrets.BOT_GITHUB_TOKEN }}
-        run: |
-          echo -e "https://$GITHUB_USERNAME:$GITHUB_TOKEN@github.com" >>  ~/.git-credentials
-          updatebot push-version --kind helm common $VERSION
-
-      - name: Update helm docs
-        working-directory: ${{ env.UPDATEBOT_FULL_CHART_REPO_PATH}}
-        run: helm-docs
-
-      - uses: Alfresco/alfresco-build-tools/.github/actions/git-commit-changes@v1.22.0
+          GH_TOKEN: ${{ secrets.BOT_GITHUB_TOKEN }}
         with:
-          username: ${{ secrets.BOT_GITHUB_USERNAME }}
-          add-options: charts/activiti-cloud-full-example/README.md
-          repository-directory: ${{ env.UPDATEBOT_FULL_CHART_REPO_PATH}}
-          commit-message: "update helm-docs for common chart $VERSION"
-
-      - name: Push helm docs update
-        working-directory: ${{ env.UPDATEBOT_FULL_CHART_REPO_PATH}}
-        run: git push --set-upstream origin $(git rev-parse --abbrev-ref HEAD)
+          version: ${{ env.VERSION }}
+          auto-merge: 'true'
+          labels: ${{ env.DEVELOPMENT_BRANCH }}
+          git-username: ${{ secrets.BOT_GITHUB_USERNAME }}
+          git-token: ${{ secrets.BOT_GITHUB_TOKEN }}
+          git-author-name: ${{ secrets.BOT_GITHUB_USERNAME }}
 
   notify:
     runs-on: ubuntu-latest
