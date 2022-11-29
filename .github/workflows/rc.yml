@@ -6,6 +6,7 @@ on:
       - '[0-9]+.[0-9]+.[0-9]+-rc.[0-9]+'
 
 env:
+  CHART_NAME: common
   CHART_DIR: "charts/common"
   HELM_REPO_BASE_URL: https://activiti.github.io/activiti-cloud-helm-charts
   HELM_REPO: Activiti/activiti-cloud-helm-charts
