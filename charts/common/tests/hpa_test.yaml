@@ -47,13 +47,14 @@ tests:
           value:
             name: rb-common
             namespace: NAMESPACE
-  - it: should render Kind StatefulSet when role is consumer
+  - it: should render Kind StatefulSet as target when role is consumer
     release:
       name: rb
     set:
       enabled: true
       global:
         messaging:
+          broker: rabbitmq
           partitioned: true
       messaging:
         enabled: true
@@ -67,7 +68,7 @@ tests:
             apiVersion: apps/v1
             kind: StatefulSet
             name: rb-common
-  - it: should render Kind Deployment when role is not consumer
+  - it: should render Kind Deployment as target when role is not consumer
     release:
       name: rb
     set:

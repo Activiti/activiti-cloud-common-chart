@@ -6,7 +6,7 @@ GITHUB_CHARTS_REPO := "https://${GITHUB_TOKEN}@github.com/Activiti/activiti-clou
 GITHUB_CHARTS_BRANCH := $(or $(GITHUB_CHARTS_BRANCH),gh-pages)
 
 plugin:
-	helm plugin install https://github.com/quintush/helm-unittest || true
+	helm plugin install https://github.com/helm-unittest/helm-unittest.git --version v0.3.2 || true
 
 build: clean
 	helm dep up
@@ -16,7 +16,7 @@ install: build
 	helm install . ${NAME}
 
 test: plugin
-	helm unittest . --helm3
+	helm unittest .
 
 upgrade: clean build
 	helm upgrade ${NAME} .
