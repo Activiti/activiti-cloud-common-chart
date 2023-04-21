@@ -7,6 +7,7 @@ spec:
     {{- else }}
   replicas: {{ .Values.global.messaging.partitionCount }}
     {{- end }}
+  serviceAccountName: {{ include "common.serviceAccountName" . }}
   serviceName: {{ template "common.service.name" . }}
   podManagementPolicy: {{ .Values.statefulset.podManagementPolicy }}
   updateStrategy:
