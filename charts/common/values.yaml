@@ -178,7 +178,7 @@ db:
   ddlAuto: validate
 
 messaging:
-  enabled: false
+  enabled: true
   # messaging.role -- required configuration of the messaging role, i.e. producer, consumer, or connector
   role: ""
   producer:
