@@ -56,7 +56,7 @@ tests:
         messaging:
           partitioned: true
       messaging:
-        enabled: true
+        enabled: false
         role: consumer
       hpa:
         enabled: true
