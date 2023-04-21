@@ -99,7 +99,7 @@ A Helm chart for Activiti Cloud Common Templates
 | livenessProbe.successThreshold | int | `1` |  |
 | livenessProbe.timeoutSeconds | int | `4` |  |
 | messaging.consumer.config.script | string | `"echo activiti.cloud.messaging.broker={{ .Values.global.messaging.broker }} >> $APPLICATION_PROPERTIES\necho activiti.cloud.messaging.partitioned={{ .Values.global.messaging.partitioned }} >> $APPLICATION_PROPERTIES\necho activiti.cloud.messaging.partition-count={{ .Values.global.messaging.partitionCount }} >> $APPLICATION_PROPERTIES\necho activiti.cloud.messaging.instance-index=${HOSTNAME##*-} >> $APPLICATION_PROPERTIES\n"` |  |
-| messaging.enabled | bool | `true` |  |
+| messaging.enabled | bool | `false` |  |
 | messaging.producer.config.script | string | `"echo activiti.cloud.messaging.broker={{ .Values.global.messaging.broker }} >> $APPLICATION_PROPERTIES\necho activiti.cloud.messaging.partitioned={{ .Values.global.messaging.partitioned }} >> $APPLICATION_PROPERTIES\necho activiti.cloud.messaging.partition-count={{ .Values.global.messaging.partitionCount }} >> $APPLICATION_PROPERTIES\n"` |  |
 | messaging.role | string | `""` | required configuration of the messaging role, i.e. producer, consumer, or connector |
 | nodeSelector | object | `{}` | allows customising nodeSelector |
