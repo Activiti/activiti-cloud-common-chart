@@ -139,6 +139,11 @@ A Helm chart for Activiti Cloud Common Templates
 | service.portName | string | `"http"` |  |
 | service.portProtocol | string | `"TCP"` |  |
 | service.type | string | `"ClusterIP"` |  |
+| serviceAccount.annotations."eks.amazonaws.com/role-arn" | string | `"arn:aws:iam::175125429442:role/deployment-service-events-role"` |  |
+| serviceAccount.annotations."eks.amazonaws.com/sts-regional-endpoints" | bool | `true` |  |
+| serviceAccount.create | bool | `true` |  |
+| serviceAccount.name | string | `"service-account-ds"` |  |
+| serviceAccount.namespace | string | `"aae"` |  |
 | sidecars | list | `[]` | add additional sidecar containers as list |
 | statefulset.podManagementPolicy | string | `"Parallel"` |  |
 | statefulset.updateStrategyType | string | `"RollingUpdate"` |  |
