@@ -29,7 +29,9 @@ spec:
         {{- include "common.values.tpl" (dict "value" . "context" $) | nindent 8 }}
     {{- end }}
     spec:
+      {{- if .Values.serviceAccount.create }}
       serviceAccountName: {{ include "common.serviceAccountName" . }}
+      {{- end }}
       {{- with (include "common.registry-pull-secrets" .) }}
       imagePullSecrets:
         {{- . | nindent 8 }}
