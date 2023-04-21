@@ -139,6 +139,9 @@ A Helm chart for Activiti Cloud Common Templates
 | service.portName | string | `"http"` |  |
 | service.portProtocol | string | `"TCP"` |  |
 | service.type | string | `"ClusterIP"` |  |
+| serviceAccount.annotations | object | `{}` |  |
+| serviceAccount.create | bool | `false` |  |
+| serviceAccount.name | string | `""` |  |
 | sidecars | list | `[]` | add additional sidecar containers as list |
 | statefulset.podManagementPolicy | string | `"Parallel"` |  |
 | statefulset.updateStrategyType | string | `"RollingUpdate"` |  |
