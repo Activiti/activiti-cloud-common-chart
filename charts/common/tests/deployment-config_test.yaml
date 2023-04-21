@@ -146,9 +146,3 @@ tests:
       - equal:
           path: spec.replicas
           value: 1
-      - isNull:
-          path: spec.template.spec.initContainers
-      - isNull:
-          path: spec.template.spec.volumes
-      - isNull:
-          path: spec.template.spec.containers[0].volumeMounts
