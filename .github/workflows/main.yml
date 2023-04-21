@@ -46,7 +46,7 @@ jobs:
         run: helm plugin install https://github.com/quintush/helm-unittest
 
       - name: Test
-        run: helm unittest $CHART_DIR --helm3
+        run: helm unittest $CHART_DIR
 
   publish:
     runs-on: ubuntu-latest
