@@ -7,7 +7,6 @@ spec:
     {{- else }}
   replicas: {{ .Values.global.messaging.partitionCount }}
     {{- end }}
-  serviceAccountName: {{ include "common.serviceAccountName" . }}
   serviceName: {{ template "common.service.name" . }}
   podManagementPolicy: {{ .Values.statefulset.podManagementPolicy }}
   updateStrategy:
@@ -30,6 +29,7 @@ spec:
         {{- include "common.values.tpl" (dict "value" . "context" $) | nindent 8 }}
     {{- end }}
     spec:
+      serviceAccountName: {{ include "common.serviceAccountName" . }}
       {{- with (include "common.registry-pull-secrets" .) }}
       imagePullSecrets:
         {{- . | nindent 8 }}
