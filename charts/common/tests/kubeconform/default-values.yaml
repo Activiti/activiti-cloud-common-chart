@@ -1,0 +1,7 @@
+enabled: true
+serviceAccount:
+  create: true
+  annotations:
+    eks.amazonaws.com/role-arn: arn:aws:iam::123456789:role/my-role
+    eks.amazonaws.com/sts-regional-endpoints: true
+    test1: test1-value

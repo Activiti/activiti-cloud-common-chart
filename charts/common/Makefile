@@ -7,6 +7,7 @@ GITHUB_CHARTS_BRANCH := $(or $(GITHUB_CHARTS_BRANCH),gh-pages)
 
 plugin:
 	helm plugin install https://github.com/helm-unittest/helm-unittest.git --version v0.3.2 || true
+	helm plugin install https://github.com/jtyr/kubeconform-helm --version v0.1.12 || true
 
 build: clean
 	helm dep up
@@ -17,6 +18,7 @@ install: build
 
 test: plugin
 	helm unittest .
+	helm kubeconform .
 
 upgrade: clean build
 	helm upgrade ${NAME} .
