@@ -24,11 +24,11 @@ jobs:
   pre-commit:
     runs-on: ubuntu-latest
     steps:
-      - uses: Alfresco/alfresco-build-tools/.github/actions/setup-helm-docs@v1.36.0
+      - uses: Alfresco/alfresco-build-tools/.github/actions/setup-helm-docs@v2.2.0
       - uses: bridgecrewio/checkov-action@v12.1839.0
         with:
           framework: kubernetes
-      - uses: Alfresco/alfresco-build-tools/.github/actions/pre-commit@v1.36.0
+      - uses: Alfresco/alfresco-build-tools/.github/actions/pre-commit@v2.2.0
 
   build:
     runs-on: ubuntu-latest
@@ -37,7 +37,7 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: Build
-        uses: Alfresco/alfresco-build-tools/.github/actions/helm-build-chart@v1.36.0
+        uses: Alfresco/alfresco-build-tools/.github/actions/helm-build-chart@v2.2.0
         with:
           chart-dir: ${{ env.CHART_DIR }}
 
@@ -57,19 +57,19 @@ jobs:
 
       - name: Parse next release
         id: helm-parse-next-release
-        uses: Alfresco/alfresco-build-tools/.github/actions/helm-parse-next-release@v1.36.0
+        uses: Alfresco/alfresco-build-tools/.github/actions/helm-parse-next-release@v2.2.0
         with:
           chart-dir: ${{ env.CHART_DIR }}
 
       - id: calculate-next-internal-version
         name: Calculate next internal release
-        uses: Alfresco/alfresco-build-tools/.github/actions/calculate-next-internal-version@v1.36.0
+        uses: Alfresco/alfresco-build-tools/.github/actions/calculate-next-internal-version@v2.2.0
         with:
           next-version: ${{ steps.helm-parse-next-release.outputs.next-release }}
 
       - id: helm-release-and-publish
         name: Release and publish helm chart
-        uses: Alfresco/alfresco-build-tools/.github/actions/helm-release-and-publish@v1.36.0
+        uses: Alfresco/alfresco-build-tools/.github/actions/helm-release-and-publish@v2.2.0
         with:
           version: ${{ steps.calculate-next-internal-version.outputs.next-prerelease }}
           chart-dir: ${{ env.CHART_DIR }}
@@ -96,8 +96,8 @@ jobs:
           helm-repo-name:  ${{ env.HELM_REPO_NAME }}
           helm-repo-url: ${{ env.HELM_REPO_BASE_URL }}
       - uses: actions/checkout@v3
-      - uses: Alfresco/alfresco-build-tools/.github/actions/setup-helm-docs@v1.36.0
-      - uses: Alfresco/alfresco-build-tools/.github/actions/jx-updatebot-pr@v1.36.0
+      - uses: Alfresco/alfresco-build-tools/.github/actions/setup-helm-docs@v2.2.0
+      - uses: Alfresco/alfresco-build-tools/.github/actions/jx-updatebot-pr@v2.2.0
         env:
           GH_TOKEN: ${{ secrets.BOT_GITHUB_TOKEN }}
         with:
@@ -117,7 +117,7 @@ jobs:
     if: always() && failure() && github.event_name == 'push'
     steps:
       - name: Slack Notification
-        uses: Alfresco/alfresco-build-tools/.github/actions/send-slack-notification@v1.36.0
+        uses: Alfresco/alfresco-build-tools/.github/actions/send-slack-notification@v2.2.0
         with:
           channel-id: 'eng-hxp-studio-activiti-gh-notifs'
           token: ${{ secrets.SLACK_NOTIFICATION_BOT_TOKEN }}
