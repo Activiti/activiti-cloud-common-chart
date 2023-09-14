@@ -82,6 +82,8 @@ jobs:
       - id: helm-release-and-publish
         name: Release and publish helm chart
         uses: Wandalen/wretry.action@v1.3.0
+        env:
+          GH_TOKEN: ${{ secrets.BOT_GITHUB_TOKEN }}
         with:
           attempt_limit: 3
           attempt_delay: 2000
