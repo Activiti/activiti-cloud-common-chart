@@ -81,7 +81,7 @@ jobs:
 
       - id: helm-release-and-publish
         name: Release and publish helm chart
-        uses: Wandalen/wretry.action@v1.3.0
+        uses: igdianov/wretry.action@master
         env:
           GH_TOKEN: ${{ secrets.BOT_GITHUB_TOKEN }}
         with:
