@@ -31,9 +31,10 @@ jobs:
       - id: helm-publish-chart
         name: Publish Helm chart
         uses: Wandalen/wretry.action@v1.3.0
-          action: Alfresco/alfresco-build-tools/.github/actions/helm-publish-chart@v1.36.0
+        with:
           attempt_limit: 3
           attempt_delay: 2000
+          action: Alfresco/alfresco-build-tools/.github/actions/helm-publish-chart@v1.36.0
           with: |
             chart-package: ${{ steps.helm-package-chart.outputs.package-file-path }}
             helm-charts-repo: ${{ env.HELM_REPO }}

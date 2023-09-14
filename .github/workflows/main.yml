@@ -83,9 +83,9 @@ jobs:
         name: Release and publish helm chart
         uses: Wandalen/wretry.action@v1.3.0
         with:
-          action: Alfresco/alfresco-build-tools/.github/actions/helm-release-and-publish@v1.36.0
           attempt_limit: 3
           attempt_delay: 2000
+          action: Alfresco/alfresco-build-tools/.github/actions/helm-release-and-publish@v1.36.0
           with: |
             version: ${{ steps.calculate-next-internal-version.outputs.next-prerelease }}
             chart-dir: ${{ env.CHART_DIR }}
