@@ -79,33 +79,19 @@ jobs:
         with:
           next-version: ${{ steps.helm-parse-next-release.outputs.next-release }}
 
-      - name: Test Retry Action
-        uses: igdianov/wretry.action@master
-        continue-on-error: true
-        with:
-          attempt_limit: 5
-          attempt_delay: 1000
-          command: exit 1
-
       - id: helm-release-and-publish
         name: Release and publish helm chart
-        uses: igdianov/wretry.action@master
-        env:
-          GH_TOKEN: ${{ secrets.BOT_GITHUB_TOKEN }}
+        uses: Alfresco/alfresco-build-tools/.github/actions/helm-release-and-publish@v1.36.0
         with:
-          attempt_limit: 3
-          attempt_delay: 2000
-          action: Alfresco/alfresco-build-tools/.github/actions/helm-release-and-publish@v1.36.0
-          with: |
-            version: ${{ steps.calculate-next-internal-version.outputs.next-prerelease }}
-            chart-dir: ${{ env.CHART_DIR }}
-            helm-repository: ${{ env.HELM_REPO }}
-            helm-repository-branch: ${{ env.HELM_REPO_BRANCH }}
-            helm-repository-subfolder: ${{ env.HELM_REPO_SUBFOLDER }}
-            helm-repository-base-url: ${{ env.HELM_REPO_BASE_URL }}
-            helm-repository-token: ${{ secrets.BOT_GITHUB_TOKEN }}
-            git-username: ${{ secrets.BOT_GITHUB_USERNAME }}
-            do-push: ${{ github.event_name == 'push' }}
+          version: ${{ steps.calculate-next-internal-version.outputs.next-prerelease }}
+          chart-dir: ${{ env.CHART_DIR }}
+          helm-repository: ${{ env.HELM_REPO }}
+          helm-repository-branch: ${{ env.HELM_REPO_BRANCH }}
+          helm-repository-subfolder: ${{ env.HELM_REPO_SUBFOLDER }}
+          helm-repository-base-url: ${{ env.HELM_REPO_BASE_URL }}
+          helm-repository-token: ${{ secrets.BOT_GITHUB_TOKEN }}
+          git-username: ${{ secrets.BOT_GITHUB_USERNAME }}
+          do-push: ${{ github.event_name == 'push' }}
 
   propagate:
     if: github.event_name == 'push'
