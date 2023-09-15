@@ -79,6 +79,14 @@ jobs:
         with:
           next-version: ${{ steps.helm-parse-next-release.outputs.next-release }}
 
+      - name: Test Retry Action
+        uses: igdianov/wretry.action@master
+        continue-on-error: true
+        with:
+          attempt_limit: 5
+          attempt_delay: 1000
+          command: exit 1
+
       - id: helm-release-and-publish
         name: Release and publish helm chart
         uses: igdianov/wretry.action@master
