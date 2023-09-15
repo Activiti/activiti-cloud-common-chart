@@ -30,21 +30,15 @@ jobs:
 
       - id: helm-publish-chart
         name: Publish Helm chart
-        uses: Wandalen/wretry.action@v1.3.0
-        env:
-          GH_TOKEN: ${{ secrets.BOT_GITHUB_TOKEN }}
+        uses: Alfresco/alfresco-build-tools/.github/actions/helm-publish-chart@dev-igdianov-AAE-16060
         with:
-          attempt_limit: 3
-          attempt_delay: 2000
-          action: Alfresco/alfresco-build-tools/.github/actions/helm-publish-chart@v1.36.0
-          with: |
-            chart-package: ${{ steps.helm-package-chart.outputs.package-file-path }}
-            helm-charts-repo: ${{ env.HELM_REPO }}
-            helm-charts-repo-branch: ${{ env.HELM_REPO_BRANCH }}
-            helm-charts-repo-subfolder: ${{ env.HELM_REPO_SUBFOLDER }}
-            helm-charts-repo-base-url: ${{ env.HELM_REPO_BASE_URL }}
-            token: ${{ secrets.BOT_GITHUB_TOKEN }}
-            git-username: ${{ secrets.BOT_GITHUB_USERNAME }}
+          chart-package: ${{ steps.helm-package-chart.outputs.package-file-path }}
+          helm-charts-repo: ${{ env.HELM_REPO }}
+          helm-charts-repo-branch: ${{ env.HELM_REPO_BRANCH }}
+          helm-charts-repo-subfolder: ${{ env.HELM_REPO_SUBFOLDER }}
+          helm-charts-repo-base-url: ${{ env.HELM_REPO_BASE_URL }}
+          token: ${{ secrets.BOT_GITHUB_TOKEN }}
+          git-username: ${{ secrets.BOT_GITHUB_USERNAME }}
 
       - uses: Activiti/activiti-scripts/.github/actions/wait-for-chart@develop
         with:
