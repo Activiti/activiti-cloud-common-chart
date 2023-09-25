@@ -1,19 +1,17 @@
 name: CI
-
 on:
   push:
     branches:
-      - develop
+      - 8.0.x
   pull_request:
     branches:
-      - develop
+      - 8.0.x
     types:
       - opened
       - reopened
       - synchronize
       - labeled
   workflow_dispatch:
-
 env:
   CHART_NAME: common
   CHART_DIR: charts/common
@@ -22,16 +20,13 @@ env:
   HELM_REPO_BASE_URL: https://activiti.github.io/activiti-cloud-helm-charts
   HELM_REPO_BRANCH: gh-pages
   HELM_REPO_SUBFOLDER: .
-
 jobs:
-
   check-ext-build:
     name: Check dependabot/external build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: Activiti/Activiti/.github/actions/check-ext-build@8.0.0-alpha.10
-
   pre-commit:
     needs: check-ext-build
     runs-on: ubuntu-latest
@@ -41,24 +36,19 @@ jobs:
         with:
           framework: kubernetes
       - uses: Alfresco/alfresco-build-tools/.github/actions/pre-commit@v3.2.1
-
   build:
     runs-on: ubuntu-latest
     needs: pre-commit
     steps:
       - uses: actions/checkout@v4
-
       - name: Build
         uses: Alfresco/alfresco-build-tools/.github/actions/helm-build-chart@v3.2.1
         with:
           chart-dir: ${{ env.CHART_DIR }}
-
       - name: Setup Helm test plugin
         run: helm plugin install https://github.com/helm-unittest/helm-unittest.git --version v0.3.2
-
       - name: Test
         run: helm unittest $CHART_DIR
-
   publish:
     runs-on: ubuntu-latest
     needs: build
@@ -66,19 +56,16 @@ jobs:
       version: ${{ steps.calculate-next-internal-version.outputs.next-prerelease }}
     steps:
       - uses: actions/checkout@v4
-
       - name: Parse next release
         id: helm-parse-next-release
         uses: Alfresco/alfresco-build-tools/.github/actions/helm-parse-next-release@v3.2.1
         with:
           chart-dir: ${{ env.CHART_DIR }}
-
       - id: calculate-next-internal-version
         name: Calculate next internal release
         uses: Alfresco/alfresco-build-tools/.github/actions/calculate-next-internal-version@v3.2.1
         with:
           next-version: ${{ steps.helm-parse-next-release.outputs.next-release }}
-
       - id: helm-release-and-publish
         name: Release and publish helm chart
         uses: Alfresco/alfresco-build-tools/.github/actions/helm-release-and-publish@v3.2.1
@@ -92,7 +79,6 @@ jobs:
           helm-repository-token: ${{ secrets.BOT_GITHUB_TOKEN }}
           git-username: ${{ secrets.BOT_GITHUB_USERNAME }}
           do-push: ${{ github.event_name == 'push' }}
-
   propagate:
     if: github.event_name == 'push'
     runs-on: ubuntu-latest
@@ -105,7 +91,7 @@ jobs:
         with:
           chart-name: ${{ env.CHART_NAME }}
           version: ${{ env.VERSION }}
-          helm-repo-name:  ${{ env.HELM_REPO_NAME }}
+          helm-repo-name: ${{ env.HELM_REPO_NAME }}
           helm-repo-url: ${{ env.HELM_REPO_BASE_URL }}
       - uses: actions/checkout@v4
       - uses: Alfresco/alfresco-build-tools/.github/actions/setup-helm-docs@v3.2.1
@@ -121,7 +107,6 @@ jobs:
           git-token: ${{ secrets.BOT_GITHUB_TOKEN }}
           git-author-name: ${{ secrets.BOT_GITHUB_USERNAME }}
           git-author-email: ${{ secrets.BOT_GITHUB_USERNAME }}@users.noreply.github.com
-
   notify:
     runs-on: ubuntu-latest
     needs:
