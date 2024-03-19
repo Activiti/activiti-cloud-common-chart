@@ -32,13 +32,13 @@ jobs:
       - name: Check dependabot build
         uses: Activiti/Activiti/.github/actions/check-ext-build@4db084fcbb13a288f3b66ac08fc50a5ab7f144ed # 8.0.0-alpha.10
       - name: Setup Helm Docs
-        uses: Alfresco/alfresco-build-tools/.github/actions/setup-helm-docs@9451f6b3f97da882d0e18e1c44696fe07adfa6c8 # v5.19.0
+        uses: Alfresco/alfresco-build-tools/.github/actions/setup-helm-docs@ce73f951967bcc34142ca7d99994f9e2bc333929 # v5.20.0
       - name: Run Checkov
         uses: bridgecrewio/checkov-action@e1bb78184f5dd3690fb1089d6c4f51295f9dff48 # v12.1839.0
         with:
           framework: kubernetes
       - name: pre-commit
-        uses: Alfresco/alfresco-build-tools/.github/actions/pre-commit@9451f6b3f97da882d0e18e1c44696fe07adfa6c8 # v5.19.0
+        uses: Alfresco/alfresco-build-tools/.github/actions/pre-commit@ce73f951967bcc34142ca7d99994f9e2bc333929 # v5.20.0
         with:
           skip_checkout: true
       - name: Ensure SHA pinned actions
@@ -51,7 +51,7 @@ jobs:
       - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
 
       - name: Build
-        uses: Alfresco/alfresco-build-tools/.github/actions/helm-build-chart@9451f6b3f97da882d0e18e1c44696fe07adfa6c8 # v5.19.0
+        uses: Alfresco/alfresco-build-tools/.github/actions/helm-build-chart@ce73f951967bcc34142ca7d99994f9e2bc333929 # v5.20.0
         with:
           chart-dir: ${{ env.CHART_DIR }}
 
@@ -71,19 +71,19 @@ jobs:
 
       - name: Parse next release
         id: helm-parse-next-release
-        uses: Alfresco/alfresco-build-tools/.github/actions/helm-parse-next-release@9451f6b3f97da882d0e18e1c44696fe07adfa6c8 # v5.19.0
+        uses: Alfresco/alfresco-build-tools/.github/actions/helm-parse-next-release@ce73f951967bcc34142ca7d99994f9e2bc333929 # v5.20.0
         with:
           chart-dir: ${{ env.CHART_DIR }}
 
       - id: calculate-next-internal-version
         name: Calculate next internal release
-        uses: Alfresco/alfresco-build-tools/.github/actions/calculate-next-internal-version@9451f6b3f97da882d0e18e1c44696fe07adfa6c8 # v5.19.0
+        uses: Alfresco/alfresco-build-tools/.github/actions/calculate-next-internal-version@ce73f951967bcc34142ca7d99994f9e2bc333929 # v5.20.0
         with:
           next-version: ${{ steps.helm-parse-next-release.outputs.next-release }}
 
       - id: helm-release-and-publish
         name: Release and publish helm chart
-        uses: Alfresco/alfresco-build-tools/.github/actions/helm-release-and-publish@9451f6b3f97da882d0e18e1c44696fe07adfa6c8 # v5.19.0
+        uses: Alfresco/alfresco-build-tools/.github/actions/helm-release-and-publish@ce73f951967bcc34142ca7d99994f9e2bc333929 # v5.20.0
         with:
           version: ${{ steps.calculate-next-internal-version.outputs.next-prerelease }}
           chart-dir: ${{ env.CHART_DIR }}
@@ -110,8 +110,8 @@ jobs:
           helm-repo-name:  ${{ env.HELM_REPO_NAME }}
           helm-repo-url: ${{ env.HELM_REPO_BASE_URL }}
       - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
-      - uses: Alfresco/alfresco-build-tools/.github/actions/setup-helm-docs@9451f6b3f97da882d0e18e1c44696fe07adfa6c8 # v5.19.0
-      - uses: Alfresco/alfresco-build-tools/.github/actions/jx-updatebot-pr@9451f6b3f97da882d0e18e1c44696fe07adfa6c8 # v5.19.0
+      - uses: Alfresco/alfresco-build-tools/.github/actions/setup-helm-docs@ce73f951967bcc34142ca7d99994f9e2bc333929 # v5.20.0
+      - uses: Alfresco/alfresco-build-tools/.github/actions/jx-updatebot-pr@ce73f951967bcc34142ca7d99994f9e2bc333929 # v5.20.0
         env:
           GH_TOKEN: ${{ secrets.BOT_GITHUB_TOKEN }}
         with:
@@ -131,7 +131,7 @@ jobs:
     if: always() && failure() && github.event_name == 'push'
     steps:
       - name: Slack Notification
-        uses: Alfresco/alfresco-build-tools/.github/actions/send-slack-notification@9451f6b3f97da882d0e18e1c44696fe07adfa6c8 # v5.19.0
+        uses: Alfresco/alfresco-build-tools/.github/actions/send-slack-notification@ce73f951967bcc34142ca7d99994f9e2bc333929 # v5.20.0
         with:
           channel-id: 'eng-hxp-studio-activiti-gh-notifs'
           token: ${{ secrets.SLACK_NOTIFICATION_BOT_TOKEN }}
