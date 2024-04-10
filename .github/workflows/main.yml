@@ -103,7 +103,7 @@ jobs:
       VERSION: ${{ needs.publish.outputs.version }}
       DEVELOPMENT_BRANCH: ${{ github.ref_name }}
     steps:
-      - uses: Activiti/activiti-scripts/.github/actions/wait-for-chart@000995bdf3eae49f78ff39c462226208039ef1a8 # 8.1.0
+      - uses: Activiti/activiti-scripts/.github/actions/wait-for-chart@f80caf1206963c7af8090266e4543b6fd3ff2d84 # 8.4.0
         with:
           chart-name: ${{ env.CHART_NAME }}
           version: ${{ env.VERSION }}
