@@ -6,8 +6,8 @@ GITHUB_CHARTS_REPO := "https://${GITHUB_TOKEN}@github.com/Activiti/activiti-clou
 GITHUB_CHARTS_BRANCH := $(or $(GITHUB_CHARTS_BRANCH),gh-pages)
 
 plugin:
-	helm plugin install https://github.com/helm-unittest/helm-unittest.git --version v0.3.2 || true
-	helm plugin install https://github.com/jtyr/kubeconform-helm --version v0.1.12 || true
+	helm plugin install https://github.com/helm-unittest/helm-unittest.git --version v0.5.1 || true
+	helm plugin install https://github.com/jtyr/kubeconform-helm.git --version v0.1.16 || true
 
 build: clean
 	helm dep up

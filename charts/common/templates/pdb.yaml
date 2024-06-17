@@ -1,0 +1,5 @@
+{{- if .Values.enabled -}}
+{{- template "common.pdb" (list . "activiti.cloud.pdb") -}}
+{{- end -}}
+{{- define "activiti.cloud.pdb" -}}
+{{- end -}}

@@ -33,6 +33,8 @@ jobs:
         uses: Activiti/Activiti/.github/actions/check-ext-build@4db084fcbb13a288f3b66ac08fc50a5ab7f144ed # 8.0.0-alpha.10
       - name: Setup Helm Docs
         uses: Alfresco/alfresco-build-tools/.github/actions/setup-helm-docs@dc4c1f4e94307af7a916d0ca8c5e2592521d9470 # v5.22.3
+        with:
+          version: 1.13.1
       - name: Run Checkov
         uses: bridgecrewio/checkov-action@e1bb78184f5dd3690fb1089d6c4f51295f9dff48 # v12.1839.0
         with:
@@ -56,8 +58,7 @@ jobs:
           chart-dir: ${{ env.CHART_DIR }}
 
       - name: Setup Helm test plugin
-        run: helm plugin install https://github.com/helm-unittest/helm-unittest.git --version v0.3.2
-
+        run: helm plugin install https://github.com/helm-unittest/helm-unittest.git --version v0.5.1 || true
       - name: Test
         run: helm unittest $CHART_DIR
 
@@ -111,6 +112,8 @@ jobs:
           helm-repo-url: ${{ env.HELM_REPO_BASE_URL }}
       - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
       - uses: Alfresco/alfresco-build-tools/.github/actions/setup-helm-docs@dc4c1f4e94307af7a916d0ca8c5e2592521d9470 # v5.22.3
+        with:
+          version: 1.13.1
       - uses: Alfresco/alfresco-build-tools/.github/actions/jx-updatebot-pr@dc4c1f4e94307af7a916d0ca8c5e2592521d9470 # v5.22.3
         env:
           GH_TOKEN: ${{ secrets.BOT_GITHUB_TOKEN }}
