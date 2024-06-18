@@ -340,3 +340,9 @@ sidecars: []
 
 hpa:
   enabled: false
+
+podDisruptionBudget:
+  # podDisruptionBudget.enabled -- set to true to enable PodDisruptionBudget
+  enabled: false
+  # podDisruptionBudget.minAvailable -- min replicas to keep
+  minAvailable: 1

@@ -1,0 +1,20 @@
+{{- define "common.pdb.tpl" -}}
+{{- if .Values.podDisruptionBudget.enabled }}
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ template "common.fullname" . }}
+  labels:
+    {{- include "common.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "common.selectorLabels" . | nindent 6 }}
+  minAvailable: {{ .Values.podDisruptionBudget.minAvailable }}
+{{- end }}
+{{- end -}}
+{{- define "common.pdb" -}}
+  {{- if index (first .) "Values" "podDisruptionBudget" "enabled" -}}
+    {{- template "common.util.merge" (append . "common.pdb.tpl") -}}
+  {{- end -}}
+{{- end -}}
