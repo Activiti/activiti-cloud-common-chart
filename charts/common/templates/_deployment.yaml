@@ -84,7 +84,7 @@ spec:
         {{- end }}
         {{- if .Values.liquibase.enabled }}
         - name: liquibase
-          image: {{ .Values.liquibase.image.repository | default .Values.image.repository }}:{{ .Values.liquibase.image.tag | default .Values.image.tag }}
+          image: "{{ tpl (toString (.Values.image.repository | default .Values.image.repository)) . }}:{{ tpl (toString (.Values.liquibase.image.tag | default .Values.image.tag)) . }}"
           imagePullPolicy: {{ .Values.liquibase.image.pullPolicy }}
           args:
             {{- toYaml .Values.liquibase.args | nindent 14 }}
@@ -106,7 +106,7 @@ spec:
         - name: {{ .Chart.Name }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          image: "{{ tpl (toString .Values.image.repository) . }}:{{ tpl (toString .Values.image.tag) . }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
             {{ $envTemplate := tpl "common.{{ .Values.service.envType }}-env" . }}
@@ -161,7 +161,7 @@ spec:
       {{- end }}
       {{- with .Values.affinity }}
       affinity:
-        {{- toYaml . | nindent 8 }}
+        {{- include "common.values.tpl" (dict "value" . "context" $) | nindent 8 }}
       {{- end }}
       {{- with .Values.tolerations }}
       tolerations:
