@@ -13,7 +13,6 @@ tests:
   - it: should render Ingress if enabled
     set:
       enabled: true
-      ingress.enabled: true
     release:
       name: my-release
     asserts:
@@ -30,3 +29,32 @@ tests:
               servicePort: 80
       - isNull:
           path: spec.tls
+
+  - it: should render ingress class name if set
+    set:
+      enabled: true
+      ingress.className: nginx
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: Ingress
+      - equal:
+          path: spec.ingressClassName
+          value: nginx
+
+  - it: should render ingress pathtype
+    set:
+      enabled: true
+      ingress.pathType: ImplementationSpecific
+    capabilities:
+      apiVersions:
+        - networking.k8s.io/v1/Ingress
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: Ingress
+      - equal:
+          path: spec.rules[0].http.paths[0].pathType
+          value: ImplementationSpecific
