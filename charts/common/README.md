@@ -71,9 +71,11 @@ A Helm chart for Activiti Cloud Common Templates
 | image.repository | string | `"activiti/replaceme"` |  |
 | image.tag | string | `"latest"` |  |
 | ingress.annotations | object | `{}` | configure ingress annotations as key:value pairs |
+| ingress.className | string | `""` | set an ingress class name |
 | ingress.enabled | bool | `true` | set to false to disable ingress record generation |
 | ingress.hostName | string | `nil` | if set, overrides .Values.global.gateway.host configuration |
 | ingress.path | string | `"/"` | set ingress path |
+| ingress.pathType | string | `"Prefix"` | set ingress path type |
 | ingress.servicePort | string | `nil` | the Service port targeted by the Ingress, defaults to service.externalPort |
 | ingress.subPaths | list | `[]` | set multiple ingress subpaths |
 | ingress.tls | string | `nil` | set to true in order to enable TLS on the ingress record |
