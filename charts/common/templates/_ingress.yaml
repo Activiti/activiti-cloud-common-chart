@@ -10,6 +10,9 @@ metadata:
     {{- . | nindent 4 }}
   {{- end }}
 spec:
+  {{- if and .Values.ingress.className (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion) }}
+  ingressClassName: {{ .Values.ingress.className }}
+  {{- end }}
   rules:
     {{- with (include "common.ingress-host" .) }}
     - host: {{ . }}
@@ -22,6 +25,7 @@ spec:
           {{- $externalPort := coalesce .Values.ingress.servicePort .Values.service.externalPort -}}
           {{- $ingressPath := include "common.ingress-path" . -}}
           {{- $serviceNameTemplate := include "common.fullname" . -}}
+          {{- $ingressPathType := .Values.ingress.pathType -}}
           {{- $paths := list }}
           {{- if .Values.ingress.subPaths -}}
             {{- $ingressPathNoSlash := ternary $ingressPath "" (ne $ingressPath "/") -}}
@@ -35,7 +39,7 @@ spec:
           {{- range $paths }}
             - path: {{ . }}
               {{- if $.Capabilities.APIVersions.Has "networking.k8s.io/v1/Ingress" }}
-              pathType: Prefix
+              pathType: {{ $ingressPathType }}
               backend:
                 service:
                   name: {{ coalesce $serviceName $serviceNameTemplate }}
