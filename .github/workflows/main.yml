@@ -44,7 +44,7 @@ jobs:
         with:
           skip_checkout: true
       - name: Ensure SHA pinned actions
-        uses: zgosalvez/github-actions-ensure-sha-pinned-actions@74606c30450304eee8660aae751818321754feb1 # v3.0.9
+        uses: zgosalvez/github-actions-ensure-sha-pinned-actions@40ba2d51b6b6d8695f2b6bd74e785172d4f8d00f # v3.0.14
 
   build:
     runs-on: ubuntu-latest
