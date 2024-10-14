@@ -108,6 +108,10 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ tpl (toString .Values.image.repository) . }}:{{ tpl (toString .Values.image.tag) . }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- with .Values.args }}
+          args:
+          {{ toYaml . | nindent 12 }}
+          {{- end }}
           env:
             {{ $envTemplate := tpl "common.{{ .Values.service.envType }}-env" . }}
             {{ include $envTemplate . | nindent 12 }}

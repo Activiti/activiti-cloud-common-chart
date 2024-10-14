@@ -13,6 +13,7 @@ A Helm chart for Activiti Cloud Common Templates
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | affinity | object | `{}` | allows customising affinity |
+| args | string | `nil` | use to customize container args |
 | config.args | string | `"-c"` |  |
 | config.command | string | `"sh"` |  |
 | config.env.APPLICATION_PROPERTIES | string | `"{{ .Values.config.mountPath | trimSuffix \"/\" }}/application.properties"` |  |

@@ -214,3 +214,31 @@ tests:
       - equal:
           path: spec.template.spec.containers[0].livenessProbe.httpGet.path
           value: /rb/actuator/health
+
+  - it: should render deployment with no args by default
+    set:
+      enabled: true
+    asserts:
+      - isKind:
+          of: Deployment
+      - hasDocuments:
+          count: 1
+      - notExists:
+          path: spec.template.spec.containers[0].args
+
+  - it: should render deployment with custom args
+    set:
+      enabled: true
+      args: [ "-jar", "consumer.jar" ]
+    asserts:
+      - isKind:
+          of: Deployment
+      - hasDocuments:
+          count: 1
+      - exists:
+          path: spec.template.spec.containers[0].args
+      - equal:
+          path: spec.template.spec.containers[0].args
+          value:
+            - "-jar"
+            - "consumer.jar"
