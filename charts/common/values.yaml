@@ -126,6 +126,9 @@ image:
   tag: latest
   pullPolicy: IfNotPresent
 
+# args -- use to customize container args
+args:
+
 # registryPullSecrets -- configures additional pull secrets for this deployment
 registryPullSecrets: []
 
