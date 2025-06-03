@@ -39,6 +39,7 @@ spec:
           {{- range $paths }}
             - path: {{ . }}
               {{- if $.Capabilities.APIVersions.Has "networking.k8s.io/v1/Ingress" }}
+              {{- fail (printf "Debug: externalPort=%v, serviceName=%v" $externalPort $serviceName) -}}
               pathType: {{ $ingressPathType }}
               backend:
                 service:
