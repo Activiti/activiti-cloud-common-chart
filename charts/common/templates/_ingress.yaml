@@ -50,7 +50,7 @@ spec:
                 serviceName: {{ coalesce $serviceName $serviceNameTemplate }}
                 servicePort: {{ $externalPort }}
               {{- end }}
-            {{- end }}
+          {{- end }}
   {{- if include "common.ingress-tls" . }}
   tls:
     - secretName: {{ template "common.ingress-tlssecretname" . }}
