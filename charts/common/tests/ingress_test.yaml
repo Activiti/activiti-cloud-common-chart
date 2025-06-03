@@ -49,7 +49,7 @@ tests:
       ingress.pathType: ImplementationSpecific
     capabilities:
       apiVersions:
-        - networking.k8s.io/v1/Ingress
+        - networking.k8s.io/v1beta1/Ingress
     asserts:
       - hasDocuments:
           count: 1
