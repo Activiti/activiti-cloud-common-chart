@@ -38,13 +38,18 @@ spec:
           {{- end -}}
           {{- range $paths }}
             - path: {{ . }}
-              {{- if $.Capabilities.APIVersions.Has "networking.k8s.io/v1/Ingress" }}
+              {{- if $.Capabilities.APIVersions.Has "networking.k8s.io/v1beta1/Ingress" }}
+              {{- fail (printf "Debug: externalPort=%v, serviceName=%v" $externalPort $serviceName) -}}
               pathType: {{ $ingressPathType }}
               backend:
                 service:
                   name: {{ coalesce $serviceName $serviceNameTemplate }}
                   port:
-                    {{ ternary "name" "number" (kindIs "string" $externalPort) }}: {{ $externalPort }}
+                    {{- if kindIs "string" $externalPort }}
+                    name: {{ $externalPort }}
+                    {{- else }}
+                    number: {{ $externalPort }}
+                    {{- end }}
               {{- else }}
               backend:
                 serviceName: {{ coalesce $serviceName $serviceNameTemplate }}
