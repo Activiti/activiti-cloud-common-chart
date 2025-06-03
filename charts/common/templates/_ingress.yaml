@@ -44,13 +44,13 @@ spec:
                 service:
                   name: {{ coalesce $serviceName $serviceNameTemplate }}
                   port:
-                    {{ ternary "name" "number" (kindIs "string" $externalPort) }}: {{ $externalPort }}
+                    number: $externalPort
               {{- else }}
-              backend:
-                serviceName: {{ coalesce $serviceName $serviceNameTemplate }}
-                servicePort: {{ $externalPort }}
-              {{- end }}
-          {{- end }}
+                backend:
+                  serviceName: {{ coalesce $serviceName $serviceNameTemplate }}
+                  servicePort: {{ $externalPort }}
+            {{- end }}
+  {{- end }}
   {{- if include "common.ingress-tls" . }}
   tls:
     - secretName: {{ template "common.ingress-tlssecretname" . }}
