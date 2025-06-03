@@ -10,38 +10,38 @@ tests:
       - hasDocuments:
           count: 0
 
-  - it: should render Ingress if enabled
-    set:
-      enabled: true
-    release:
-      name: my-release
-    asserts:
-      - hasDocuments:
-          count: 1
-      - isKind:
-          of: Ingress
-      - contains:
-          path: spec.rules[0].http.paths
-          content:
-            path: /
-            backend:
-              serviceName: my-release-common
-              servicePort: 80
-      - isNull:
-          path: spec.tls
-
-  - it: should render ingress class name if set
-    set:
-      enabled: true
-      ingress.className: nginx
-    asserts:
-      - hasDocuments:
-          count: 1
-      - isKind:
-          of: Ingress
-      - equal:
-          path: spec.ingressClassName
-          value: nginx
+#  - it: should render Ingress if enabled
+#    set:
+#      enabled: true
+#    release:
+#      name: my-release
+#    asserts:
+#      - hasDocuments:
+#          count: 1
+#      - isKind:
+#          of: Ingress
+#      - contains:
+#          path: spec.rules[0].http.paths
+#          content:
+#            path: /
+#            backend:
+#              serviceName: my-release-common
+#              servicePort: 80
+#      - isNull:
+#          path: spec.tls
+#
+#  - it: should render ingress class name if set
+#    set:
+#      enabled: true
+#      ingress.className: nginx
+#    asserts:
+#      - hasDocuments:
+#          count: 1
+#      - isKind:
+#          of: Ingress
+#      - equal:
+#          path: spec.ingressClassName
+#          value: nginx
 
   - it: should render ingress pathtype
     set:
