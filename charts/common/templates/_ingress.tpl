@@ -123,8 +123,8 @@ Ingress API version
 */}}
 {{- define "common.ingress-apiversion" -}}
 {{- if .Capabilities.APIVersions.Has "networking.k8s.io/v1beta1/Ingress" -}}
-{{- print "networking.k8s.io/v1beta1" -}}
-{{- else -}}
 {{- print "networking.k8s.io/v1" -}}
+{{- else -}}
+{{- print "extensions/v1beta1" -}}
 {{- end -}}
 {{- end }}
