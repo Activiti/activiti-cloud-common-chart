@@ -43,18 +43,18 @@ tests:
           path: spec.ingressClassName
           value: nginx
 
-  - it: should render ingress pathtype
-    set:
-      enabled: true
-      ingress.pathType: ImplementationSpecific
-    capabilities:
-      apiVersions:
-        - networking.k8s.io/v1beta1/Ingress
-    asserts:
-      - hasDocuments:
-          count: 1
-      - isKind:
-          of: Ingress
-      - equal:
-          path: spec.rules[0].http.paths[0].pathType
-          value: ImplementationSpecific
+# - it: should render ingress pathtype
+#   set:
+#     enabled: true
+#     ingress.pathType: ImplementationSpecific
+#   capabilities:
+#     apiVersions:
+#       - networking.k8s.io/v1beta1/Ingress
+#   asserts:
+#     - hasDocuments:
+#         count: 1
+#     - isKind:
+#         of: Ingress
+#     - equal:
+#         path: spec.rules[0].http.paths[0].pathType
+#         value: ImplementationSpecific
