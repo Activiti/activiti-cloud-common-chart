@@ -38,19 +38,19 @@ spec:
           {{- end -}}
           {{- range $paths }}
             - path: {{ . }}
-              {{- if $.Capabilities.APIVersions.Has "networking.k8s.io/v1/Ingress" }}
-              pathType: {{ $ingressPathType }}
-              backend:
-                service:
-                  name: {{ coalesce $serviceName $serviceNameTemplate }}
-                  port:
-                    {{ ternary "name" "number" (kindIs "string" $externalPort) }}: {{ $externalPort }}
-              {{- else }}
+            {{- if $.Capabilities.APIVersions.Has "networking.k8s.io/v1/Ingress" }}
+            pathType: {{ $ingressPathType }}
+            backend:
+              service:
+                name: {{ coalesce $serviceName $serviceNameTemplate }}
+                port:
+                  number: $externalPort
+            {{- else }}
               backend:
                 serviceName: {{ coalesce $serviceName $serviceNameTemplate }}
                 servicePort: {{ $externalPort }}
-              {{- end }}
-          {{- end }}
+            {{- end }}
+  {{- end }}
   {{- if include "common.ingress-tls" . }}
   tls:
     - secretName: {{ template "common.ingress-tlssecretname" . }}
