@@ -44,7 +44,8 @@ spec:
                 service:
                   name: {{ coalesce $serviceName $serviceNameTemplate }}
                   port:
-                    {{ ternary "name" "number" (kindIs "string" $externalPort) }}: {{ $externalPort }}
+                    number: 80
+                   # {{ ternary "name" "number" (kindIs "string" $externalPort) }}: {{ $externalPort }}
               {{- else }}
               backend:
                 serviceName: {{ coalesce $serviceName $serviceNameTemplate }}
