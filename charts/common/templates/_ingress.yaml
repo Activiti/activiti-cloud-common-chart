@@ -46,9 +46,9 @@ spec:
                   port:
                     number: {{ $externalPort }}
               {{- else }}
-                backend:
-                  serviceName: {{ coalesce $serviceName $serviceNameTemplate }}
-                  servicePort: {{ $externalPort }}
+              backend:
+                serviceName: {{ coalesce $serviceName $serviceNameTemplate }}
+                servicePort: {{ $externalPort }}
             {{- end }}
   {{- end }}
   {{- if include "common.ingress-tls" . }}
