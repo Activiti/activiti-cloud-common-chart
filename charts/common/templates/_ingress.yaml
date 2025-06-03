@@ -44,7 +44,7 @@ spec:
                 service:
                   name: {{ coalesce $serviceName $serviceNameTemplate }}
                   port:
-                    number: $externalPort
+                    number: {{ $externalPort }}
               {{- else }}
                 backend:
                   serviceName: {{ coalesce $serviceName $serviceNameTemplate }}
