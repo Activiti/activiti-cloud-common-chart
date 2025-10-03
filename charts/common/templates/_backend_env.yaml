@@ -15,7 +15,7 @@ Create SPRING_DATASOURCE_* env.
   valueFrom:
     secretKeyRef:
       name: {{ include "common.postgresql.fullname" . }}
-      key: postgres-password
+      key: {{ (.Values.postgresql).passwordKey | default "postgres-password" }}
   {{- else }}
   value: ""
   {{- end }}
