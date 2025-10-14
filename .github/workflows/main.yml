@@ -32,7 +32,7 @@ jobs:
       - name: Check dependabot build
         uses: Activiti/Activiti/.github/actions/check-ext-build@d50dea0ec2f4b06b26a8018e5b9083fbced01ed5 # 8.0.0-alpha.10
       - name: Setup Helm Docs
-        uses: Alfresco/alfresco-build-tools/.github/actions/setup-helm-docs@f37c44cc085236178ebb8834eb634b0b4b550a40 # v8.23.0
+        uses: Alfresco/alfresco-build-tools/.github/actions/setup-helm-docs@de5e037bf9a2ac174c1993dab82002a2278a6506 # v9.3.2
         with:
           version: 1.13.1
       - name: Run Checkov
@@ -40,7 +40,7 @@ jobs:
         with:
           framework: kubernetes
       - name: pre-commit
-        uses: Alfresco/alfresco-build-tools/.github/actions/pre-commit@f37c44cc085236178ebb8834eb634b0b4b550a40 # v8.23.0
+        uses: Alfresco/alfresco-build-tools/.github/actions/pre-commit@de5e037bf9a2ac174c1993dab82002a2278a6506 # v9.3.2
         with:
           skip_checkout: true
       - name: Ensure SHA pinned actions
@@ -53,7 +53,7 @@ jobs:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
       - name: Build
-        uses: Alfresco/alfresco-build-tools/.github/actions/helm-build-chart@f37c44cc085236178ebb8834eb634b0b4b550a40 # v8.23.0
+        uses: Alfresco/alfresco-build-tools/.github/actions/helm-build-chart@de5e037bf9a2ac174c1993dab82002a2278a6506 # v9.3.2
         with:
           chart-dir: ${{ env.CHART_DIR }}
 
@@ -72,19 +72,19 @@ jobs:
 
       - name: Parse next release
         id: helm-parse-next-release
-        uses: Alfresco/alfresco-build-tools/.github/actions/helm-parse-next-release@f37c44cc085236178ebb8834eb634b0b4b550a40 # v8.23.0
+        uses: Alfresco/alfresco-build-tools/.github/actions/helm-parse-next-release@de5e037bf9a2ac174c1993dab82002a2278a6506 # v9.3.2
         with:
           chart-dir: ${{ env.CHART_DIR }}
 
       - id: calculate-next-internal-version
         name: Calculate next internal release
-        uses: Alfresco/alfresco-build-tools/.github/actions/calculate-next-internal-version@f37c44cc085236178ebb8834eb634b0b4b550a40 # v8.23.0
+        uses: Alfresco/alfresco-build-tools/.github/actions/calculate-next-internal-version@de5e037bf9a2ac174c1993dab82002a2278a6506 # v9.3.2
         with:
           next-version: ${{ steps.helm-parse-next-release.outputs.next-release }}
 
       - id: helm-release-and-publish
         name: Release and publish helm chart
-        uses: Alfresco/alfresco-build-tools/.github/actions/helm-release-and-publish@f37c44cc085236178ebb8834eb634b0b4b550a40 # v8.23.0
+        uses: Alfresco/alfresco-build-tools/.github/actions/helm-release-and-publish@de5e037bf9a2ac174c1993dab82002a2278a6506 # v9.3.2
         with:
           version: ${{ steps.calculate-next-internal-version.outputs.next-prerelease }}
           chart-dir: ${{ env.CHART_DIR }}
@@ -111,10 +111,10 @@ jobs:
           helm-repo-name:  ${{ env.HELM_REPO_NAME }}
           helm-repo-url: ${{ env.HELM_REPO_BASE_URL }}
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
-      - uses: Alfresco/alfresco-build-tools/.github/actions/setup-helm-docs@f37c44cc085236178ebb8834eb634b0b4b550a40 # v8.23.0
+      - uses: Alfresco/alfresco-build-tools/.github/actions/setup-helm-docs@de5e037bf9a2ac174c1993dab82002a2278a6506 # v9.3.2
         with:
           version: 1.13.1
-      - uses: Alfresco/alfresco-build-tools/.github/actions/jx-updatebot-pr@f37c44cc085236178ebb8834eb634b0b4b550a40 # v8.23.0
+      - uses: Alfresco/alfresco-build-tools/.github/actions/jx-updatebot-pr@de5e037bf9a2ac174c1993dab82002a2278a6506 # v9.3.2
         env:
           GH_TOKEN: ${{ secrets.BOT_GITHUB_TOKEN }}
         with:
@@ -134,6 +134,6 @@ jobs:
     if: always() && failure() && github.event_name == 'push'
     steps:
       - name: Teams Notification
-        uses: Alfresco/alfresco-build-tools/.github/actions/send-teams-notification@f37c44cc085236178ebb8834eb634b0b4b550a40 # v8.23.0
+        uses: Alfresco/alfresco-build-tools/.github/actions/send-teams-notification@de5e037bf9a2ac174c1993dab82002a2278a6506 # v9.3.2
         with:
           webhook-url: ${{ secrets.TEAMS_NOTIFICATION_WORKFLOW_WEBHOOK }}
