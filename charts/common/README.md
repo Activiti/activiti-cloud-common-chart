@@ -1,6 +1,6 @@
 # common
 
-![Version: 8.8.0-alpha.15](https://img.shields.io/badge/Version-8.8.0--alpha.15-informational?style=flat-square)
+![Version: 7.20.0-rc.690](https://img.shields.io/badge/Version-7.20.0--rc.690-informational?style=flat-square)
 
 A Helm chart for Activiti Cloud Common Templates
 
