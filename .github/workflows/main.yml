@@ -44,11 +44,11 @@ jobs:
         with:
           framework: kubernetes
       - name: pre-commit
-        uses: Alfresco/alfresco-build-tools/.github/actions/pre-commit@0fa2704957dfff688af2371cc7a935de53d26610 # v19.1.0
+        uses: Alfresco/alfresco-build-tools/.github/actions/pre-commit@c176315c6b0b3e3bbf022ea444944fb903c47e0e # v19.2.1
         with:
           skip_checkout: true
       - name: Ensure SHA pinned actions
-        uses: zgosalvez/github-actions-ensure-sha-pinned-actions@62574f011e0d1967d555a862bd28a7abba8684fe # v5.0.9
+        uses: zgosalvez/github-actions-ensure-sha-pinned-actions@c4e71056006d29f90204b2d063be337109507d62 # v5.0.10
 
   build:
     runs-on: ubuntu-latest
@@ -140,6 +140,6 @@ jobs:
     if: always() && failure() && github.event_name == 'push'
     steps:
       - name: Teams Notification
-        uses: Alfresco/alfresco-build-tools/.github/actions/send-teams-notification@0fa2704957dfff688af2371cc7a935de53d26610 # v19.1.0
+        uses: Alfresco/alfresco-build-tools/.github/actions/send-teams-notification@c176315c6b0b3e3bbf022ea444944fb903c47e0e # v19.2.1
         with:
           webhook-url: ${{ secrets.TEAMS_NOTIFICATION_WORKFLOW_WEBHOOK }}
