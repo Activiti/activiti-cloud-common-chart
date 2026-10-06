@@ -36,7 +36,7 @@ jobs:
           dependabot-error-message: "This PR requires additional validation, please set the milestone to 'Validating' or ask a reviewer to approve it."
           none-error-message: "This PR requires additional validation, please set the milestone to 'Validating'."
       - name: Setup Helm Docs
-        uses: Alfresco/alfresco-build-tools/.github/actions/setup-helm-docs@f1bae5a4bdb3b12030a350e52b8f661dbcb2f849 # v18.28.3
+        uses: Alfresco/alfresco-build-tools/.github/actions/setup-helm-docs@c176315c6b0b3e3bbf022ea444944fb903c47e0e # v19.2.1
         with:
           version: 1.13.1
       - name: Run Checkov
@@ -115,7 +115,7 @@ jobs:
           helm-repo-name:  ${{ env.HELM_REPO_NAME }}
           helm-repo-url: ${{ env.HELM_REPO_BASE_URL }}
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: Alfresco/alfresco-build-tools/.github/actions/setup-helm-docs@f1bae5a4bdb3b12030a350e52b8f661dbcb2f849 # v18.28.3
+      - uses: Alfresco/alfresco-build-tools/.github/actions/setup-helm-docs@c176315c6b0b3e3bbf022ea444944fb903c47e0e # v19.2.1
         with:
           version: 1.13.1
       - uses: Alfresco/alfresco-build-tools/.github/actions/jx-updatebot-pr@f1bae5a4bdb3b12030a350e52b8f661dbcb2f849 # v18.28.3
