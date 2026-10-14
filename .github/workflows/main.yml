@@ -82,7 +82,7 @@ jobs:
 
       - id: calculate-next-internal-version
         name: Calculate next internal release
-        uses: Alfresco/alfresco-build-tools/.github/actions/calculate-next-internal-version@f1bae5a4bdb3b12030a350e52b8f661dbcb2f849 # v18.28.3
+        uses: Alfresco/alfresco-build-tools/.github/actions/calculate-next-internal-version@f2ba011b2bd8bee8d7418b046541ce2f75d1fbed # v19.4.0
         with:
           next-version: ${{ steps.helm-parse-next-release.outputs.next-release }}
 
