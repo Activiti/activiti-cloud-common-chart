@@ -22,6 +22,9 @@ env:
   HELM_REPO_BASE_URL: https://activiti.github.io/activiti-cloud-helm-charts
   HELM_REPO_BRANCH: gh-pages
   HELM_REPO_SUBFOLDER: .
+  HELM_VERSION: v4.3.0
+  HELM_UNITTEST_VERSION: 1.2.1
+  HELM_UNITTEST_KEY_FINGERPRINT: 853008CD0B0A5A2DA04FF8A5616AD47F65B54AC7
 
 jobs:
 
@@ -56,13 +59,29 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
+      - name: Setup Helm
+        uses: azure/setup-helm@9bc31f4ebc9c6b171d7bfbaa5d006ae7abdb4310 # v5.0.1
+        with:
+          version: ${{ env.HELM_VERSION }}
+
       - name: Build
         uses: Alfresco/alfresco-build-tools/.github/actions/helm-build-chart@768b583839a22ef7d882da0c5b82af3832197d00 # v19.7.1
         with:
           chart-dir: ${{ env.CHART_DIR }}
 
       - name: Setup Helm test plugin
-        run: helm plugin install https://github.com/helm-unittest/helm-unittest.git --version v0.5.1 || true
+        run: |
+          KEY="$RUNNER_TEMP/helm-unittest.asc"
+          KEYRING="$RUNNER_TEMP/helm-unittest.gpg"
+          curl -fsSL "https://raw.githubusercontent.com/helm-unittest/helm-unittest/v${HELM_UNITTEST_VERSION}/public-key.asc" -o "$KEY"
+          FPRS=$(gpg --batch --show-keys --with-colons "$KEY" | awk -F: '$1 == "fpr" { print $10 }')
+          if [ "$FPRS" != "$HELM_UNITTEST_KEY_FINGERPRINT" ]; then
+            echo "::error::Unexpected helm-unittest signing key: $FPRS"
+            exit 1
+          fi
+          gpg --batch --dearmor < "$KEY" > "$KEYRING"
+          helm plugin install "https://github.com/helm-unittest/helm-unittest/releases/download/v${HELM_UNITTEST_VERSION}/unittest-${HELM_UNITTEST_VERSION}.tgz" \
+            --keyring "$KEYRING"
       - name: Test
         run: helm unittest $CHART_DIR
 
