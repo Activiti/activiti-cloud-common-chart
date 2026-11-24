@@ -34,12 +34,12 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Check dependabot/fork build
         if: github.secret_source == 'Dependabot' || (github.secret_source == 'None' && github.event.action != 'milestoned')
-        uses: Alfresco/alfresco-build-tools/.github/actions/github-require-secrets@3bbbfc459dd15452e68e3cefcbc56596d88d71ee # v19.15.0
+        uses: Alfresco/alfresco-build-tools/.github/actions/github-require-secrets@16298278308f674c76542d61658da190e975e31c # v19.16.0
         with:
           dependabot-error-message: "This PR requires additional validation, please set the milestone to 'Validating' or ask a reviewer to approve it."
           none-error-message: "This PR requires additional validation, please set the milestone to 'Validating'."
       - name: Setup Helm Docs
-        uses: Alfresco/alfresco-build-tools/.github/actions/setup-helm-docs@3bbbfc459dd15452e68e3cefcbc56596d88d71ee # v19.15.0
+        uses: Alfresco/alfresco-build-tools/.github/actions/setup-helm-docs@16298278308f674c76542d61658da190e975e31c # v19.16.0
         with:
           version: 1.13.1
       - name: Run Checkov
@@ -47,7 +47,7 @@ jobs:
         with:
           framework: kubernetes
       - name: pre-commit
-        uses: Alfresco/alfresco-build-tools/.github/actions/pre-commit@3bbbfc459dd15452e68e3cefcbc56596d88d71ee # v19.15.0
+        uses: Alfresco/alfresco-build-tools/.github/actions/pre-commit@16298278308f674c76542d61658da190e975e31c # v19.16.0
         with:
           skip_checkout: true
       - name: Ensure SHA pinned actions
@@ -65,7 +65,7 @@ jobs:
           version: ${{ env.HELM_VERSION }}
 
       - name: Build
-        uses: Alfresco/alfresco-build-tools/.github/actions/helm-build-chart@3bbbfc459dd15452e68e3cefcbc56596d88d71ee # v19.15.0
+        uses: Alfresco/alfresco-build-tools/.github/actions/helm-build-chart@16298278308f674c76542d61658da190e975e31c # v19.16.0
         with:
           chart-dir: ${{ env.CHART_DIR }}
 
@@ -95,19 +95,19 @@ jobs:
 
       - name: Parse next release
         id: helm-parse-next-release
-        uses: Alfresco/alfresco-build-tools/.github/actions/helm-parse-next-release@3bbbfc459dd15452e68e3cefcbc56596d88d71ee # v19.15.0
+        uses: Alfresco/alfresco-build-tools/.github/actions/helm-parse-next-release@16298278308f674c76542d61658da190e975e31c # v19.16.0
         with:
           chart-dir: ${{ env.CHART_DIR }}
 
       - id: calculate-next-internal-version
         name: Calculate next internal release
-        uses: Alfresco/alfresco-build-tools/.github/actions/calculate-next-internal-version@3bbbfc459dd15452e68e3cefcbc56596d88d71ee # v19.15.0
+        uses: Alfresco/alfresco-build-tools/.github/actions/calculate-next-internal-version@16298278308f674c76542d61658da190e975e31c # v19.16.0
         with:
           next-version: ${{ steps.helm-parse-next-release.outputs.next-release }}
 
       - id: helm-release-and-publish
         name: Release and publish helm chart
-        uses: Alfresco/alfresco-build-tools/.github/actions/helm-release-and-publish@3bbbfc459dd15452e68e3cefcbc56596d88d71ee # v19.15.0
+        uses: Alfresco/alfresco-build-tools/.github/actions/helm-release-and-publish@16298278308f674c76542d61658da190e975e31c # v19.16.0
         with:
           version: ${{ steps.calculate-next-internal-version.outputs.next-prerelease }}
           chart-dir: ${{ env.CHART_DIR }}
@@ -134,10 +134,10 @@ jobs:
           helm-repo-name:  ${{ env.HELM_REPO_NAME }}
           helm-repo-url: ${{ env.HELM_REPO_BASE_URL }}
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: Alfresco/alfresco-build-tools/.github/actions/setup-helm-docs@3bbbfc459dd15452e68e3cefcbc56596d88d71ee # v19.15.0
+      - uses: Alfresco/alfresco-build-tools/.github/actions/setup-helm-docs@16298278308f674c76542d61658da190e975e31c # v19.16.0
         with:
           version: 1.13.1
-      - uses: Alfresco/alfresco-build-tools/.github/actions/jx-updatebot-pr@3bbbfc459dd15452e68e3cefcbc56596d88d71ee # v19.15.0
+      - uses: Alfresco/alfresco-build-tools/.github/actions/jx-updatebot-pr@16298278308f674c76542d61658da190e975e31c # v19.16.0
         env:
           GH_TOKEN: ${{ secrets.BOT_GITHUB_TOKEN }}
         with:
@@ -159,6 +159,6 @@ jobs:
     if: always() && failure() && github.event_name == 'push'
     steps:
       - name: Teams Notification
-        uses: Alfresco/alfresco-build-tools/.github/actions/send-teams-notification@3bbbfc459dd15452e68e3cefcbc56596d88d71ee # v19.15.0
+        uses: Alfresco/alfresco-build-tools/.github/actions/send-teams-notification@16298278308f674c76542d61658da190e975e31c # v19.16.0
         with:
           webhook-url: ${{ secrets.TEAMS_NOTIFICATION_WORKFLOW_WEBHOOK }}
